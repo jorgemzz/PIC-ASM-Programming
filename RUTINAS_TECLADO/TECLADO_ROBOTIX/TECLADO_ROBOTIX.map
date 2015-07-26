@@ -1,0 +1,74 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Fri Jan 04 00:25:34 1980
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x0000ac
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x00005a      
+            87 out of 1093 program addresses used, program memory utilization is 7%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                 Cheq_Col   0x00001a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera1   0x00002f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera2   0x000031    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera3   0x000033    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera4   0x000035    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   INIXIO   0x000008    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                  KB_Port   0x00000f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  KB_Scan   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  NTeclas   0x00002d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                   PDelL1   0x000052    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL2   0x000053    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL3   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL4   0x000058    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL5   0x000059    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelay   0x00004d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PLoop1   0x00004f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PLoop2   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   T_Conv   0x00003b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+             Ultima_Tecla   0x000026    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+              antirebotes   0x00002f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   INIXIO   0x000008    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                  KB_Port   0x00000f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  KB_Scan   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                 Cheq_Col   0x00001a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+             Ultima_Tecla   0x000026    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  NTeclas   0x00002d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+              antirebotes   0x00002f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera1   0x00002f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera2   0x000031    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera3   0x000033    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                  Espera4   0x000035    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                   T_Conv   0x00003b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC
+                   PDelay   0x00004d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PLoop1   0x00004f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PLoop2   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL1   0x000052    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL2   0x000053    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL3   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL4   0x000058    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+                   PDelL5   0x000059    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM
+
+

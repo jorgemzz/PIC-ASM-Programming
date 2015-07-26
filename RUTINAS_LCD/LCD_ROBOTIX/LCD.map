@@ -1,0 +1,57 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Thu Nov 05 06:56:19 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x0000bc
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x00005d      
+            94 out of 1093 program addresses used, program memory utilization is 8%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   DATO_1   0x000017    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                  DELAY_1   0x000059    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                DELAY_5MS   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                   INICIO   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                 LCD_BUSY   0x00002d    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                LCD_DATOS   0x000040    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                    LCD_E   0x000029    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                  LCD_INI   0x000045    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                 LCD_PORT   0x00004f    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                  LCD_REG   0x00003c    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                   L_BUSY   0x000034    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                  REPETIR   0x00000d    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                    START   0x000004    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                   acabar   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   INICIO   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                    START   0x000004    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                  REPETIR   0x00000d    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                   acabar   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                   DATO_1   0x000017    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.ASM
+                    LCD_E   0x000029    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                 LCD_BUSY   0x00002d    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                   L_BUSY   0x000034    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                  LCD_REG   0x00003c    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                LCD_DATOS   0x000040    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                  LCD_INI   0x000045    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                 LCD_PORT   0x00004f    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                DELAY_5MS   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+                  DELAY_1   0x000059    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD_ROBOTIX\LCD.LIB
+
+

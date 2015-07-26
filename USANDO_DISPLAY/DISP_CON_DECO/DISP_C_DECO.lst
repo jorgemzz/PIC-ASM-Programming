@@ -1,0 +1,192 @@
+MPASM  5.33                   DISP_C_DECO.ASM   10-30-2009  7:57:46         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 
+                      00003         LIST            P=16F84A
+                      00004         INCLUDE         "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00005 
+                      00006 ;-----------------------------------
+                      00007         
+                      00008         CBLOCK          0X0C
+  0000000C            00009         PDel0 
+  0000000D            00010         PDel1
+                      00011         ENDC
+                      00012 
+                      00013 ;---------CONFIGURACION DE PUERTOS------
+                      00014 
+0000                  00015                 ORG             0X00
+0000   2805           00016                 GOTO    INICIO
+0004                  00017                 ORG             0X04
+0004   2811           00018                 GOTO    ISR
+0005                  00019                 ORG             0X05
+0005                  00020 INICIO
+0005   1683           00021                 BSF             STATUS,RP0                      ;CONFIGURANDO LOS PUERTOS
+0006   3000           00022                 MOVLW   0X00                            ;CARGO W CON 00000000
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0085           00023                 MOVWF   TRISA                           ;PORT A ES SALIDA
+0008   3001           00024                 MOVLW   0X01                            ;CARGA W CON 00000001
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0086           00025                 MOVWF   TRISB                           ;RB0 ES ENTRADA  DE INTERRUPCION EXTERNA
+                      00026 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000A   1701           00027                 BSF             OPTION_REG,6            ;SELECCIONAMOS FLANCO ASCENDENTE PARA LA INTERRU
+                            PCION
+                      00028                                                                         ;CUANDO SOLTEMOS EL PULSADOR SE 
+                            PRODUCIRA LA INTERRUPCION
+000B   1283           00029                 BCF             STATUS,RP0                      ;PULSADOR A TIERRA
+                      00030 
+                      00031 ;--------HABILITACION DE INTERRUPCIONES-----
+                      00032 
+000C   178B           00033                 BSF             INTCON,GIE              ;HABILITACION DE TODAS LAS INTERRUPCIONES
+000D   160B           00034                 BSF             INTCON,INTE             ;QUE SEN INTERRUPCIONES EXTERNAS
+                      00035 
+                      00036 ;-------------PROGRAMA PRINCIPAL--------------
+                      00037 
+000E   0185           00038                 CLRF    PORTA                   
+000F   0063           00039 ESPERA  SLEEP
+0010   280F           00040                 GOTO    ESPERA                  ;EL MICRO PASA A BAJO CONSUMO
+                      00041                 
+0011   1C06           00042 ISR             BTFSS   PORTB,0                 ;VERIFICAMOS QUE SUELTEN EL PULSADOR
+0012   2811           00043                 GOTO    ISR
+0013   201E           00044                 CALL    PDelay                  ;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms) 
+                      00045 
+MPASM  5.33                   DISP_C_DECO.ASM   10-30-2009  7:57:46         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0014   0805           00046                 MOVF    PORTA,W                 ;PASAMOS LO QUE HAY EN PORTA A W
+0015   3A09           00047                 XORLW   0X09                    ;COMPARA PARA SABER SI TERMINO LA CUENTA
+0016   1903           00048                 BTFSC   STATUS,Z                ;SINNO TERMINO SALTA UNA LINEA
+0017   281B           00049                 GOTO    REINI                   ;Y SI TERMINO IRA A REINICIARLA
+0018   0A85           00050                 INCF    PORTA,F                 ;INCREMENTA EN UNO PORTA U L0 RETIENE
+0019   108B           00051                 BCF             INTCON,INTF             ;BORRO BANDERA DE INTERRUPCION
+                      00052                 
+001A   0009           00053                 RETFIE                                  ;REGRESA A MODO SLEEP
+                      00054 
+001B   0185           00055 REINI   CLRF    PORTA                   
+001C   108B           00056                 BCF             INTCON,INTF             ;BORRO BANDERA DE INTERRUPCION
+                      00057                 
+001D   0009           00058                 RETFIE
+                      00059 
+                      00060 ;--------AMORTIGUANDO----------
+                      00061 
+001E   3037           00062 PDelay  movlw     .55       ; 1 set number of repetitions (B)
+001F   008C           00063         movwf     PDel0     ; 1 |
+0020   30B5           00064 PLoop1  movlw     .181      ; 1 set number of repetitions (A)
+0021   008D           00065         movwf     PDel1     ; 1 |
+0022   0064           00066 PLoop2  clrwdt              ; 1 clear watchdog
+0023   0064           00067         clrwdt              ; 1 cycle delay
+0024   0B8D           00068         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+0025   2822           00069         goto      PLoop2    ; 2 no, loop
+0026   0B8C           00070         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+0027   2820           00071         goto      PLoop1    ; 2 no, loop
+0028   0008           00072         return              ; 2+2 Done
+                      00073 
+                      00074 ;----------------------------------------------
+                      00075         END
+MPASM  5.33                   DISP_C_DECO.ASM   10-30-2009  7:57:46         PAGE  3
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+ESPERA                            0000000F
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+ISR                               00000011
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             0000000C
+PDel1                             0000000D
+PDelay                            0000001E
+PLoop1                            00000020
+PLoop2                            00000022
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+REINI                             0000001B
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WR                                00000001
+MPASM  5.33                   DISP_C_DECO.ASM   10-30-2009  7:57:46         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXX------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    38
+Program Memory Words Free:   986
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     3 reported,     0 suppressed
+
+

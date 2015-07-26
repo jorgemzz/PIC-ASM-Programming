@@ -1,0 +1,146 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Wed Oct 21 20:11:35 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x0001bc
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x0000e2      
+            223 out of 1093 program addresses used, program memory utilization is 20%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                  AHORA_1   0x00000b    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                 AHORA_10   0x0000c8    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_2   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_3   0x00003c    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_4   0x000053    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_5   0x000069    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_6   0x00007e    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_7   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_8   0x0000a5    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_9   0x0000b7    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_1   0x00000f    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  CHAU_10   0x0000cc    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_2   0x000028    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_3   0x000040    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_4   0x000057    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_5   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_6   0x000082    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_7   0x000096    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_8   0x0000a9    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_9   0x0000bb    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_1   0x000009    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+               CONTROL_10   0x0000c6    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_2   0x000022    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_3   0x00003a    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_4   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_5   0x000067    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_6   0x00007c    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_7   0x000090    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_8   0x0000a3    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_9   0x0000b5    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_1   0x000009    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  FREC_10   0x0000c6    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_2   0x000022    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_3   0x00003a    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_4   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_5   0x000067    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_6   0x00007c    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_7   0x000090    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_8   0x0000a3    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_9   0x0000b5    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PDelL1   0x0000e0    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PDelL2   0x0000e1    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PDelay   0x0000d6    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PLoop1   0x0000d8    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PLoop2   0x0000da    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                    RESET   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_1   0x000012    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+               ROTANDO_10   0x0000cf    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_2   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_3   0x000043    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_4   0x00005a    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_5   0x000070    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_6   0x000085    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_7   0x000099    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_8   0x0000ac    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_9   0x0000be    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    RESET   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_1   0x000009    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_1   0x000009    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_1   0x00000b    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_1   0x00000f    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_1   0x000012    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_2   0x000022    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_2   0x000022    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_2   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_2   0x000028    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_2   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_3   0x00003a    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_3   0x00003a    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_3   0x00003c    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_3   0x000040    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_3   0x000043    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_4   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_4   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_4   0x000053    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_4   0x000057    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_4   0x00005a    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_5   0x000067    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_5   0x000067    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_5   0x000069    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_5   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_5   0x000070    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_6   0x00007c    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_6   0x00007c    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_6   0x00007e    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_6   0x000082    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_6   0x000085    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_7   0x000090    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_7   0x000090    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_7   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_7   0x000096    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_7   0x000099    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_8   0x0000a3    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_8   0x0000a3    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_8   0x0000a5    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_8   0x0000a9    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_8   0x0000ac    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   FREC_9   0x0000b5    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                CONTROL_9   0x0000b5    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  AHORA_9   0x0000b7    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   CHAU_9   0x0000bb    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                ROTANDO_9   0x0000be    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+               CONTROL_10   0x0000c6    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  FREC_10   0x0000c6    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                 AHORA_10   0x0000c8    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                  CHAU_10   0x0000cc    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+               ROTANDO_10   0x0000cf    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PDelay   0x0000d6    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PLoop1   0x0000d8    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PLoop2   0x0000da    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PDelL1   0x0000e0    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+                   PDelL2   0x0000e1    program     static E:\Jorge\PROG_PIC_NUEVOS\LED_3_PAP\LED_3_PAP.ASM
+
+

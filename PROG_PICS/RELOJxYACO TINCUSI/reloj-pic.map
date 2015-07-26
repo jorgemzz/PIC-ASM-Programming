@@ -1,0 +1,164 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Sat Oct 31 17:41:07 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x000346
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x0001a6      
+            420 out of 1093 program addresses used, program memory utilization is 38%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   PDelL1   0x000173    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL10   0x000163    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL12   0x000183    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelL120   0x0001a3    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PDelL2   0x0001a4    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL21   0x000174    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelL210   0x000164    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL22   0x000184    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PDelL3   0x0001a5    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelay1   0x000166    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelay10   0x000159    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelay2   0x000176    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelay20   0x000195    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelay5   0x000186    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PLoop0   0x000197    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop01   0x000168    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop02   0x000178    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop05   0x000188    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PLoop1   0x000199    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop10   0x00015b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop11   0x00016a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop12   0x00017a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop15   0x00018a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PLoop2   0x00019b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop21   0x00016c    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PLoop210   0x00015d    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop22   0x00017c    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop25   0x00018c    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+             RETARDO_10MS   0x000159    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+               RETARDO_1S   0x000166    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+              RETARDO_20S   0x000195    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+               RETARDO_2S   0x000176    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+               RETARDO_5S   0x000186    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+           activar_alarma   0x00013a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+      activar_interupcion   0x0000a2    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                    bucle   0x0000b3    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bucle2   0x0000df    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bucle4   0x00012f    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bulce3   0x0000e7    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bulce5   0x000137    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   cambio   0x0000b3    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+     contador_decena_hora   0x000071    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_decena_hora_alarma   0x000123    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+   contador_decena_minuto   0x00004b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_decena_minuto_alarma   0x000109    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+  contador_decena_segundo   0x000033    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+     contador_unidad_hora   0x000059    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_unidad_hora_alarma   0x000110    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+   contador_unidad_minuto   0x00003d    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_unidad_minuto_alarma   0x000103    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+  contador_unidad_segundo   0x00002b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+         continuamos_stop   0x0000ab    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+              controlador   0x000094    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+         incrementar_hora   0x00005b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+  incrementar_hora_alarma   0x000111    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   inicio   0x000005    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+          pre_controlador   0x0000d5    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+     pre_incrementar_hora   0x0000da    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+pre_incrementar_hora_alarma   0x00012a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+   pre_incrementar_minuto   0x0000e2    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+pre_incrementar_minuto_alarma   0x000132    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                    sigue   0x0000b8    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                  special   0x0000d2    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                     stop   0x00009f    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+               visualizar   0x00007b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+      visualizar_especial   0x0000ea    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   inicio   0x000005    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+  contador_unidad_segundo   0x00002b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+  contador_decena_segundo   0x000033    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+   contador_unidad_minuto   0x00003d    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+   contador_decena_minuto   0x00004b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+     contador_unidad_hora   0x000059    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+         incrementar_hora   0x00005b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+     contador_decena_hora   0x000071    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+               visualizar   0x00007b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+              controlador   0x000094    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                     stop   0x00009f    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+      activar_interupcion   0x0000a2    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+         continuamos_stop   0x0000ab    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   cambio   0x0000b3    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                    bucle   0x0000b3    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                    sigue   0x0000b8    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                  special   0x0000d2    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+          pre_controlador   0x0000d5    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+     pre_incrementar_hora   0x0000da    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bucle2   0x0000df    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+   pre_incrementar_minuto   0x0000e2    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bulce3   0x0000e7    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+      visualizar_especial   0x0000ea    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_unidad_minuto_alarma   0x000103    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_decena_minuto_alarma   0x000109    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_unidad_hora_alarma   0x000110    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+  incrementar_hora_alarma   0x000111    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+contador_decena_hora_alarma   0x000123    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+pre_incrementar_hora_alarma   0x00012a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bucle4   0x00012f    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+pre_incrementar_minuto_alarma   0x000132    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+                   bulce5   0x000137    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+           activar_alarma   0x00013a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\reloj-pic.asm
+             RETARDO_10MS   0x000159    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelay10   0x000159    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop10   0x00015b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PLoop210   0x00015d    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL10   0x000163    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelL210   0x000164    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+               RETARDO_1S   0x000166    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelay1   0x000166    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop01   0x000168    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop11   0x00016a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop21   0x00016c    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PDelL1   0x000173    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL21   0x000174    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+               RETARDO_2S   0x000176    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelay2   0x000176    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop02   0x000178    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop12   0x00017a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop22   0x00017c    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL12   0x000183    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelL22   0x000184    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+               RETARDO_5S   0x000186    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PDelay5   0x000186    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop05   0x000188    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop15   0x00018a    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                  PLoop25   0x00018c    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelay20   0x000195    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+              RETARDO_20S   0x000195    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PLoop0   0x000197    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PLoop1   0x000199    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PLoop2   0x00019b    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                 PDelL120   0x0001a3    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PDelL2   0x0001a4    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+                   PDelL3   0x0001a5    program     static E:\Jorge\PROG_PICS\RELOJxYACO TINCUSI\RETARDOS.inc
+
+

@@ -1,0 +1,4 @@
+Message[301] C:\ARCHIVOS DE PROGRAMA\MICROCHIP\MPASM SUITE\P16F84.INC 37 : MESSAGE: (Processor-header file mismatch.  Verify selected processor.)
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PIC DOORBELL_COPY\DORBELL.ASM 31 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PIC DOORBELL_COPY\DORBELL.ASM 33 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PIC DOORBELL_COPY\DORBELL.ASM 36 : Register in operand not in bank 0.  Ensure that bank bits are correct.

@@ -1,0 +1,19 @@
+# MPLAB IDE generated this makefile for use with GNU make.
+# Project: DISP_SIN_DECO.mcp
+# Date: Fri Oct 30 10:20:45 2009
+
+AS = MPASMWIN.exe
+CC = mcc18.exe
+LD = mplink.exe
+AR = mplib.exe
+RM = rm
+
+DISP_SIN_DECO.cof : DISP_SIN_DECO.o
+	$(LD) /p16F84A "DISP_SIN_DECO.o" /u_DEBUG /z__MPLAB_BUILD=1 /z__MPLAB_DEBUG=1 /o"DISP_SIN_DECO.cof" /M"DISP_SIN_DECO.map" /W /x
+
+DISP_SIN_DECO.o : DISP_SIN_DECO.ASM C:/Archivos\ de\ programa/Microchip/MPASM\ Suite/P16F84A.INC
+	$(AS) /q /p16F84A "DISP_SIN_DECO.ASM" /l"DISP_SIN_DECO.lst" /e"DISP_SIN_DECO.err" /d__DEBUG=1
+
+clean : 
+	$(RM) "DISP_SIN_DECO.o" "DISP_SIN_DECO.hex" "DISP_SIN_DECO.err" "DISP_SIN_DECO.lst" "DISP_SIN_DECO.cof"
+

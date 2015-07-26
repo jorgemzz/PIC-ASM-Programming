@@ -1,0 +1,453 @@
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;**********************************************************************
+                      00002 ; Programa para decodificar un tren de pulsos codificados en *
+                      00003 ; formato Sony para el Microcontrolador PIC16F84 @ 4Mhz. *
+                      00004 ; *
+                      00005 ; Este programa es una adaptación del programa del autor Jim Nagy *
+                      00006 ; presentado en el articulo DS40160A/6_007 Michochip Technology Inc.*
+                      00007 ; *
+                      00008 ; *
+                      00009 ;**********************************************************************
+                      00010 ; *
+                      00011 ; Filename: decosony.asm *
+                      00012 ; Date: 20/08/2001 *
+                      00013 ; File Version: 1.0 *
+                      00014 ; *
+                      00015 ; Author: Carlos A. Narvaez V. *
+                      00016 ; Company: Universidad de Oriente *
+                      00017 ; *
+                      00018 ; *
+                      00019 ;**********************************************************************
+                      00020         list p=16F84
+                      00021         #include <p16F84.inc>
+                      00001         LIST
+                      00002 ; P16F84.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+Message[301]: MESSAGE: (Processor-header file mismatch.  Verify selected processor.)
+                      00136         LIST
+2007   3FF1           00022         __CONFIG _CP_OFF & _WDT_OFF & _PWRTE_ON & _XT_OSC
+                      00023 ;******* Eques del Programa
+  00000002            00024 Zero    EQU     2
+  00000000            00025 Carry   EQU     0
+  00000004            00026 IR              EQU     4 ; RA4 input IR
+                      00027 ;******* Definición de las teclas del Control Remoto
+  00000015            00028 Power   EQU     0x15
+  00000011            00029 ChanelL EQU     0x11
+  00000010            00030 ChanelP EQU     0x10
+  0000004A            00031 TvVtr   EQU     0x4A
+  0000001B            00032 Rew     EQU     0x1B
+  0000001A            00033 Play    EQU     0x1A
+  0000001C            00034 FF              EQU     0x1C
+  00000018            00035 Stop    EQU     0x18
+  00000019            00036 Pause   EQU     0x19
+                      00037 ;******* Definición de Variables
+  0000000D            00038 Temp    EQU     0x0D
+  0000000E            00039 CntrLo  EQU     0x0E ; Contador de tiempo (low byte)
+  0000000F            00040 CntrMid EQU     0x0F ; (middle byte)
+  00000010            00041 CntrHi  EQU     0x10 ; (high byte)
+  00000011            00042 BitCnt  EQU     0x11 ; Contador de bits
+  00000012            00043 Command EQU     0x12 ; Ultimo comando recibido
+  00000013            00044 Bit_puerto      EQU     0X13
+  00000014            00045 Indicador       EQU     0X14
+                      00046 
+0000                  00047                 ORG 0x000 ; vector reset del procesador
+0000   2865           00048                 goto init ; ir a comienzo del programa
+                      00049 ; Subrutinas
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00050 ;
+                      00051 ;**********************************************************************
+                      00052 ; Delay
+                      00053 ; Espera por aproximadamente W mseg y retorna
+                      00054 ;**********************************************************************
+0001   018D           00055 Delay   CLRF    Temp
+0002   0000           00056 d1              NOP
+0003   0B8D           00057                 DECFSZ  Temp,F ; Lazo 255 * 4uS
+0004   2802           00058                 GOTO    d1
+0005   008D           00059                 MOVWF   Temp ; repita el lazo W veces
+0006   0B0D           00060                 DECFSZ  Temp,W
+0007   2801           00061                 GOTO    Delay
+0008   3400           00062                 RETLW   0
+                      00063 ;**********************************************************************
+                      00064 ; GetaByte espera hasta 50ms segundos por 12 bits. Los datos
+                      00065 ; Sony son enviados como 7 bits del comando y 5 bits
+                      00066 ; del código de dispositivo, en ambos casos los LSB
+                      00067 ; primero. Sólo necesitamos el comando de 7 bit al cual
+                      00068 ; agregamos un octavo bit puesto a cero para completar
+                      00069 ; un byte
+                      00070 ;**********************************************************************
+0009                  00071 GetaByte
+0009   018E           00072                 CLRF CntrLo ; reset contadores
+000A   30F0           00073                 MOVLW   .240    ;produce un retardo de aprox 50ms 
+000B   008F           00074                 MOVWF CntrMid
+000C   0190           00075                 CLRF CntrHi
+                      00076 
+000D   0A8E           00077 gb1     INCF    CntrLo,F ; Espera por una señal
+000E   1903           00078                 BTFSC   STATUS,Zero
+000F   0A8F           00079                 INCF    CntrMid,F
+0010   1903           00080                 BTFSC   STATUS,Zero
+0011   0A90           00081                 INCF    CntrHi,F
+0012   3001           00082                 MOVLW   D'1' ; pero no mas de 50mseg
+0013   0210           00083                 SUBWF   CntrHi,W ; (1*256*16*12us ~ 50mseg)
+0014   1803           00084                 BTFSC   STATUS,Carry
+0015   28A0           00085                 GOTO    main2 ; aborte si el tiempo se excede(va a indicar que no se pulsa tecla)
+0016   1A05           00086                 BTFSC   PORTA,IR ; sino cheque a ver si hay señal
+0017   280D           00087                 Goto    gb1 ; y sino, loop
+                      00088 ; Hay señal
+                      00089 ;
+0018   2050           00090                 CALL    HdrCheck ; ver si es un encabezado
+0019   1C03           00091                 BTFSS   STATUS,Carry
+001A   280D           00092                 GOTO    gb1
+                      00093 ;
+                      00094 ; Es un encabezado...continue
+                      00095 ; Lee los primeros 7 bit. Resultado en Command
+001B   3007           00096                 MOVLW   D'7' ; preparado para recibir 7 bits
+001C   0091           00097                 MOVWF   BitCnt
+001D   0192           00098                 CLRF    Command
+001E   2035           00099 gb2     CALL    GetaBit
+001F   0C92           00100                 RRF     Command,F
+0020   0B91           00101                 DECFSZ  BitCnt,F
+0021   281E           00102                 GOTO    gb2
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0022   0C92           00103                 RRF     Command,F ; agrega un 8 bit
+0023   1392           00104                 BCF     Command,7 ; puesto a cero
+                      00105 ; Lee 5 bit Código del dipositivo pero los ignora
+                      00106 ;
+0024   3005           00107                 MOVLW   D'5'
+0025   0091           00108                 MOVWF   BitCnt ; Preparado para recibir 5 bits
+0026   2035           00109 gb3     CALL    GetaBit
+0027   0B91           00110                 DECFSZ  BitCnt,F
+0028   2826           00111                 GOTO    gb3
+                      00112 ; Como test final, asegurese que son solo 12 bits los recibidos
+0029   018E           00113                 CLRF    CntrLo ; Reset contadores
+002A   018F           00114                 CLRF    CntrMid
+002B   1E05           00115 gb4     BTFSS   PORTA,IR ; Chequee que no hay señal por el
+                      00116 ; resto del frame
+002C   286E           00117                 GOTO    main ; Si hay aborte
+002D   0A8E           00118                 INCF    CntrLo,F
+002E   1903           00119                 BTFSC   STATUS,Zero
+002F   0A8F           00120                 INCF    CntrMid,F
+0030   3004           00121                 MOVLW    D'4' ; Cheque cuanto he esperado
+0031   020F           00122                 SUBWF   CntrMid,W ; (4*256*10us = 10ms)
+0032   1C03           00123                 BTFSS   STATUS,Carry
+0033   282B           00124                 GOTO    gb4 ; loop hasta que los 10ms expiren
+0034   3400           00125                 RETLW   0
+                      00126 ;**********************************************************************
+                      00127 ; GetaBit Determina el valor del bit que se esta recibiendo.
+                      00128 ; Retorna con carry = 1 si el bit = 1 y carry = 0 si el bit = 0
+                      00129 ; Los bits Sony son codificados como 400us sin portadora (low) seguido
+                      00130 ; de 800us de portadora (high) para un "0" o 1400us para un "1".
+                      00131 ;**********************************************************************
+0035   018E           00132 GetaBit CLRF    CntrLo ; Reset contador
+0036   0A8E           00133 b1              INCF    CntrLo,F ; determne tiempo de no portadora
+0037   3064           00134                 MOVLW   D'100'
+0038   020E           00135                 SUBWF   CntrLo,W ; permite hasta 800us (100*8us)
+0039   1803           00136                 BTFSC   STATUS,Carry
+003A   286E           00137                 GOTO    main ; aborte si es mayor
+003B   1A05           00138                 BTFSC   PORTA,IR ; mantengase contando portadora viene
+003C   2836           00139                 GOTO    b1
+                      00140 ; Un espacio menor que 800us fue recibido
+                      00141 ;
+003D   3019           00142                 MOVLW   D'25' ; Asegurese que es mas grande que
+003E   020E           00143                 SUBWF   CntrLo,W ; 25*8us = 200us
+003F   1C03           00144                 BTFSS   STATUS,Carry
+0040   286E           00145                 GOTO    main ; aborte si es menor
+                      00146 ; Determine la longitud del pulso IR que esta siendo recibido
+0041   018E           00147                 CLRF    CntrLo
+0042   0A8E           00148 b2              INCF    CntrLo,F ; Cuente este pase
+0043   30E1           00149                 MOVLW   D'225'
+0044   020E           00150                 SUBWF   CntrLo,W ; Permita hasta 1800us (255*8us)
+0045   1803           00151                 BTFSC   STATUS,Carry
+0046   286E           00152                 GOTO    main ; Aborte si es mayor
+0047   1E05           00153                 BTFSS   PORTA,IR ; siga contando hasta final pulso
+0048   2842           00154                 GOTO    b2
+                      00155 ; Señal presente
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0049   3032           00156                 MOVLW   D'50' ; Asegurese que es mayor que
+004A   020E           00157                 SUBWF   CntrLo,W ; 50*8us = 400us
+004B   1C03           00158                 BTFSS   STATUS,Carry
+004C   286E           00159                 GOTO    main ; Si no aborte
+                      00160 ; Que es: un 1 o un 0
+004D   307D           00161                 MOVLW   D'125' ; Compare con un ancho de 1000us
+004E   020E           00162                 SUBWF   CntrLo,W ; Carry 1 o 0
+004F   3400           00163                 RETLW   0
+                      00164 ;**********************************************************************
+                      00165 ;
+                      00166 ; Detecta encabezado > 1.8 ms low
+                      00167 ; Retorna con carry = 1 si es un encabezado y carry = 0 si no lo es.
+                      00168 ;
+                      00169 ;**********************************************************************
+0050                  00170 HdrCheck
+0050   018D           00171                 CLRF    Temp ; Chequee para un encabezado
+                      00172 ; de aprox. 2.5 ms de longitud
+0051   0A8D           00173 hc1     INCF    Temp,F ; Cuente cada pase a traves del loop
+0052   1605           00174                 BSF     PORTA,IR
+0053   1683           00175                 BSF     STATUS,RP0 ; Banco 1
+0054   3020           00176                 MOVLW   B'00100000' ;
+0055   0085           00177                 MOVWF   PORTA ; Reset schmitt
+0056   3030           00178                 MOVLW   B'00110000' ; Entrada a la deriva debido a la
+0057   0085           00179                 MOVWF   PORTA ; luz ambiental
+0058   1283           00180                 BCF     STATUS,RP0 ; Banco 0
+0059   30FA           00181                 MOVLW   D'250' ; Chequee para un encabezado de
+005A   020D           00182                 SUBWF   Temp,W ; aprox. (250*13us ~3.25 ms)
+005B   1803           00183                 BTFSC   STATUS,Carry
+005C   2862           00184                 GOTO    hc2 ; Aborte si es muy largo
+005D   1E05           00185                 BTFSS   PORTA,IR ; Chequee si la señal esta aun ahi
+005E   2851           00186                 GOTO    hc1 ; y si esta mantengase looping
+                      00187 ; Un pulso de menos de 3ms de duración ha sido recibido
+                      00188 ;
+005F   308A           00189                 MOVLW   D'138' ; Asegurese que es mayor que
+0060   020D           00190                 SUBWF   Temp,W ; 138*13us ~ 1.8ms
+0061   3400           00191                 RETLW   0 ; C = 1 si T>1.8ms
+0062   0103           00192 hc2     CLRW
+0063   070D           00193                 ADDWF   Temp,W ; Agregando 0 a cualquier numero C=0
+0064   3400           00194                 RETLW   0
+                      00195 ;**********************************************************************
+                      00196 ;
+                      00197 ; Programa Principal
+                      00198 ;
+                      00199 ;**********************************************************************
+0065                  00200 init
+0065   0185           00201                 CLRF    PORTA ; Clear registro PORTA
+0066   0186           00202                 CLRF    PORTB ; Clear registro PORTB
+0067   0194           00203                 CLRF Indicador  
+0068   1683           00204                 BSF     STATUS,RP0 ; Banco 1
+0069   3030           00205                 MOVLW   B'00110000' ; RA4 - RA5 como input
+006A   0085           00206                 MOVWF   PORTA ; Configure TRISA
+006B   3000           00207                 MOVLW   0x00 ; PORTB todos Salidas
+006C   0086           00208                 MOVWF   PORTB ; configura TRISA
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+006D   1283           00209                 BCF     STATUS,RP0 ; Banco 0
+006E                  00210 main
+006E   2009           00211                 CALL    GetaByte ; Tomar un byte de Comando
+                      00212                 
+                      00213 ;*********************controla bit a encender o apagar*****************
+                      00214 
+006F   0193           00215                 CLRF    Bit_puerto
+                      00216 
+0070   0812           00217                 MOVF    Command,W
+0071   3A15           00218                 XORLW   0X15    
+0072   1903           00219                 BTFSC   STATUS,Z        ;si es tecla 0x00 
+0073   1413           00220                 BSF             Bit_puerto,0    ;selecciona bit a encender
+0074   0812           00221                 MOVF    Command,W
+0075   3A2A           00222                 XORLW   0X2A    
+0076   1903           00223                 BTFSC   STATUS,Z        ;si es tecla 0x01 
+0077   1493           00224                 BSF             Bit_puerto,1    ;selecciona bit a encender
+0078   0812           00225                 MOVF    Command,W
+0079   3A10           00226                 XORLW   0X10    
+007A   1903           00227                 BTFSC   STATUS,Z        ;si es tecla 0x02 
+007B   1513           00228                 BSF             Bit_puerto,2    ;selecciona bit a encender
+007C   0812           00229                 MOVF    Command,W
+007D   3A11           00230                 XORLW   0X11    
+007E   1903           00231                 BTFSC   STATUS,Z        ;si es tecla 0x03 
+007F   1593           00232                 BSF             Bit_puerto,3    ;selecciona bit a encender
+0080   0812           00233                 MOVF    Command,W
+0081   3A1A           00234                 XORLW   0X1A    
+0082   1903           00235                 BTFSC   STATUS,Z        ;si es tecla 0x04 
+0083   1613           00236                 BSF             Bit_puerto,4    ;selecciona bit a encender
+0084   0812           00237                 MOVF    Command,W
+0085   3A1B           00238                 XORLW   0X1B    
+0086   1903           00239                 BTFSC   STATUS,Z        ;si es tecla 0x05 
+0087   1693           00240                 BSF             Bit_puerto,5    ;selecciona bit a encender
+0088   0812           00241                 MOVF    Command,W
+0089   3A1C           00242                 XORLW   0X1C    
+008A   1903           00243                 BTFSC   STATUS,Z        ;si es tecla 0x06 
+008B   1713           00244                 BSF             Bit_puerto,6    ;selecciona bit a encender
+008C   0812           00245                 MOVF    Command,W
+008D   3A18           00246                 XORLW   0X18    
+008E   1903           00247                 BTFSC   STATUS,Z        ;si es tecla 0x07
+008F   1793           00248                 BSF             Bit_puerto,7    ;selecciona bit a encender
+                      00249 
+                      00250 ;***********************************************************
+                      00251 
+0090                  00252 Analizar
+0090   0806           00253                 MOVF    PORTB,0         ;analiza si el bit correspondiente al boton  presionado =0 ó =1 
+0091   0513           00254                 ANDWF   Bit_puerto,0    ;hay 2 posibles resultados:
+                      00255                                                                 ;sera 0 si el BITn=0
+                      00256                                                                 ;diferente de 0 si el BITn=1
+0092   1903           00257                 BTFSC   STATUS,Z        
+0093   289A           00258                 GOTO    Poner_uno               ;si BITn=1 va a ponerlo a CERO
+                      00259 
+0094                  00260 Poner_cero
+0094   1C14           00261                 BTFSS   Indicador,0
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0095   286E           00262                 GOTO    main
+0096   0913           00263                 COMF    Bit_puerto,0    ;complementa Bit_puerto y lo guarda en w
+0097   0586           00264                 ANDWF   PORTB,1
+0098   0194           00265                 CLRF    Indicador
+0099   286E           00266                 GOTO    main
+                      00267 
+009A                  00268 Poner_uno                                               ;sino lo pone a UNO 
+009A   1C14           00269                 BTFSS   Indicador,0
+009B   286E           00270                 GOTO    main
+009C   0813           00271                 MOVF    Bit_puerto,0    ;pasa Bit_puerto a w
+009D   0486           00272                 IORWF   PORTB,1
+009E   0194           00273                 CLRF    Indicador       
+009F   286E           00274                 GOTO    main
+                      00275 
+00A0                  00276 main2
+00A0   1414           00277                 BSF             Indicador,0             ;llega aqui cuando no se pulsa boton por mas de 
+                            100ms
+00A1   286E           00278                 GOTO    main    
+                      00279                 
+                      00280         END ; directive 'end of program'
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Analizar                          00000090
+BitCnt                            00000011
+Bit_puerto                        00000013
+C                                 00000000
+Carry                             00000000
+ChanelL                           00000011
+ChanelP                           00000010
+CntrHi                            00000010
+CntrLo                            0000000E
+CntrMid                           0000000F
+Command                           00000012
+DC                                00000001
+Delay                             00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FF                                0000001C
+FSR                               00000004
+GIE                               00000007
+GetaBit                           00000035
+GetaByte                          00000009
+HdrCheck                          00000050
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IR                                00000004
+IRP                               00000007
+Indicador                         00000014
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Pause                             00000019
+Play                              0000001A
+Poner_cero                        00000094
+Poner_uno                         0000009A
+Power                             00000015
+RBIE                              00000003
+RBIF                              00000000
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+Rew                               0000001B
+STATUS                            00000003
+Stop                              00000018
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+Temp                              0000000D
+TvVtr                             0000004A
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+Zero                              00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+b1                                00000036
+b2                                00000042
+d1                                00000002
+gb1                               0000000D
+gb2                               0000001E
+gb3                               00000026
+gb4                               0000002B
+hc1                               00000051
+hc2                               00000062
+init                              00000065
+main                              0000006E
+main2                             000000A0
+MPASM  5.33              DECO_SONY_COPY_3.ASM   12-20-2009  19:26:36         PAGE  9
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XX-------------- ----------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   162
+Program Memory Words Free:   862
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     1 reported,     0 suppressed
+
+

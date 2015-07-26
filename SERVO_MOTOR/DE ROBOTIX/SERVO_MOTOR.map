@@ -1,0 +1,70 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Tue Dec 08 12:46:25 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x000068
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x000038      
+            53 out of 1093 program addresses used, program memory utilization is 4%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               Inicializa   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+              LeerEntrada   0x00000c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL1M   0x000027    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL2M   0x000028    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL3M   0x00002a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL4M   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL5M   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                   PDelay   0x000011    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelayM   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelayR   0x000018    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelayS   0x00002e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                   PLoop0   0x000013    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop0M   0x000026    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop1R   0x00001a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop1S   0x000030    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop2R   0x00001c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop2S   0x000032    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+              Servo_pos_1   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+              Servo_pos_2   0x000023    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               Inicializa   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+              LeerEntrada   0x00000c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+              Servo_pos_1   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                   PDelay   0x000011    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                   PLoop0   0x000013    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelayR   0x000018    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop1R   0x00001a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop2R   0x00001c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+              Servo_pos_2   0x000023    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelayM   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop0M   0x000026    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL1M   0x000027    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL2M   0x000028    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL3M   0x00002a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL4M   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelL5M   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PDelayS   0x00002e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop1S   0x000030    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+                  PLoop2S   0x000032    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\SERVO_MOTOR.ASM
+
+

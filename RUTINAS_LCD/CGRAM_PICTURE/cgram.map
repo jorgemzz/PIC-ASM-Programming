@@ -1,0 +1,88 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Thu Nov 05 15:13:06 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x000224
+     .config_2007_CGRAM.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x000116      
+                            0x002007    0x002007      
+            276 out of 1093 program addresses used, program memory utilization is 25%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                 LCD_BUSY   0x00009c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                 LCD_DATO   0x0000af    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                LCD_DELAY   0x0000c1    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+              LCD_DELAY_1   0x0000c5    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                    LCD_E   0x0000ab    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                  LCD_INI   0x0000b8    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                  LCD_REG   0x0000b4    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                   UP_LCD   0x000095    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+          caracter0_datos   0x00000e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter0_direccion   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter1_datos   0x000020    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter1_direccion   0x000017    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter2_datos   0x000032    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter2_direccion   0x000029    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter3_datos   0x000044    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter3_direccion   0x00003b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter4_datos   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter4_direccion   0x00004d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter5_datos   0x000068    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter5_direccion   0x00005f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter6_datos   0x00007a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter6_direccion   0x000071    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter7_datos   0x00008c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter7_direccion   0x000083    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+                      cic   0x00010f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+                    ciclo   0x0000d7    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+                   inicio   0x0000ca    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+      caracter0_direccion   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter0_datos   0x00000e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter1_direccion   0x000017    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter1_datos   0x000020    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter2_direccion   0x000029    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter2_datos   0x000032    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter3_direccion   0x00003b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter3_datos   0x000044    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter4_direccion   0x00004d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter4_datos   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter5_direccion   0x00005f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter5_datos   0x000068    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter6_direccion   0x000071    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter6_datos   0x00007a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+      caracter7_direccion   0x000083    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+          caracter7_datos   0x00008c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+                   UP_LCD   0x000095    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                 LCD_BUSY   0x00009c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                    LCD_E   0x0000ab    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                 LCD_DATO   0x0000af    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                  LCD_REG   0x0000b4    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                  LCD_INI   0x0000b8    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                LCD_DELAY   0x0000c1    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+              LCD_DELAY_1   0x0000c5    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\Lcd_cxx.inc
+                   inicio   0x0000ca    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+                    ciclo   0x0000d7    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+                      cic   0x00010f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\CGRAM_PICTURE\cgram.asm
+
+

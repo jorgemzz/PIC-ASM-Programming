@@ -1,0 +1,186 @@
+MPASM  5.33                       RB0_INT.ASM   10-29-2009  8:59:22         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 
+                      00003         LIST    P=16F84A
+                      00004         INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00005 
+Warning[207]: Found label after column 1. (PDel0)
+  0000000F            00006         PDel0   EQU     0X0F
+Warning[207]: Found label after column 1. (PDel1)
+  00000010            00007         PDel1   EQU     0X10
+                      00008 
+                      00009 ;------CONFIGURACION DE PUERTOS-------
+                      00010 
+0000                  00011                 ORG             0X00                    ;INDICA DONDE SE ESCRIBE LA SIGUIENTE INSTRUCCIO
+                            N
+0000   2805           00012                 GOTO    INICIO                  ;SALTA A LA ETIQUETA INICIO
+0004                  00013                 ORG             0X04
+0004   2812           00014                 GOTO    ISR                             ;RUTINA DE SERVICIO DE INTERRUPCION
+0005                  00015                 ORG             0X05
+                      00016 
+0005   1683           00017 INICIO  BSF             STATUS,RP0              ;CONFIGUTRACION DE LOS PUERTOS
+0006   3001           00018                 MOVLW   0X01                    ;CARGA W CON  00000001
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0086           00019                 MOVWF   TRISB                   ;RB0 INT ES ENTRADA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0008   1301           00020                 BCF             OPTION_REG,6    ;SELECCIONAMOS FLANCO DESCENDENTE
+0009   1283           00021                 BCF             STATUS,RP0
+                      00022 
+                      00023 ;-----HABILITACION DE INTERRUPCIONES-----
+                      00024 
+000A   178B           00025                 BSF             INTCON,GIE              ;HABILITAMOS TODAS LAS INERRUPCIONES
+000B   160B           00026                 BSF             INTCON,INTE             ;QUE SEAN INTERRUPCIONES EXTERNAS
+000C   0186           00027                 CLRF    PORTB                   ;LIMPIO EL PUERTO B
+                      00028 
+000D   0063           00029 SUEÑO   SLEEP
+000E   280D           00030                 GOTO    SUEÑO                   ;DULCES SUEÑOS
+                      00031 
+                      00032 ;-----RUTINA DE SERVICIO DE INTERRUPCIONES----
+000F   201D           00033                 CALL    PDelay                  ;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms) 
+0010   1C8B           00034                 BTFSS   INTCON,INTF             ;VERIFICA SI ES INTERRUPCION ESTEERNAA POR RB0
+0011   0009           00035                 RETFIE                                  ; SI ES ASI LO ATIENDE, SINO REGERSA CON GIE=1
+                      00036                                                 
+                      00037 
+0012   1C06           00038 ISR             BTFSS   PORTB,0                 ;VERIFICAMOS QUE SUELTEN EL PULSADOR
+0013   2812           00039                 GOTO    ISR
+                      00040 
+0014   201D           00041                 CALL    PDelay                  ;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms) 
+                      00042 
+0015   1886           00043                 BTFSC   PORTB,1                 ;AHORA SI EL LED ESTA A UNO 
+0016   281A           00044                 GOTO    OFF_LED                 ;IRE A OFF_LED PARA APAGARLO
+0017   1486           00045                 BSF             PORTB,1                 ;SINOO ENCIENDO EL LED
+MPASM  5.33                       RB0_INT.ASM   10-29-2009  8:59:22         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0018   108B           00046                 BCF             INTCON,INTF             ;BORRO LA BANDETA DE INTERRUPCION ESTERNA
+0019   0009           00047                 RETFIE
+                      00048 
+001A   1086           00049 OFF_LED BCF             PORTB,1                 ;APAGO EL LED
+001B   108B           00050                 BCF             INTCON,INTF             ;BORRO BANDERA DE INTERRUPCION
+001C   0009           00051                 RETFIE
+                      00052 
+                      00053 ;--------AMORTIGUANDO----------
+                      00054 
+001D   3037           00055 PDelay  movlw     .55       ; 1 set number of repetitions (B)
+001E   008F           00056         movwf     PDel0     ; 1 |
+001F   30B5           00057 PLoop1  movlw     .181      ; 1 set number of repetitions (A)
+0020   0090           00058         movwf     PDel1     ; 1 |
+0021   0064           00059 PLoop2  clrwdt              ; 1 clear watchdog
+0022   0064           00060         clrwdt              ; 1 cycle delay
+0023   0B90           00061         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+0024   2821           00062         goto      PLoop2    ; 2 no, loop
+0025   0B8F           00063         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+0026   281F           00064         goto      PLoop1    ; 2 no, loop
+0027   0008           00065         return              ; 2+2 Done
+                      00066 
+                      00067 ;----------------------------------------------
+                      00068 
+                      00069         END
+MPASM  5.33                       RB0_INT.ASM   10-29-2009  8:59:22         PAGE  3
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+ISR                               00000012
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OFF_LED                           0000001A
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             0000000F
+PDel1                             00000010
+PDelay                            0000001D
+PLoop1                            0000001F
+PLoop2                            00000021
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+SUEÑO                             0000000D
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WR                                00000001
+MPASM  5.33                       RB0_INT.ASM   10-29-2009  8:59:22         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXX-------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    37
+Program Memory Words Free:   987
+
+
+Errors   :     0
+Warnings :     2 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

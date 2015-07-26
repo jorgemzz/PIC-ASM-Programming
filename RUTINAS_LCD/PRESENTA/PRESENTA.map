@@ -1,0 +1,82 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Wed Nov 04 12:22:07 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x00039a
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x0001d1      
+            462 out of 1093 program addresses used, program memory utilization is 42%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    BLINK   0x00012c    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  BLINK_1   0x000131    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    DATOS   0x000011    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   DATO_1   0x0000d4    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   DATO_2   0x0000e5    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  DELAY10   0x000120    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                DELAY10_1   0x000123    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  DELAY1S   0x000128    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  DELAY_1   0x00011b    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                DELAY_5MS   0x000118    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                 LCD_BUSY   0x0000f2    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                LCD_DATOS   0x000105    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    LCD_E   0x000101    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  LCD_INI   0x00010e    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  LCD_REG   0x00010a    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   L_BUSY   0x0000f9    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                     MENS   0x000158    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    MENS1   0x000159    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   MENS_1   0x00013e    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                 MENS_1_1   0x00013f    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   MENS_2   0x00014c    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                 MENS_2_1   0x00014d    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    START   0x000165    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  START_1   0x000166    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    DATOS   0x000011    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   DATO_1   0x0000d4    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   DATO_2   0x0000e5    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                 LCD_BUSY   0x0000f2    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   L_BUSY   0x0000f9    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    LCD_E   0x000101    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                LCD_DATOS   0x000105    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  LCD_REG   0x00010a    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  LCD_INI   0x00010e    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                DELAY_5MS   0x000118    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  DELAY_1   0x00011b    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  DELAY10   0x000120    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                DELAY10_1   0x000123    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  DELAY1S   0x000128    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    BLINK   0x00012c    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  BLINK_1   0x000131    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   MENS_1   0x00013e    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                 MENS_1_1   0x00013f    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                   MENS_2   0x00014c    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                 MENS_2_1   0x00014d    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                     MENS   0x000158    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    MENS1   0x000159    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                    START   0x000165    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+                  START_1   0x000166    program     static E:\Jorge\PROG_PIC_NUEVOS\LCD\ROBOTICA\PRESENTA.ASM
+
+

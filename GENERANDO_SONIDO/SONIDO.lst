@@ -1,0 +1,1036 @@
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002         LIST    P=16F84A
+                      00003         INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00004 
+                      00005 ;Declarando variables
+                      00006 
+                      00007         CBLOCK  0X0C
+  0000000C            00008                 WCYCLE
+  0000000D            00009                 PRESCwait
+  0000000E            00010                 Beep_TEMP1
+  0000000F            00011                 Beep_TEMP2
+  00000010            00012                 Beep_TEMP3
+                      00013         ENDC
+                      00014 
+                      00015 ;Definir el hardware
+                      00016 
+                      00017         #define BEEPport        PORTA,3
+                      00018         #define BEEPtris        TRISA,3
+                      00019 
+                      00020 ;Estructura de la memoria de programa
+                      00021 
+0000                  00022         ORG     0X00
+0000   2828           00023         goto    Main
+0004                  00024         ORG     0X04
+0004   2828           00025         goto    Main
+                      00026 
+                      00027         INCLUDE "bank.inc"      
+                      00001 
+                      00002 BANK0 macro
+                      00003 Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+Warning[205]: Found directive in column 1. (Endm)
+                      00004 Endm
+                      00005 BANK1 macro
+                      00006 Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Warning[205]: Found directive in column 1. (Endm)
+                      00007 Endm
+                      00028         INCLUDE "button.inc"
+                      00001 Button  macro   Hilo,Port,Bit,Delay,Adrress
+                      00002                 Local   Exit
+                      00003                 Local   Loop
+                      00004 
+                      00005                 if      Hilo==0
+                      00006                 btfsc   Port,Bit
+                      00007                 else    
+                      00008                 btfss   Port,Bit
+                      00009                 endif
+                      00010                 goto    Exit
+                      00011                 
+                      00012                 WAIT    Delay
+                      00013         Loop
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00014                 if      Hilo==0
+                      00015                 btfss   Port,Bit
+                      00016                 else
+                      00017                 btfsc   Port,Bit
+                      00018                 endif
+                      00019                 goto    Loop
+                      00020 
+                      00021                 WAIT    Delay
+                      00022                 call    Adrress
+                      00023     Exit
+                      00024                 endm
+                      00025         
+                      00029         INCLUDE "wait.inc"
+                      00001 
+                      00002 ;*******DECLARACION DE CONSTANTES**********
+                      00003 
+  0001                00004                 CONSTANT PRESCstd = b'00000001' ;prescaler estandar para TMR0
+                      00005 
+                      00006 ;********MACROS*******
+                      00007 
+Warning[207]: Found label after column 1. (WAIT)
+                      00008         WAIT    macro   timeconst_1
+                      00009 
+                      00010                 movlw   timeconst_1
+                      00011                 call    WAITstd
+                      00012         endm
+                      00013 
+Warning[207]: Found label after column 1. (WAITX)
+                      00014         WAITX   macro   timeconst_2,PRESCest
+                      00015 
+                      00016                 movlw   timeconst_2
+                      00017                 movwf   WCYCLE          ;definir espacio de tiempo
+                      00018                 movlw   PRESCext                ;definir valor de prescaler
+                      00019                 call    WAIT_x
+                      00020         endm
+                      00021 
+                      00022 ;**********subprogramas********
+                      00023 
+Warning[207]: Found label after column 1. (WAITstd)
+0005                  00024         WAITstd
+                      00025 
+0005   008C           00026                 movwf   WCYCLE          ;definir espacio de tiempo
+0006   3001           00027                 movlw   PRESCstd                ;definir valor de prescaler
+                      00028 
+Warning[207]: Found label after column 1. (WAIT_x)
+0007                  00029         WAIT_x
+0007   0181           00030                 clrf    TMR0
+                      00031                 BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+0008   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0081           00032                 movwf   OPTION_REG              ;atribuir prescaler a TMR0
+                      00033                 BANK0
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (Bcf)
+000A   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+                      00034 
+Warning[207]: Found label after column 1. (WAITa)
+000B                  00035         WAITa
+000B   110B           00036                 BCF             INTCON,2                ;PONE A 0 EL FLAG DE DESBORDE DE TMR0
+Warning[207]: Found label after column 1. (WAITb)
+000C                  00037         WAITb
+000C   1D0B           00038                 btfss   INTCON,2                ;VERIFICA SI EL FAG DE DESBORDE ES 0
+000D   280C           00039                 goto    WAITb                   ;CONTINUAR A ESPERAR
+000E   0B8C           00040                 decfsz  WCYCLE,1                ;REPETIR SI ESTA VARIABLE NO ES 0
+000F   280B           00041                 goto    WAITa
+                      00042         
+0010   0008           00043         RETURN
+                      00044                 
+                      00030         INCLUDE "beep.inc"
+                      00001 ;declarar constantes
+                      00002 
+  0007                00003         CONSTANT        PRESCbeep=b'00000111'
+                      00004 
+                      00005 ;macros
+                      00006 
+Warning[207]: Found label after column 1. (BEEP)
+                      00007         BEEP    macro   freq,duration
+                      00008                 movlw   freq    
+                      00009                 movwf   Beep_TEMP1
+                      00010                 MOVLW   duration
+                      00011                 call    BEEPsub
+                      00012                         endm
+                      00013 
+Warning[207]: Found label after column 1. (BEEPinit)
+                      00014         BEEPinit macro
+                      00015                 bcf             BEEPport
+                      00016                 BANK1
+                      00017                 BCF             BEEPtris
+                      00018                 BANK0
+                      00019                         endm
+                      00020 
+                      00021 ;subrutinas
+                      00022 
+Warning[207]: Found label after column 1. (BEEPsub)
+0011                  00023         BEEPsub
+0011   008F           00024                 movwf   Beep_TEMP2
+0012   0181           00025                 clrf    TMR0
+0013   1185           00026                 bcf             BEEPport
+                      00027                 BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+0014   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+0015   1185           00028                 bcf             BEEPport
+0016   3007           00029                 movlw   PRESCbeep
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0017   0081           00030                 movwf   OPTION_REG
+                      00031                 BANK0
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (Bcf)
+0018   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+                      00032 
+Warning[207]: Found label after column 1. (BEEPa)
+0019                  00033         BEEPa
+0019   110B           00034                 bcf             INTCON,2
+Warning[207]: Found label after column 1. (BEEPb)
+001A                  00035         BEEPb
+001A   1585           00036                 bsf             BEEPport
+001B   2023           00037                 call    B_Wait
+001C   1185           00038                 bcf             BEEPport
+001D   2023           00039                 call    B_Wait
+001E   1D0B           00040                 btfss   INTCON,T0IF
+001F   281A           00041                 goto    BEEPb
+0020   0B8F           00042                 decfsz  Beep_TEMP2,1
+0021   2819           00043                 goto    BEEPa
+0022   0008           00044                 RETURN
+                      00045 
+Warning[207]: Found label after column 1. (B_Wait)
+0023                  00046         B_Wait
+0023   080E           00047                 movfw   Beep_TEMP1
+0024   0090           00048                 movwf   Beep_TEMP3
+Warning[207]: Found label after column 1. (B_Waita)
+0025                  00049         B_Waita
+0025   0B90           00050                 decfsz  Beep_TEMP3,1
+0026   2825           00051                 GOTO    B_Waita
+0027   0008           00052                 RETURN
+                      00053         
+                      00054         
+                      00031 
+0028                  00032 Main
+                      00033         BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+0028   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+0029   3017           00034         movlw   0x17
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002A   0085           00035         movwf   TRISA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002B   0186           00036         clrf    TRISB
+                      00037         BANK0
+Warning[203]: Found opcode in column 1. (Bcf)
+002C   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+                      00038 
+                      00039         BEEPinit
+002D   1185               M                 bcf             BEEPport
+                          M                 BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+002E   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002F   1185               M                 BCF             BEEPtris
+                          M                 BANK0
+Warning[203]: Found opcode in column 1. (Bcf)
+0030   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0031   0186           00040         clrf    PORTB
+                      00041 
+0032                  00042 Loop
+                      00043         Button  0,PORTA,0,.100,Play1
+  0000                    M                 Local   Exit
+  0000                    M                 Local   Loop
+                          M 
+                          M                 if      0==0
+0032   1805               M                 btfsc   PORTA,0
+                          M                 else    
+                          M                 btfss   PORTA,0
+                          M                 endif
+0033   283B               M                 goto    Exit
+                          M                 
+                          M                 WAIT    .100
+                          M 
+0034   3064               M                 movlw   .100
+0035   2005               M                 call    WAITstd
+Warning[207]: Found label after column 1. (Loop)
+0036                      M         Loop
+                          M                 if      0==0
+0036   1C05               M                 btfss   PORTA,0
+                          M                 else
+                          M                 btfsc   PORTA,0
+                          M                 endif
+0037   2836               M                 goto    Loop
+                          M 
+                          M                 WAIT    .100
+                          M 
+0038   3064               M                 movlw   .100
+0039   2005               M                 call    WAITstd
+003A   2045               M                 call    Play1
+Warning[207]: Found label after column 1. (Exit)
+003B                      M     Exit
+                      00044         Button  0,PORTA,1,.100,Play2
+  0000                    M                 Local   Exit
+  0000                    M                 Local   Loop
+                          M 
+                          M                 if      0==0
+003B   1885               M                 btfsc   PORTA,1
+                          M                 else    
+                          M                 btfss   PORTA,1
+                          M                 endif
+003C   2844               M                 goto    Exit
+                          M                 
+                          M                 WAIT    .100
+                          M 
+003D   3064               M                 movlw   .100
+003E   2005               M                 call    WAITstd
+Warning[207]: Found label after column 1. (Loop)
+003F                      M         Loop
+                          M                 if      0==0
+003F   1C85               M                 btfss   PORTA,1
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M                 else
+                          M                 btfsc   PORTA,1
+                          M                 endif
+0040   283F               M                 goto    Loop
+                          M 
+                          M                 WAIT    .100
+                          M 
+0041   3064               M                 movlw   .100
+0042   2005               M                 call    WAITstd
+0043   2146               M                 call    Play2
+Warning[207]: Found label after column 1. (Exit)
+0044                      M     Exit
+0044   2832           00045         goto    Loop
+                      00046 
+0045                  00047 Play1
+                      00048         BEEP    0X50,0X03
+0045   3050               M                 movlw   0X50    
+0046   008E               M                 movwf   Beep_TEMP1
+0047   3003               M                 MOVLW   0X03
+0048   2011               M                 call    BEEPsub
+                      00049 
+                      00050         BEEP    0X55,0X03
+0049   3055               M                 movlw   0X55    
+004A   008E               M                 movwf   Beep_TEMP1
+004B   3003               M                 MOVLW   0X03
+004C   2011               M                 call    BEEPsub
+                      00051 
+                      00052         BEEP    0X50,0X03
+004D   3050               M                 movlw   0X50    
+004E   008E               M                 movwf   Beep_TEMP1
+004F   3003               M                 MOVLW   0X03
+0050   2011               M                 call    BEEPsub
+                      00053 
+                      00054         BEEP    0X55,0X03
+0051   3055               M                 movlw   0X55    
+0052   008E               M                 movwf   Beep_TEMP1
+0053   3003               M                 MOVLW   0X03
+0054   2011               M                 call    BEEPsub
+                      00055 
+                      00056         BEEP    0X50,0X03
+0055   3050               M                 movlw   0X50    
+0056   008E               M                 movwf   Beep_TEMP1
+0057   3003               M                 MOVLW   0X03
+0058   2011               M                 call    BEEPsub
+                      00057 
+                      00058         BEEP    0X55,0X03
+0059   3055               M                 movlw   0X55    
+005A   008E               M                 movwf   Beep_TEMP1
+005B   3003               M                 MOVLW   0X03
+005C   2011               M                 call    BEEPsub
+                      00059 
+                      00060         BEEP    0X50,0X03
+005D   3050               M                 movlw   0X50    
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+005E   008E               M                 movwf   Beep_TEMP1
+005F   3003               M                 MOVLW   0X03
+0060   2011               M                 call    BEEPsub
+                      00061 
+                      00062         
+                      00063         BEEP    0X65,0X03
+0061   3065               M                 movlw   0X65    
+0062   008E               M                 movwf   Beep_TEMP1
+0063   3003               M                 MOVLW   0X03
+0064   2011               M                 call    BEEPsub
+                      00064 
+                      00065         BEEP    0X55,0X03
+0065   3055               M                 movlw   0X55    
+0066   008E               M                 movwf   Beep_TEMP1
+0067   3003               M                 MOVLW   0X03
+0068   2011               M                 call    BEEPsub
+                      00066 
+                      00067         BEEP    0X60,0X03
+0069   3060               M                 movlw   0X60    
+006A   008E               M                 movwf   Beep_TEMP1
+006B   3003               M                 MOVLW   0X03
+006C   2011               M                 call    BEEPsub
+                      00068 
+                      00069         BEEP    0X70,0X0A
+006D   3070               M                 movlw   0X70    
+006E   008E               M                 movwf   Beep_TEMP1
+006F   300A               M                 MOVLW   0X0A
+0070   2011               M                 call    BEEPsub
+                      00070 
+                      00071 ;-----------------------------
+                      00072 
+                      00073         WAIT    0X9F
+                          M 
+0071   309F               M                 movlw   0X9F
+0072   2005               M                 call    WAITstd
+                      00074 
+                      00075         BEEP    0X75,0X03
+0073   3075               M                 movlw   0X75    
+0074   008E               M                 movwf   Beep_TEMP1
+0075   3003               M                 MOVLW   0X03
+0076   2011               M                 call    BEEPsub
+                      00076 
+                      00077         BEEP    0X65,0X03
+0077   3065               M                 movlw   0X65    
+0078   008E               M                 movwf   Beep_TEMP1
+0079   3003               M                 MOVLW   0X03
+007A   2011               M                 call    BEEPsub
+                      00078 
+                      00079         BEEP    0X60,0X03
+007B   3060               M                 movlw   0X60    
+007C   008E               M                 movwf   Beep_TEMP1
+007D   3003               M                 MOVLW   0X03
+007E   2011               M                 call    BEEPsub
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00080         WAIT    0X50
+                          M 
+007F   3050               M                 movlw   0X50
+0080   2005               M                 call    WAITstd
+                      00081         BEEP    0X55,0X0A
+0081   3055               M                 movlw   0X55    
+0082   008E               M                 movwf   Beep_TEMP1
+0083   300A               M                 MOVLW   0X0A
+0084   2011               M                 call    BEEPsub
+                      00082 
+                      00083         BEEP    0X75,0X03
+0085   3075               M                 movlw   0X75    
+0086   008E               M                 movwf   Beep_TEMP1
+0087   3003               M                 MOVLW   0X03
+0088   2011               M                 call    BEEPsub
+                      00084 
+                      00085         BEEP    0X65,0X03
+0089   3065               M                 movlw   0X65    
+008A   008E               M                 movwf   Beep_TEMP1
+008B   3003               M                 MOVLW   0X03
+008C   2011               M                 call    BEEPsub
+                      00086 
+                      00087         BEEP    0X60,0X03
+008D   3060               M                 movlw   0X60    
+008E   008E               M                 movwf   Beep_TEMP1
+008F   3003               M                 MOVLW   0X03
+0090   2011               M                 call    BEEPsub
+                      00088         WAIT    0X50
+                          M 
+0091   3050               M                 movlw   0X50
+0092   2005               M                 call    WAITstd
+                      00089         BEEP    0X50,0X0A
+0093   3050               M                 movlw   0X50    
+0094   008E               M                 movwf   Beep_TEMP1
+0095   300A               M                 MOVLW   0X0A
+0096   2011               M                 call    BEEPsub
+                      00090 
+                      00091 ;--------------------------------
+                      00092 
+                      00093         BEEP    0X50,0X03
+0097   3050               M                 movlw   0X50    
+0098   008E               M                 movwf   Beep_TEMP1
+0099   3003               M                 MOVLW   0X03
+009A   2011               M                 call    BEEPsub
+                      00094 
+                      00095         BEEP    0X55,0X03
+009B   3055               M                 movlw   0X55    
+009C   008E               M                 movwf   Beep_TEMP1
+009D   3003               M                 MOVLW   0X03
+009E   2011               M                 call    BEEPsub
+                      00096 
+                      00097         BEEP    0X50,0X03
+009F   3050               M                 movlw   0X50    
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00A0   008E               M                 movwf   Beep_TEMP1
+00A1   3003               M                 MOVLW   0X03
+00A2   2011               M                 call    BEEPsub
+                      00098 
+                      00099         BEEP    0X55,0X03
+00A3   3055               M                 movlw   0X55    
+00A4   008E               M                 movwf   Beep_TEMP1
+00A5   3003               M                 MOVLW   0X03
+00A6   2011               M                 call    BEEPsub
+                      00100 
+                      00101         BEEP    0X50,0X03
+00A7   3050               M                 movlw   0X50    
+00A8   008E               M                 movwf   Beep_TEMP1
+00A9   3003               M                 MOVLW   0X03
+00AA   2011               M                 call    BEEPsub
+                      00102 
+                      00103         BEEP    0X55,0X03
+00AB   3055               M                 movlw   0X55    
+00AC   008E               M                 movwf   Beep_TEMP1
+00AD   3003               M                 MOVLW   0X03
+00AE   2011               M                 call    BEEPsub
+                      00104 
+                      00105         BEEP    0X50,0X03
+00AF   3050               M                 movlw   0X50    
+00B0   008E               M                 movwf   Beep_TEMP1
+00B1   3003               M                 MOVLW   0X03
+00B2   2011               M                 call    BEEPsub
+                      00106 
+                      00107         
+                      00108         BEEP    0X65,0X03
+00B3   3065               M                 movlw   0X65    
+00B4   008E               M                 movwf   Beep_TEMP1
+00B5   3003               M                 MOVLW   0X03
+00B6   2011               M                 call    BEEPsub
+                      00109 
+                      00110         BEEP    0X55,0X03
+00B7   3055               M                 movlw   0X55    
+00B8   008E               M                 movwf   Beep_TEMP1
+00B9   3003               M                 MOVLW   0X03
+00BA   2011               M                 call    BEEPsub
+                      00111 
+                      00112         BEEP    0X60,0X03
+00BB   3060               M                 movlw   0X60    
+00BC   008E               M                 movwf   Beep_TEMP1
+00BD   3003               M                 MOVLW   0X03
+00BE   2011               M                 call    BEEPsub
+                      00113 
+                      00114         BEEP    0X70,0X0A
+00BF   3070               M                 movlw   0X70    
+00C0   008E               M                 movwf   Beep_TEMP1
+00C1   300A               M                 MOVLW   0X0A
+00C2   2011               M                 call    BEEPsub
+                      00115 
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00116 ;-----------------------------
+                      00117 
+                      00118         WAIT    0X9F
+                          M 
+00C3   309F               M                 movlw   0X9F
+00C4   2005               M                 call    WAITstd
+                      00119 
+                      00120         BEEP    0X75,0X03
+00C5   3075               M                 movlw   0X75    
+00C6   008E               M                 movwf   Beep_TEMP1
+00C7   3003               M                 MOVLW   0X03
+00C8   2011               M                 call    BEEPsub
+                      00121 
+                      00122         BEEP    0X65,0X03
+00C9   3065               M                 movlw   0X65    
+00CA   008E               M                 movwf   Beep_TEMP1
+00CB   3003               M                 MOVLW   0X03
+00CC   2011               M                 call    BEEPsub
+                      00123 
+                      00124         BEEP    0X60,0X03
+00CD   3060               M                 movlw   0X60    
+00CE   008E               M                 movwf   Beep_TEMP1
+00CF   3003               M                 MOVLW   0X03
+00D0   2011               M                 call    BEEPsub
+                      00125         WAIT    0X50
+                          M 
+00D1   3050               M                 movlw   0X50
+00D2   2005               M                 call    WAITstd
+                      00126         BEEP    0X55,0X0A
+00D3   3055               M                 movlw   0X55    
+00D4   008E               M                 movwf   Beep_TEMP1
+00D5   300A               M                 MOVLW   0X0A
+00D6   2011               M                 call    BEEPsub
+                      00127 
+                      00128         BEEP    0X75,0X03
+00D7   3075               M                 movlw   0X75    
+00D8   008E               M                 movwf   Beep_TEMP1
+00D9   3003               M                 MOVLW   0X03
+00DA   2011               M                 call    BEEPsub
+                      00129 
+                      00130         BEEP    0X65,0X03
+00DB   3065               M                 movlw   0X65    
+00DC   008E               M                 movwf   Beep_TEMP1
+00DD   3003               M                 MOVLW   0X03
+00DE   2011               M                 call    BEEPsub
+                      00131 
+                      00132         BEEP    0X60,0X03
+00DF   3060               M                 movlw   0X60    
+00E0   008E               M                 movwf   Beep_TEMP1
+00E1   3003               M                 MOVLW   0X03
+00E2   2011               M                 call    BEEPsub
+                      00133         WAIT    0X50
+                          M 
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00E3   3050               M                 movlw   0X50
+00E4   2005               M                 call    WAITstd
+                      00134         BEEP    0X60,0X0A
+00E5   3060               M                 movlw   0X60    
+00E6   008E               M                 movwf   Beep_TEMP1
+00E7   300A               M                 MOVLW   0X0A
+00E8   2011               M                 call    BEEPsub
+                      00135 ;-----------------------------
+                      00136 
+                      00137         WAIT    0X9F
+                          M 
+00E9   309F               M                 movlw   0X9F
+00EA   2005               M                 call    WAITstd
+                      00138 
+                      00139         BEEP    0X75,0X03
+00EB   3075               M                 movlw   0X75    
+00EC   008E               M                 movwf   Beep_TEMP1
+00ED   3003               M                 MOVLW   0X03
+00EE   2011               M                 call    BEEPsub
+                      00140 
+                      00141         BEEP    0X65,0X03
+00EF   3065               M                 movlw   0X65    
+00F0   008E               M                 movwf   Beep_TEMP1
+00F1   3003               M                 MOVLW   0X03
+00F2   2011               M                 call    BEEPsub
+                      00142 
+                      00143         BEEP    0X60,0X03
+00F3   3060               M                 movlw   0X60    
+00F4   008E               M                 movwf   Beep_TEMP1
+00F5   3003               M                 MOVLW   0X03
+00F6   2011               M                 call    BEEPsub
+                      00144 
+                      00145         BEEP    0X55,0X04
+00F7   3055               M                 movlw   0X55    
+00F8   008E               M                 movwf   Beep_TEMP1
+00F9   3004               M                 MOVLW   0X04
+00FA   2011               M                 call    BEEPsub
+                      00146         WAIT    0XA
+                          M 
+00FB   300A               M                 movlw   0XA
+00FC   2005               M                 call    WAITstd
+                      00147         BEEP    0X55,0X04
+00FD   3055               M                 movlw   0X55    
+00FE   008E               M                 movwf   Beep_TEMP1
+00FF   3004               M                 MOVLW   0X04
+0100   2011               M                 call    BEEPsub
+                      00148         WAIT    0XA
+                          M 
+0101   300A               M                 movlw   0XA
+0102   2005               M                 call    WAITstd
+                      00149         BEEP    0X55,0X04
+0103   3055               M                 movlw   0X55    
+0104   008E               M                 movwf   Beep_TEMP1
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0105   3004               M                 MOVLW   0X04
+0106   2011               M                 call    BEEPsub
+                      00150 
+                      00151         BEEP    0X50,0X03
+0107   3050               M                 movlw   0X50    
+0108   008E               M                 movwf   Beep_TEMP1
+0109   3003               M                 MOVLW   0X03
+010A   2011               M                 call    BEEPsub
+                      00152 
+                      00153         BEEP    0X55,0X03
+010B   3055               M                 movlw   0X55    
+010C   008E               M                 movwf   Beep_TEMP1
+010D   3003               M                 MOVLW   0X03
+010E   2011               M                 call    BEEPsub
+                      00154 
+                      00155         BEEP    0X60,0X04
+010F   3060               M                 movlw   0X60    
+0110   008E               M                 movwf   Beep_TEMP1
+0111   3004               M                 MOVLW   0X04
+0112   2011               M                 call    BEEPsub
+                      00156         WAIT    0XA
+                          M 
+0113   300A               M                 movlw   0XA
+0114   2005               M                 call    WAITstd
+                      00157         BEEP    0X60,0X04
+0115   3060               M                 movlw   0X60    
+0116   008E               M                 movwf   Beep_TEMP1
+0117   3004               M                 MOVLW   0X04
+0118   2011               M                 call    BEEPsub
+                      00158         WAIT    0XA
+                          M 
+0119   300A               M                 movlw   0XA
+011A   2005               M                 call    WAITstd
+                      00159         BEEP    0X60,0X04
+011B   3060               M                 movlw   0X60    
+011C   008E               M                 movwf   Beep_TEMP1
+011D   3004               M                 MOVLW   0X04
+011E   2011               M                 call    BEEPsub
+                      00160 
+                      00161         BEEP    0X55,0X03
+011F   3055               M                 movlw   0X55    
+0120   008E               M                 movwf   Beep_TEMP1
+0121   3003               M                 MOVLW   0X03
+0122   2011               M                 call    BEEPsub
+                      00162 
+                      00163         BEEP    0X60,0X03
+0123   3060               M                 movlw   0X60    
+0124   008E               M                 movwf   Beep_TEMP1
+0125   3003               M                 MOVLW   0X03
+0126   2011               M                 call    BEEPsub
+                      00164 
+                      00165         BEEP    0X65,0X04
+0127   3065               M                 movlw   0X65    
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0128   008E               M                 movwf   Beep_TEMP1
+0129   3004               M                 MOVLW   0X04
+012A   2011               M                 call    BEEPsub
+                      00166         WAIT    0XA
+                          M 
+012B   300A               M                 movlw   0XA
+012C   2005               M                 call    WAITstd
+                      00167         BEEP    0X65,0X04
+012D   3065               M                 movlw   0X65    
+012E   008E               M                 movwf   Beep_TEMP1
+012F   3004               M                 MOVLW   0X04
+0130   2011               M                 call    BEEPsub
+                      00168         WAIT    0XA
+                          M 
+0131   300A               M                 movlw   0XA
+0132   2005               M                 call    WAITstd
+                      00169         BEEP    0X65,0X04
+0133   3065               M                 movlw   0X65    
+0134   008E               M                 movwf   Beep_TEMP1
+0135   3004               M                 MOVLW   0X04
+0136   2011               M                 call    BEEPsub
+                      00170 
+                      00171         BEEP    0X60,0X03
+0137   3060               M                 movlw   0X60    
+0138   008E               M                 movwf   Beep_TEMP1
+0139   3003               M                 MOVLW   0X03
+013A   2011               M                 call    BEEPsub
+                      00172 
+                      00173         BEEP    0X65,0X03
+013B   3065               M                 movlw   0X65    
+013C   008E               M                 movwf   Beep_TEMP1
+013D   3003               M                 MOVLW   0X03
+013E   2011               M                 call    BEEPsub
+                      00174 
+                      00175         BEEP    0X70,0X0A
+013F   3070               M                 movlw   0X70    
+0140   008E               M                 movwf   Beep_TEMP1
+0141   300A               M                 MOVLW   0X0A
+0142   2011               M                 call    BEEPsub
+                      00176 
+                      00177         WAIT    0X20
+                          M 
+0143   3020               M                 movlw   0X20
+0144   2005               M                 call    WAITstd
+                      00178 
+                      00179         ;TERMINAMOS
+                      00180 
+0145   0008           00181         RETURN
+                      00182 
+0146                  00183 Play2
+                      00184         ;BEEP   0XAA,0X02
+                      00185         ;BEEP   0X87,0X05
+                      00186         ;BEEP   0XA2,0X03
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00187         ;BEEP   0X98,0X03
+                      00188 
+                      00189         BEEP    0X80,0X01
+0146   3080               M                 movlw   0X80    
+0147   008E               M                 movwf   Beep_TEMP1
+0148   3001               M                 MOVLW   0X01
+0149   2011               M                 call    BEEPsub
+                      00190         BEEP    0X75,0X01
+014A   3075               M                 movlw   0X75    
+014B   008E               M                 movwf   Beep_TEMP1
+014C   3001               M                 MOVLW   0X01
+014D   2011               M                 call    BEEPsub
+                      00191         BEEP    0X70,0X01
+014E   3070               M                 movlw   0X70    
+014F   008E               M                 movwf   Beep_TEMP1
+0150   3001               M                 MOVLW   0X01
+0151   2011               M                 call    BEEPsub
+                      00192         BEEP    0X65,0X01
+0152   3065               M                 movlw   0X65    
+0153   008E               M                 movwf   Beep_TEMP1
+0154   3001               M                 MOVLW   0X01
+0155   2011               M                 call    BEEPsub
+                      00193         BEEP    0X60,0X01
+0156   3060               M                 movlw   0X60    
+0157   008E               M                 movwf   Beep_TEMP1
+0158   3001               M                 MOVLW   0X01
+0159   2011               M                 call    BEEPsub
+                      00194         BEEP    0X55,0X01
+015A   3055               M                 movlw   0X55    
+015B   008E               M                 movwf   Beep_TEMP1
+015C   3001               M                 MOVLW   0X01
+015D   2011               M                 call    BEEPsub
+                      00195         BEEP    0X50,0X01
+015E   3050               M                 movlw   0X50    
+015F   008E               M                 movwf   Beep_TEMP1
+0160   3001               M                 MOVLW   0X01
+0161   2011               M                 call    BEEPsub
+                      00196         BEEP    0X45,0X01
+0162   3045               M                 movlw   0X45    
+0163   008E               M                 movwf   Beep_TEMP1
+0164   3001               M                 MOVLW   0X01
+0165   2011               M                 call    BEEPsub
+                      00197         BEEP    0X40,0X01
+0166   3040               M                 movlw   0X40    
+0167   008E               M                 movwf   Beep_TEMP1
+0168   3001               M                 MOVLW   0X01
+0169   2011               M                 call    BEEPsub
+                      00198         BEEP    0X35,0X01
+016A   3035               M                 movlw   0X35    
+016B   008E               M                 movwf   Beep_TEMP1
+016C   3001               M                 MOVLW   0X01
+016D   2011               M                 call    BEEPsub
+                      00199         BEEP    0X30,0X01
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+016E   3030               M                 movlw   0X30    
+016F   008E               M                 movwf   Beep_TEMP1
+0170   3001               M                 MOVLW   0X01
+0171   2011               M                 call    BEEPsub
+                      00200         BEEP    0X25,0X01
+0172   3025               M                 movlw   0X25    
+0173   008E               M                 movwf   Beep_TEMP1
+0174   3001               M                 MOVLW   0X01
+0175   2011               M                 call    BEEPsub
+                      00201 
+                      00202         BEEP    0X30,0X01
+0176   3030               M                 movlw   0X30    
+0177   008E               M                 movwf   Beep_TEMP1
+0178   3001               M                 MOVLW   0X01
+0179   2011               M                 call    BEEPsub
+                      00203         BEEP    0X35,0X01
+017A   3035               M                 movlw   0X35    
+017B   008E               M                 movwf   Beep_TEMP1
+017C   3001               M                 MOVLW   0X01
+017D   2011               M                 call    BEEPsub
+                      00204         BEEP    0X40,0X01
+017E   3040               M                 movlw   0X40    
+017F   008E               M                 movwf   Beep_TEMP1
+0180   3001               M                 MOVLW   0X01
+0181   2011               M                 call    BEEPsub
+                      00205         BEEP    0X45,0X01
+0182   3045               M                 movlw   0X45    
+0183   008E               M                 movwf   Beep_TEMP1
+0184   3001               M                 MOVLW   0X01
+0185   2011               M                 call    BEEPsub
+                      00206         BEEP    0X50,0X01
+0186   3050               M                 movlw   0X50    
+0187   008E               M                 movwf   Beep_TEMP1
+0188   3001               M                 MOVLW   0X01
+0189   2011               M                 call    BEEPsub
+                      00207         BEEP    0X55,0X01
+018A   3055               M                 movlw   0X55    
+018B   008E               M                 movwf   Beep_TEMP1
+018C   3001               M                 MOVLW   0X01
+018D   2011               M                 call    BEEPsub
+                      00208         BEEP    0X60,0X01
+018E   3060               M                 movlw   0X60    
+018F   008E               M                 movwf   Beep_TEMP1
+0190   3001               M                 MOVLW   0X01
+0191   2011               M                 call    BEEPsub
+                      00209         BEEP    0X65,0X01
+0192   3065               M                 movlw   0X65    
+0193   008E               M                 movwf   Beep_TEMP1
+0194   3001               M                 MOVLW   0X01
+0195   2011               M                 call    BEEPsub
+                      00210         BEEP    0X70,0X01
+0196   3070               M                 movlw   0X70    
+0197   008E               M                 movwf   Beep_TEMP1
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0198   3001               M                 MOVLW   0X01
+0199   2011               M                 call    BEEPsub
+                      00211         BEEP    0x75,0X01
+019A   3075               M                 movlw   0x75    
+019B   008E               M                 movwf   Beep_TEMP1
+019C   3001               M                 MOVLW   0X01
+019D   2011               M                 call    BEEPsub
+                      00212         BEEP    0x80,0X01
+019E   3080               M                 movlw   0x80    
+019F   008E               M                 movwf   Beep_TEMP1
+01A0   3001               M                 MOVLW   0X01
+01A1   2011               M                 call    BEEPsub
+                      00213 
+01A2   0008           00214         RETURN
+                      00215 
+                      00216         end
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BANK0                             
+BANK1                             
+BEEP                              
+BEEPa                             00000019
+BEEPb                             0000001A
+BEEPinit                          
+BEEPport                          PORTA,3
+BEEPsub                           00000011
+BEEPtris                          TRISA,3
+B_Wait                            00000023
+B_Waita                           00000025
+Beep_TEMP1                        0000000E
+Beep_TEMP2                        0000000F
+Beep_TEMP3                        00000010
+Button                            
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+Loop                              00000032
+Main                              00000028
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PRESCbeep                         00000007
+PRESCstd                          00000001
+PRESCwait                         0000000D
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Play1                             00000045
+Play2                             00000146
+RBIE                              00000003
+RBIF                              00000000
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WAIT                              
+WAITX                             
+WAIT_x                            00000007
+WAITa                             0000000B
+WAITb                             0000000C
+WAITstd                           00000005
+WCYCLE                            0000000C
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXX------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   416
+Program Memory Words Free:   608
+
+MPASM  5.33                        SONIDO.ASM   1-4-1980  0:41:46         PAGE 19
+
+
+
+
+
+
+Errors   :     0
+Warnings :    27 reported,     0 suppressed
+Messages :     5 reported,     0 suppressed
+
+

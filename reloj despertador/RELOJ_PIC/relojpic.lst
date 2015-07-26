@@ -1,0 +1,728 @@
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;************************************************************
+                      00002 ;**                                                        **
+                      00003 ;**                    Reloj Despertador                   **
+                      00004 ;**                     Por Carlos Díaz                    **
+                      00005 ;**                           2002                         **
+                      00006 ;**                                                        **
+                      00007 ;**            http://perso.wanadoo.es/chyryes/            **
+                      00008 ;**                                                        **
+                      00009 ;************************************************************
+                      00010 
+  0000009F            00011 AJUSTV  EQU     09FH            ;SI ATRASA HAY QUE BAJAR ESTE NUMERO    
+  00000011            00012 REFRESV EQU     011H            
+  000000C8            00013 VAR1V   EQU     0C8H
+  00000014            00014 VAR2V   EQU     14H
+  0000003C            00015 SEGV    EQU     3CH
+  00000004            00016 FSR     EQU     04H
+  00000000            00017 INDF    EQU     00H
+  0000000C            00018 CUENTA1 equ     0Ch
+  0000000D            00019 CUENTA2 EQU     0DH
+  0000000E            00020 CUENTA3 EQU     0EH
+  0000000F            00021 DISP1   EQU     0FH
+  00000010            00022 DISP2   EQU     10H
+  00000011            00023 VAR1    EQU     11H
+  00000012            00024 VAR2    EQU     12H
+  00000013            00025 SEG     EQU     13H
+  00000014            00026 MIN     EQU     14H
+  00000015            00027 HOR     EQU     15H
+  00000016            00028 ACU     EQU     16H
+  00000017            00029 REFRES  EQU     17H
+  00000018            00030 STAT    EQU     18H
+  00000019            00031 AJUST   EQU     19H
+  00000020            00032 AL_HOR  EQU     20H
+  00000021            00033 HORAL   EQU     21H
+  00000022            00034 MINAL   EQU     22H
+  00000023            00035 HORAL2  EQU     23H
+  00000024            00036 MINAL2  EQU     24H
+  00000003            00037 STATUS  EQU     03H
+  00000005            00038 PORTA   EQU     05H
+  00000006            00039 PORTB   EQU     06H
+  00000005            00040 TRISA   EQU     05H
+  00000006            00041 TRISB   EQU     06H
+  00000001            00042 TMR0    EQU     01H     ;AQUI SE PONE LO Q QUIERES QUE CUENTE EL TIMER (BANCO 0)
+  0000000B            00043 INTCON  EQU     0BH
+  00000001            00044 F       EQU     1
+  00000000            00045 W       EQU     0
+                      00046 
+0000                  00047         ORG     00H
+0000   288F           00048         GOTO    INICIO
+0004                  00049         ORG     04H
+0004   0096           00050         MOVWF   ACU
+0005   300D           00051         MOVLW   0DH     ;CON 0DH SALTA LA INTERRUPCION CADA 250 uSEG (CON CRISTAL 4MHZ)
+0006   0081           00052         MOVWF   TMR0
+0007   0803           00053         MOVF    STATUS,W
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0008   0098           00054         MOVWF   STAT
+0009   1D20           00055         BTFSS   AL_HOR,2
+000A   2810           00056         GOTO    AJUAJU
+000B   1C05           00057         BTFSS   PORTA,0
+000C   280F           00058         GOTO    SON1
+000D   1005           00059         BCF     PORTA,0
+000E   2810           00060         GOTO    AJUAJU
+000F   1405           00061 SON1    BSF     PORTA,0
+                      00062 
+                      00063 
+0010   0B99           00064 AJUAJU  DECFSZ  AJUST,F         
+0011   2816           00065         GOTO    BLABLA
+0012   3004           00066         MOVLW   04H
+Message[305]: Using default destination of 1 (file).
+0013   0781           00067         ADDWF   TMR0
+0014   309F           00068         MOVLW   AJUSTV
+0015   0099           00069         MOVWF   AJUST
+                      00070 
+0016   0B97           00071 BLABLA  DECFSZ  REFRES,F
+0017   284A           00072         GOTO    CONT
+0018   3011           00073         MOVLW   REFRESV
+0019   0097           00074         MOVWF   REFRES
+001A   1A06           00075         BTFSc   PORTB,4 ;ESCRIBE EN DISPLAYS
+001B   2830           00076         GOTO    ESCDIS2
+001C   1A86           00077         BTFSc   PORTB,5
+001D   2839           00078         GOTO    ESCDIS3
+001E   1B06           00079         BTFSc   PORTB,6
+001F   2842           00080         GOTO    ESCDIS4
+0020   1B86           00081         BTFSC   PORTB,7
+0021   2823           00082         GOTO    ESCDIS1
+0022   2830           00083         GOTO    ESCDIS2
+0023   18A0           00084 ESCDIS1 BTFSC   AL_HOR,1
+0024   282E           00085         GOTO    BORRA
+0025   0E15           00086         SWAPF   HOR,W
+0026   1820           00087         BTFSC   AL_HOR,0
+0027   0E21           00088         SWAPF   HORAL,W
+0028   390F           00089         ANDLW   0FH
+0029   1903           00090         BTFSC   STATUS,2
+002A   282E           00091         GOTO    BORRA
+002B   3810           00092         IORLW   10H
+002C   0086           00093         MOVWF   PORTB
+002D   284A           00094         GOTO    CONT
+002E   0186           00095 BORRA   CLRF    PORTB
+002F   284A           00096         GOTO    CONT
+                      00097 
+0030   18A0           00098 ESCDIS2 BTFSC   AL_HOR,1
+0031   282E           00099         GOTO    BORRA
+0032   0815           00100         MOVF    HOR,W
+0033   1820           00101         BTFSC   AL_HOR,0
+0034   0821           00102         MOVF    HORAL,W
+0035   390F           00103         ANDLW   0FH
+0036   3820           00104         IORLW   20H
+0037   0086           00105         MOVWF   PORTB
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0038   284A           00106         GOTO    CONT
+                      00107 
+0039   18A0           00108 ESCDIS3 BTFSC   AL_HOR,1
+003A   282E           00109         GOTO    BORRA
+003B   0E14           00110         SWAPF   MIN,W
+003C   1820           00111         BTFSC   AL_HOR,0
+003D   0E22           00112         SWAPF   MINAL,W
+003E   390F           00113         ANDLW   0FH
+003F   3840           00114         IORLW   40H
+0040   0086           00115         MOVWF   PORTB
+0041   284A           00116         GOTO    CONT
+                      00117 
+0042   18A0           00118 ESCDIS4 BTFSC   AL_HOR,1
+0043   282E           00119         GOTO    BORRA
+0044   0814           00120         MOVF    MIN,W
+0045   1820           00121         BTFSC   AL_HOR,0
+0046   0822           00122         MOVF    MINAL,W
+0047   390F           00123         ANDLW   0FH
+0048   3880           00124         IORLW   80H
+0049   0086           00125         MOVWF   PORTB
+                      00126 
+004A   0B91           00127 CONT    DECFSZ  VAR1,F  ;CONTABILIZA
+004B   2868           00128         GOTO    SAL1
+004C   30C8           00129         MOVLW   VAR1V
+004D   0091           00130         MOVWF   VAR1
+004E   0B92           00131         DECFSZ  VAR2,F
+004F   2868           00132         GOTO    SAL1
+0050   3014           00133         MOVLW   VAR2V
+0051   0092           00134         MOVWF   VAR2
+0052   0B93           00135 INCSEG  DECFSZ  SEG,F           ;CUENTA SEGUNDOS
+0053   2868           00136         GOTO    SAL1
+0054   303C           00137         MOVLW   SEGV
+0055   0093           00138         MOVWF   SEG
+0056   0A94           00139 INCMIN  INCF    MIN,F
+0057   0814           00140         MOVF    MIN,W           ;VA A MIRAR SI MIN<60H
+0058   1003           00141         BCF     STATUS,0
+0059   3C59           00142         SUBLW   59H
+005A   1C03           00143         BTFSS   STATUS,0
+005B   287B           00144         GOTO    MIN0            ;HAY QUE IR A PONER MIN A CERO e incrementar hor
+005C   1003           00145         BCF     STATUS,0
+005D   0814           00146         MOVF    MIN,W           ;VA A MIRAR SI MIN ES DE TIPO 2A, 3A...
+005E   390F           00147         ANDLW   0FH
+005F   3C09           00148         SUBLW   09H
+0060   1803           00149         BTFSC   STATUS,0
+0061   2866           00150         GOTO    SAL
+0062   3006           00151         MOVLW   06H
+0063   0794           00152         ADDWF   MIN,F
+0064   30F0           00153         MOVLW   0F0H
+0065   0594           00154         ANDWF   MIN,F
+                      00155 
+0066   19A0           00156 SAL     BTFSC   AL_HOR,3
+0067   206D           00157         CALL    MIRAL
+0068   0818           00158 SAL1    MOVF    STAT,W
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0069   0083           00159         MOVWF   STATUS
+006A   0816           00160         MOVF    ACU,W
+006B   110B           00161         BCF     INTCON,2        
+006C   0009           00162         RETFIE
+                      00163 
+                      00164 
+006D   0822           00165 MIRAL   MOVF    MINAL,W
+006E   1AA0           00166         BTFSC   AL_HOR,5
+006F   0824           00167         MOVF    MINAL2,W
+0070   0214           00168         SUBWF   MIN,W
+0071   1903           00169         BTFSC   STATUS,2
+0072   2874           00170         GOTO    MIRHOR
+0073   0008           00171         RETURN
+0074   0821           00172 MIRHOR  MOVF    HORAL,W
+0075   1AA0           00173         BTFSC   AL_HOR,5
+0076   0823           00174         MOVF    HORAL2,W
+0077   0215           00175         SUBWF   HOR,W
+0078   1903           00176         BTFSC   STATUS,2
+0079   1620           00177         BSF     AL_HOR,4
+007A   0008           00178         RETURN
+                      00179 
+                      00180 
+                      00181 
+007B   0194           00182 MIN0    CLRF    MIN
+007C   0A95           00183         INCF    HOR,F
+007D   1003           00184         BCF     STATUS,0
+007E   0815           00185         MOVF    HOR,W
+007F   3C23           00186         SUBLW   23H
+0080   1C03           00187         BTFSS   STATUS,0
+0081   288D           00188         GOTO    HOR0            ;HAY QUE IR A PONER HOR A CERO
+0082   1003           00189         BCF     STATUS,0
+0083   0815           00190         MOVF    HOR,W           ;VA A MIRAR SI HOR ES DE TIPO 2A, 3A...
+0084   390F           00191         ANDLW   0FH
+0085   3C09           00192         SUBLW   09H
+0086   1803           00193         BTFSC   STATUS,0
+0087   2866           00194         GOTO    SAL
+0088   3006           00195         MOVLW   06H
+0089   0795           00196         ADDWF   HOR,F
+008A   30F0           00197         MOVLW   0F0H
+008B   0595           00198         ANDWF   HOR,F
+008C   2866           00199         GOTO    SAL
+                      00200 
+                      00201         
+008D   0195           00202 HOR0    CLRF    HOR
+008E   2866           00203         GOTO    SAL
+                      00204 
+008F   1005           00205 INICIO  BCF     PORTA,0
+0090   01A1           00206         CLRF    HORAL
+0091   01A2           00207         CLRF    MINAL
+0092   01A0           00208         CLRF    AL_HOR
+0093   309F           00209         MOVLW   AJUSTV
+0094   0099           00210         MOVWF   AJUST
+0095   3011           00211         MOVLW   REFRESV
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0096   0097           00212         MOVWF   REFRES
+0097   30C8           00213         MOVLW   VAR1V
+0098   0091           00214         MOVWF   VAR1            ;VAR1 SE CARGA CON 200
+0099   3014           00215         MOVLW   VAR2V
+009A   0092           00216         MOVWF   VAR2            ;VAR2 SE CARGA CON 20
+009B   303C           00217         MOVLW   SEGV
+009C   0093           00218         MOVWF   SEG
+009D   0103           00219         CLRW
+009E   0094           00220         MOVWF   MIN
+009F   0086           00221         MOVWF   PORTB
+00A0   0095           00222         MOVWF   HOR
+00A1   110B           00223         BCF     INTCON,2                ;FLAG DE DESBORDAMIENTO DE TMR0 (PONER A CERO POR SOFTWARE)
+00A2   168B           00224         BSF     INTCON,5                ;PERMITE INTERRUPCION POR DEBORDAMIENTO DE TMR0
+00A3   178B           00225         BSF     INTCON,7                ;PERMITE INTERRUPCIONES
+00A4   1683           00226         BSF     STATUS,5
+00A5   0103           00227         CLRW
+00A6   0086           00228         MOVWF   TRISB
+00A7   301E           00229         MOVLW   1EH
+00A8   0085           00230         MOVWF   TRISA
+00A9   1281           00231         BCF     01H,5
+00AA   1283           00232         BCF     STATUS,5
+00AB   0181           00233         CLRF    TMR0
+00AC   2919           00234         GOTO    PULSA1
+                      00235 
+00AD   1E05           00236 REP     BTFSS   PORTA,4
+00AE   2913           00237         GOTO    CAMBHOR
+00AF   1D85           00238         BTFSS   PORTA,3
+00B0   294E           00239         GOTO    CAMBAL
+00B1   1D05           00240         BTFSS   PORTA,2
+00B2   21A9           00241         CALL    MUEAL
+00B3   1C85           00242         BTFSS   PORTA,1
+00B4   2911           00243         GOTO    CONECAL
+00B5   11A0           00244         BCF     AL_HOR,3
+00B6   1220           00245         BCF     AL_HOR,4
+00B7   1120           00246         BCF     AL_HOR,2
+00B8   1005           00247         BCF     PORTA,0
+00B9   12A0           00248         BCF     AL_HOR,5
+00BA   1A20           00249 REP1    BTFSC   AL_HOR,4
+00BB   28C2           00250         GOTO    SONAR
+                      00251         
+00BC   28AD           00252         GOTO    REP
+                      00253 
+00BD   30FF           00254 REBOT   MOVLW   0FFH            ;PARA PROBLEMAS CON LOS REBOTES
+00BE   008C           00255         MOVWF   CUENTA1
+00BF   0B8C           00256 REBO    DECFSZ  CUENTA1,F
+00C0   28BF           00257         GOTO    REBO
+00C1   0008           00258         RETURN
+                      00259 
+00C2   3008           00260 SONAR   MOVLW   08H
+00C3   008E           00261         MOVWF   CUENTA3
+00C4   2106           00262 SONAR1  CALL    DELAY3
+00C5   3004           00263         MOVLW   04H
+00C6   06A0           00264         XORWF   AL_HOR,F        ;permuta el bit 2 de al_hor
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00C7   1D05           00265         BTFSS   PORTA,2
+00C8   28D2           00266         GOTO    SALSON
+00C9   1885           00267         BTFSC   PORTA,1
+00CA   28AD           00268         GOTO    REP
+00CB   0B8E           00269         DECFSZ  CUENTA3,F
+00CC   28C4           00270         GOTO    SONAR1
+00CD   2106           00271         CALL    DELAY3
+00CE   2106           00272         CALL    DELAY3
+00CF   2106           00273         CALL    DELAY3
+00D0   2106           00274         CALL    DELAY3
+00D1   28C2           00275         GOTO    SONAR
+                      00276 
+00D2   1220           00277 SALSON  BCF     AL_HOR,4        ;AQUI HAY QUE PARAR LA ALARMA PERO Q VUELVA  A SONAR
+00D3   1120           00278         BCF     AL_HOR,2
+00D4   1005           00279         BCF     PORTA,0
+00D5   0821           00280         MOVF    HORAL,W
+00D6   1AA0           00281         BTFSC   AL_HOR,5
+00D7   0823           00282         MOVF    HORAL2,W
+00D8   00A3           00283         MOVWF   HORAL2
+00D9   0822           00284         MOVF    MINAL,W
+00DA   1AA0           00285         BTFSC   AL_HOR,5
+00DB   0824           00286         MOVF    MINAL2,W
+00DC   3E05           00287         ADDLW   05H
+00DD   00A4           00288         MOVWF   MINAL2
+00DE   1003           00289         BCF     STATUS,0
+00DF   3C59           00290         SUBLW   59H
+00E0   1C03           00291         BTFSS   STATUS,0
+00E1   28F1           00292         GOTO    REBA            ;HAY QUE sumar 6 y and por 0f, e incrementar horal2, y bsf al_hor,5
+00E2   1003           00293         BCF     STATUS,0
+00E3   0824           00294         MOVF    MINAL2,W
+00E4   390F           00295         ANDLW   0FH
+00E5   3C09           00296         SUBLW   09H
+00E6   1C03           00297         BTFSS   STATUS,0
+00E7   28EE           00298         GOTO    SUMA6
+00E8   20BD           00299 SALSON2 CALL    REBOT
+00E9   1D05           00300 SALSON1 BTFSS   PORTA,2
+00EA   28E9           00301         GOTO    SALSON1
+00EB   16A0           00302         BSF     AL_HOR,5
+00EC   20BD           00303         CALL    REBOT
+00ED   28AD           00304         GOTO    REP
+00EE   3006           00305 SUMA6   MOVLW   06H
+00EF   07A4           00306         ADDWF   MINAL2,F
+00F0   28E8           00307         GOTO    SALSON2
+00F1   3006           00308 REBA    MOVLW   06h
+00F2   0724           00309         ADDWF   MINAL2,W
+00F3   390F           00310         ANDLW   0FH
+00F4   00A4           00311         MOVWF   MINAL2
+00F5   0A23           00312         INCF    HORAL2,W
+00F6   00A3           00313         MOVWF   HORAL2
+00F7   1003           00314         BCF     STATUS,0
+00F8   3C23           00315         SUBLW   23H
+00F9   1C03           00316         BTFSS   STATUS,0
+00FA   2904           00317         GOTO    REBA2           ;poner a cero horal2
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00FB   1003           00318         BCF     STATUS,0
+00FC   0823           00319         MOVF    HORAL2,W
+00FD   390F           00320         ANDLW   0FH
+00FE   3C09           00321         SUBLW   09H
+00FF   1803           00322         BTFSC   STATUS,0
+0100   28E8           00323         GOTO    SALSON2
+0101   3006           00324         MOVLW   06H
+0102   07A3           00325         ADDWF   HORAL2,F
+0103   28E8           00326         GOTO    SALSON2
+0104   01A3           00327 REBA2   CLRF    HORAL2
+0105   28E8           00328         GOTO    SALSON2
+                      00329 
+                      00330 
+0106   018C           00331 DELAY3  CLRF    CUENTA1
+0107   301F           00332         MOVLW   01FH
+0108   008D           00333         MOVWF   CUENTA2
+Message[305]: Using default destination of 1 (file).
+0109   0B8C           00334 DELAY4  DECFSZ  CUENTA1
+010A   290E           00335         GOTO    DELAY5
+Message[305]: Using default destination of 1 (file).
+010B   0B8D           00336         DECFSZ  CUENTA2
+010C   2909           00337         GOTO    DELAY4
+010D   0008           00338         RETURN
+010E   1885           00339 DELAY5  BTFSC   PORTA,1
+010F   0008           00340         RETURN
+0110   2909           00341         GOTO    DELAY4
+                      00342 
+0111   15A0           00343 CONECAL BSF     AL_HOR,3
+0112   28BA           00344         GOTO    REP1
+                      00345 
+0113   2194           00346 CAMBHOR CALL    DELAY
+0114   1A05           00347         BTFSC   PORTA,4
+0115   28AD           00348         GOTO    REP
+0116   21A5           00349         CALL    PARPAD          
+                      00350 
+0117   1E05           00351 SUELTA1 BTFSS   PORTA,4         ;ESPERA A QUE SE SUELTE EL BOTON
+0118   2917           00352         GOTO    SUELTA1                         
+                      00353 
+0119   2198           00354 PULSA1  CALL    DELAY2
+011A   1E05           00355         BTFSS   PORTA,4         ;ESPERA A Q SE PULSE
+011B   2922           00356         GOTO    INCREM
+011C   1D85           00357         BTFSS   PORTA,3
+011D   293A           00358         GOTO    INCREH
+011E   1D05           00359         BTFSS   PORTA,2
+011F   2991           00360         GOTO    SALHOR
+0120   21A5           00361         CALL    PARPAD
+0121   2919           00362         GOTO    PULSA1
+                      00363 
+0122   20BD           00364 INCREM  CALL    REBOT           
+0123   1A05           00365         BTFSC   PORTA,4
+0124   2919           00366         GOTO    PULSA1
+0125   1003           00367         BCF     STATUS,0
+0126   0A94           00368         INCF    MIN,F
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0127   0814           00369         MOVF    MIN,W
+0128   1003           00370         BCF     STATUS,0
+0129   3C59           00371         SUBLW   59H
+012A   1C03           00372         BTFSS   STATUS,0
+012B   2937           00373         GOTO    MIN02           ;HAY QUE IR A PONER MIN A CERO E IR A INCREM
+012C   1003           00374         BCF     STATUS,0
+012D   0814           00375         MOVF    MIN,W           ;VA A MIRAR SI MIN ES DE TIPO 2A, 3A...
+012E   390F           00376         ANDLW   0FH
+012F   3C09           00377         SUBLW   09H
+0130   1803           00378         BTFSC   STATUS,0
+0131   2938           00379         GOTO    INCREM1
+0132   3006           00380         MOVLW   06H
+0133   0794           00381         ADDWF   MIN,F
+0134   30F0           00382         MOVLW   0F0H
+0135   0594           00383         ANDWF   MIN,F
+0136   2938           00384         GOTO    INCREM1
+0137   0194           00385 MIN02   CLRF    MIN
+0138   2196           00386 INCREM1 CALL    DELAY1
+0139   2922           00387         GOTO    INCREM
+                      00388 
+013A   20BD           00389 INCREH  CALL    REBOT
+013B   1985           00390         BTFSC   PORTA,3
+013C   2919           00391         GOTO    PULSA1
+013D   0A95           00392         INCF    HOR,F
+013E   0815           00393         MOVF    HOR,W
+013F   1003           00394         BCF     STATUS,0
+0140   3C23           00395         SUBLW   23H
+0141   1C03           00396         BTFSS   STATUS,0
+0142   298E           00397         GOTO    HOR02           ;HAY QUE IR A PONER HOR A CERO
+0143   1003           00398         BCF     STATUS,0
+0144   0815           00399         MOVF    HOR,W           ;VA A MIRAR SI HOR ES DE TIPO 2A, 3A...
+0145   390F           00400         ANDLW   0FH
+0146   3C09           00401         SUBLW   09H
+0147   1803           00402         BTFSC   STATUS,0
+0148   298F           00403         GOTO    INCREH1
+0149   3006           00404         MOVLW   06H
+014A   0795           00405         ADDWF   HOR,F
+014B   30F0           00406         MOVLW   0F0H
+014C   0595           00407         ANDWF   HOR,F
+014D   298F           00408         GOTO    INCREH1
+                      00409 
+014E   2194           00410 CAMBAL  CALL    DELAY
+014F   1985           00411         BTFSC   PORTA,3
+0150   28AD           00412         GOTO    REP
+0151   21A5           00413         CALL    PARPAD
+0152   1420           00414         BSF     AL_HOR,0
+0153   1D85           00415 ACA     BTFSS   PORTA,3
+0154   2953           00416         GOTO    ACA
+                      00417 
+0155   2198           00418 PULSA2  CALL    DELAY2
+0156   1E05           00419         BTFSS   PORTA,4
+0157   295E           00420         GOTO    INMINAL
+0158   1D85           00421         BTFSS   PORTA,3
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0159   2974           00422         GOTO    CAHORAL
+015A   1D05           00423         BTFSS   PORTA,2
+015B   2987           00424         GOTO    SALAL
+015C   21A5           00425         CALL    PARPAD
+015D   2955           00426         GOTO    PULSA2
+                      00427 
+015E   12A0           00428 INMINAL BCF     AL_HOR,5
+015F   20BD           00429         CALL    REBOT
+0160   1A05           00430 INMINA2 BTFSC   PORTA,4
+0161   2955           00431         GOTO    PULSA2
+0162   0AA2           00432         INCF    MINAL,F
+0163   0822           00433         MOVF    MINAL,W
+0164   1003           00434         BCF     STATUS,0
+0165   3C59           00435         SUBLW   59H
+0166   1C03           00436         BTFSS   STATUS,0
+0167   2971           00437         GOTO    MINAL0          ;HAY QUE IR A PONER MINAL A CERO E IR A INCREM
+0168   1003           00438         BCF     STATUS,0
+0169   0822           00439         MOVF    MINAL,W         ;VA A MIRAR SI MINAL ES DE TIPO 2A, 3A...
+016A   390F           00440         ANDLW   0FH
+016B   3C09           00441         SUBLW   09H
+016C   1803           00442         BTFSC   STATUS,0
+016D   2972           00443         GOTO    INMINA3
+016E   3006           00444         MOVLW   06H
+016F   07A2           00445         ADDWF   MINAL,F
+0170   2972           00446         GOTO    INMINA3
+                      00447 
+0171   01A2           00448 MINAL0  CLRF    MINAL
+0172   2196           00449 INMINA3 CALL    DELAY1
+0173   2960           00450         GOTO    INMINA2
+                      00451 
+0174   12A0           00452 CAHORAL BCF     AL_HOR,5
+0175   20BD           00453         CALL    REBOT
+0176   1985           00454 CAHORA2 BTFSC   PORTA,3
+0177   2955           00455         GOTO    PULSA2
+0178   0AA1           00456         INCF    HORAL,F
+0179   0821           00457         MOVF    HORAL,W
+017A   1003           00458         BCF     STATUS,0
+017B   3C23           00459         SUBLW   23H
+017C   1C03           00460         BTFSS   STATUS,0
+017D   298B           00461         GOTO    HORAL0          ;HAY QUE IR A PONER HORAL A CERO
+017E   1003           00462         BCF     STATUS,0
+017F   0821           00463         MOVF    HORAL,W         ;VA A MIRAR SI HOR ES DE TIPO 2A, 3A...
+0180   390F           00464         ANDLW   0FH
+0181   3C09           00465         SUBLW   09H
+0182   1803           00466         BTFSC   STATUS,0
+0183   298C           00467         GOTO    CAHORA3
+0184   3006           00468         MOVLW   06H
+0185   07A1           00469         ADDWF   HORAL,F
+0186   298C           00470         GOTO    CAHORA3
+                      00471 
+                      00472 
+0187   1020           00473 SALAL   BCF     AL_HOR,0
+0188   1D05           00474 SUELTA3 BTFSS   PORTA,2
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0189   2988           00475         GOTO    SUELTA3
+018A   28AD           00476         GOTO    REP
+                      00477 
+018B   01A1           00478 HORAL0  CLRF    HORAL
+018C   2196           00479 CAHORA3 CALL    DELAY1
+018D   2976           00480         GOTO    CAHORA2
+                      00481 
+018E   0195           00482 HOR02   CLRF    HOR
+018F   2196           00483 INCREH1 CALL    DELAY1
+0190   293A           00484         GOTO    INCREH
+0191   1905           00485 SALHOR  BTFSC   PORTA,2 
+0192   28AD           00486         GOTO    REP
+0193   2991           00487         GOTO    SALHOR
+                      00488 
+0194   3006           00489 DELAY   MOVLW   06H
+0195   2999           00490         GOTO    DEL
+0196   3002           00491 DELAY1  MOVLW   02H             ;SE REGULA LA VELOCIDAD DE CAMBIAR LA HORA
+0197   2999           00492         GOTO    DEL
+0198   3001           00493 DELAY2  MOVLW   01H
+0199   008E           00494 DEL     MOVWF   CUENTA3
+019A   30FF           00495 JOD     MOVLW   0FFH
+019B   008C           00496         MOVWF   CUENTA1
+019C   30FF           00497 JODER   MOVLW   0FFH
+019D   008D           00498         MOVWF   CUENTA2
+019E   0B8D           00499 JODE    DECFSZ  CUENTA2,F
+019F   299E           00500         GOTO    JODE
+01A0   0B8C           00501         DECFSZ  CUENTA1,F
+01A1   299C           00502         GOTO    JODER
+01A2   0B8E           00503         DECFSZ  CUENTA3,F
+01A3   299A           00504         GOTO    JOD
+01A4   0008           00505         RETURN
+                      00506 
+                      00507 
+01A5   14A0           00508 PARPAD  BSF     AL_HOR,1        ;SUBRUTINA QUE HACE UN PARPADEO
+01A6   2198           00509         CALL    DELAY2
+01A7   10A0           00510         BCF     AL_HOR,1
+01A8   0008           00511         RETURN
+                      00512 
+01A9   21A5           00513 MUEAL   CALL    PARPAD          ;MUESTRA UNOS INSTANTES LA HORA DE LA ALARMA
+01AA   1420           00514         BSF     AL_HOR,0
+01AB   1D05           00515 MUEAL2  BTFSS   PORTA,2
+01AC   29AB           00516         GOTO    MUEAL2
+01AD   2194           00517         CALL    DELAY
+01AE   1020           00518         BCF     AL_HOR,0
+01AF   21A5           00519         CALL    PARPAD
+01B0   0008           00520         RETURN
+                      00521         
+                      00522 
+                      00523 
+                      00524         END
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACA                               00000153
+ACU                               00000016
+AJUAJU                            00000010
+AJUST                             00000019
+AJUSTV                            0000009F
+AL_HOR                            00000020
+BLABLA                            00000016
+BORRA                             0000002E
+CAHORA2                           00000176
+CAHORA3                           0000018C
+CAHORAL                           00000174
+CAMBAL                            0000014E
+CAMBHOR                           00000113
+CONECAL                           00000111
+CONT                              0000004A
+CUENTA1                           0000000C
+CUENTA2                           0000000D
+CUENTA3                           0000000E
+DEL                               00000199
+DELAY                             00000194
+DELAY1                            00000196
+DELAY2                            00000198
+DELAY3                            00000106
+DELAY4                            00000109
+DELAY5                            0000010E
+DISP1                             0000000F
+DISP2                             00000010
+ESCDIS1                           00000023
+ESCDIS2                           00000030
+ESCDIS3                           00000039
+ESCDIS4                           00000042
+F                                 00000001
+FSR                               00000004
+HOR                               00000015
+HOR0                              0000008D
+HOR02                             0000018E
+HORAL                             00000021
+HORAL0                            0000018B
+HORAL2                            00000023
+INCMIN                            00000056
+INCREH                            0000013A
+INCREH1                           0000018F
+INCREM                            00000122
+INCREM1                           00000138
+INCSEG                            00000052
+INDF                              00000000
+INICIO                            0000008F
+INMINA2                           00000160
+INMINA3                           00000172
+INMINAL                           0000015E
+INTCON                            0000000B
+JOD                               0000019A
+JODE                              0000019E
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+JODER                             0000019C
+MIN                               00000014
+MIN0                              0000007B
+MIN02                             00000137
+MINAL                             00000022
+MINAL0                            00000171
+MINAL2                            00000024
+MIRAL                             0000006D
+MIRHOR                            00000074
+MUEAL                             000001A9
+MUEAL2                            000001AB
+PARPAD                            000001A5
+PORTA                             00000005
+PORTB                             00000006
+PULSA1                            00000119
+PULSA2                            00000155
+REBA                              000000F1
+REBA2                             00000104
+REBO                              000000BF
+REBOT                             000000BD
+REFRES                            00000017
+REFRESV                           00000011
+REP                               000000AD
+REP1                              000000BA
+SAL                               00000066
+SAL1                              00000068
+SALAL                             00000187
+SALHOR                            00000191
+SALSON                            000000D2
+SALSON1                           000000E9
+SALSON2                           000000E8
+SEG                               00000013
+SEGV                              0000003C
+SON1                              0000000F
+SONAR                             000000C2
+SONAR1                            000000C4
+STAT                              00000018
+STATUS                            00000003
+SUELTA1                           00000117
+SUELTA3                           00000188
+SUMA6                             000000EE
+TMR0                              00000001
+TRISA                             00000005
+TRISB                             00000006
+VAR1                              00000011
+VAR1V                             000000C8
+VAR2                              00000012
+VAR2V                             00000014
+W                                 00000000
+__16F84A                          00000001
+__DEBUG                           1
+MPASM  5.33                      RELOJPIC.ASM   1-4-1980  0:31:17         PAGE 13
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX X---------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   430
+Program Memory Words Free:   594
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     3 reported,     0 suppressed
+
+

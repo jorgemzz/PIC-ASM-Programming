@@ -1,0 +1,98 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Fri Jan 04 00:52:26 1980
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x0001ce
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x0000eb      
+            232 out of 1093 program addresses used, program memory utilization is 21%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+             BORRA_Y_HOME   0x000045    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                  DELAY10   0x0000cc    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                DELAY10_1   0x0000cf    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  DELAY1S   0x0000d4    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+               DELAY_LOOP   0x0000e5    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  DELAY_V   0x0000e2    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+       DISPLAY_ON_CUR_OFF   0x000048    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                 HEX_7SEG   0x00009b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                HEX_ASCII   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                   INICIO   0x0000ad    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  KEY_HEX   0x00008f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                KEY_HEX_1   0x000098    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                KEY_HEX_2   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                  KEY_OFF   0x0000d8    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+               KEY_OFF_NO   0x0000da    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                 KEY_SCAN   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_1   0x00005d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_2   0x00006b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_3   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_4   0x00006f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                KEY_TABLA   0x00007d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                 LCD_BUSY   0x00001d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                 LCD_DATO   0x000030    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                LCD_DELAY   0x00004b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+              LCD_DELAY_1   0x00004f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                    LCD_E   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                  LCD_INI   0x00003b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                  LCD_REG   0x000036    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                   L_BUSY   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                   NO_HAY   0x0000b6    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+              TECLADO.ASM   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                   UP_LCD   0x000016    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                   VOLVER   0x00007b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                HEX_ASCII   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                   UP_LCD   0x000016    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                 LCD_BUSY   0x00001d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                   L_BUSY   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                    LCD_E   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                 LCD_DATO   0x000030    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                  LCD_REG   0x000036    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                  LCD_INI   0x00003b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+             BORRA_Y_HOME   0x000045    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+       DISPLAY_ON_CUR_OFF   0x000048    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+                LCD_DELAY   0x00004b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+              LCD_DELAY_1   0x00004f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\LCD_CXX.ASM
+              TECLADO.ASM   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                 KEY_SCAN   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_1   0x00005d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_2   0x00006b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_3   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+               KEY_SCAN_4   0x00006f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                   VOLVER   0x00007b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                KEY_TABLA   0x00007d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                  KEY_HEX   0x00008f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                KEY_HEX_2   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                KEY_HEX_1   0x000098    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                 HEX_7SEG   0x00009b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\TECLADO.ASM
+                   INICIO   0x0000ad    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                   NO_HAY   0x0000b6    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  DELAY10   0x0000cc    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                DELAY10_1   0x0000cf    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  DELAY1S   0x0000d4    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  KEY_OFF   0x0000d8    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+               KEY_OFF_NO   0x0000da    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+                  DELAY_V   0x0000e2    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+               DELAY_LOOP   0x0000e5    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\WR_TECLADO_LCD\WR_TECLADO_LCD.ASM
+
+

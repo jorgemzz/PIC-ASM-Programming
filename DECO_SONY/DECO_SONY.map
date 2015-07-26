@@ -1,0 +1,62 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Fri Dec 18 00:34:36 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x0000e2
+ .config_2007_DECO_SONY.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000070      
+                            0x002007    0x002007      
+            114 out of 1093 program addresses used, program memory utilization is 10%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Delay   0x000001    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                  GetaBit   0x000035    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                 GetaByte   0x000009    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                 HdrCheck   0x000050    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                       b1   0x000036    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                       b2   0x000042    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                       d1   0x000002    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb1   0x00000d    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb2   0x00001e    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb3   0x000026    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb4   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      hc1   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      hc2   0x000062    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                     init   0x000065    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                     main   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Delay   0x000001    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                       d1   0x000002    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                 GetaByte   0x000009    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb1   0x00000d    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb2   0x00001e    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb3   0x000026    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      gb4   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                  GetaBit   0x000035    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                       b1   0x000036    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                       b2   0x000042    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                 HdrCheck   0x000050    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      hc1   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                      hc2   0x000062    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                     init   0x000065    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+                     main   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\DECO_SONY\DECO_SONY.ASM
+
+

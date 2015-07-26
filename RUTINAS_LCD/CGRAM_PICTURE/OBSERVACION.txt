@@ -1,0 +1,26 @@
+PARA PODER USAR EL CODIGO GERADO 
+POR UN LCD DE 5X8 ES NECERARIO MODIFICAR UNO DE LOS OCTETOS
+GENERADOS
+
+EJEMPLO
+caracter0_datos:    
+	addwf PCL, F
+	dt b'10101',b'01010',b'10101',b'01010',b'10101',b'01010',b'10101',b'0'
+
+EL OCTAVO OCTETO ES EL CORRESPONDIENTE A LA OCTAVA FILA
+ESTE ES EL QUE DEBEMOS MODIFICAR PARA LOGRAR EL CARACTER DESEADO EN 5X8
+
+MODIFICANDO 	b'0'
+POR	b'01010
+SE LOGRA EL SIGUIENTE PATRON
+
+								
+		;  |   x x x|
+		;  |    x x |
+		;  |   x x x|
+		;  |    x x |
+		;  |   x x x|
+		;  |    x x |
+		;  |   x x x|
+		;  |    x x |
+	

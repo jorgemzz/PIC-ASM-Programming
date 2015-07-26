@@ -1,0 +1,1531 @@
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;********************************* Aritmetica_11.asm ************************************
+                      00002 ;
+                      00003 ;       ===================================================================
+                      00004 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00005 ;         E. Palacios, F. Remiro y L. López.            www.pic16f84a.com
+                      00006 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00007 ;       ===================================================================
+                      00008 ;
+                      00009 ; Programa donde se comprueba la forma de convertir un número binario de 16 bits a un
+                      00010 ; número decimal de 5 digitos. Un ejemplo se visualizará en el LCD.
+                      00011 ;
+                      00012 ; Así por ejemplo:
+                      00013 ; - En la primera línea visualiza: "Hex. = 25E9".
+                      00014 ; - En la segunda línea visualiza: "Dec. = 09705"
+                      00015 ;
+                      00016 ; ZONA DE DATOS *************************************************************************
+                      00017 
+2007   3FF1           00018         __CONFIG   _CP_OFF &  _WDT_OFF & _PWRTE_ON & _XT_OSC
+                      00019         LIST    P=16F84A
+                      00020         INCLUDE <P16F84A.INC>
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00021 
+                      00022         CBLOCK  0x0C
+                      00023         ENDC
+                      00024 
+  000025E9            00025 Binario         EQU     0x25E9          ; El número a convertir.
+                      00026 
+                      00027 ; ZONA DE CÓDIGOS ***********************************************************************
+                      00028 
+0000                  00029         ORG     0
+0000                  00030 Inicio
+0000   2110           00031         call    LCD_Inicializa
+0001   3021           00032         movlw   MensajeHex
+0002   2194           00033         call    LCD_Mensaje
+0003   3025           00034         movlw   HIGH Binario            ; Carga todos los registros y visualiza los digitos.
+0004   009C           00035         movwf   Arit_Binario_H
+0005   2185           00036         call    LCD_ByteCompleto
+0006   30E9           00037         movlw   LOW Binario
+0007   009D           00038         movwf   Arit_Binario_L
+0008   2185           00039         call    LCD_ByteCompleto
+0009   20A3           00040         call    Arit_Bin_BCD_16Bit      ; Pasa de binario natural en 16 bits a BCD de 5 digitos.
+000A   2140           00041         call    LCD_Linea2              ; Pasa a la segunda línea del LCD.
+000B   3019           00042         movlw   MensajeBCD              ; Visualiza el resultado en decimal.
+000C   2194           00043         call    LCD_Mensaje
+000D   081A           00044         movf    Arit_DecenasMillar,W
+000E   2189           00045         call    LCD_Nibble
+000F   0819           00046         movf    Arit_Millares,W
+0010   2189           00047         call    LCD_Nibble
+0011   0818           00048         movf    Arit_Centenas,W
+0012   2189           00049         call    LCD_Nibble
+0013   0817           00050         movf    Arit_Decenas,W
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0014   2189           00051         call    LCD_Nibble
+0015   0816           00052         movf    Arit_Unidades,W
+0016   2189           00053         call    LCD_Nibble
+0017   0063           00054         sleep                           ; Pasa a modo de bajo consumo.
+                      00055 
+0018                  00056 Mensajes
+0018   0782           00057         addwf   PCL,F
+0019                  00058 MensajeBCD
+0019   3444 3465 3463 00059         DT "Dec. = ", 0x00
+       342E 3420 343D 
+       3420 3400 
+0021                  00060 MensajeHex
+0021   3448 3465 3478 00061         DT "Hex. = ", 0x00
+       342E 3420 343D 
+       3420 3400 
+                      00062 
+                      00063         INCLUDE <ARITMETICA.INC>        ; Subrutina Arit_Bin_BCD_16Bit.
+                      00001 ;******************************** Librería "Aritmetica.INC" *****************************
+                      00002 ;
+                      00003 ;       ===================================================================
+                      00004 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00005 ;         E. Palacios, F. Remiro y L.J. López.          www.pic16f84a.com
+                      00006 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00007 ;       ===================================================================
+                      00008 ;
+                      00009 ; Librería de subrutinas con diversas operaciones aritméticas:
+                      00010 ;
+                      00011 ; - Arit_VisualizaBinario: Visualiza en el LCD el dato en binario que le entra por W.
+                      00012 ; - Arit_Negar: Niega el contenido de un número binario de 16 bits.
+                      00013 ; - Arit_Suma_16Bit: Realiza la suma con dos registros de 16 bits.
+                      00014 ; - Arit_Resta_16Bit: Realiza la resta con dos registros de 16 bits.
+                      00015 ; - Arit_Multiplica_8Bit: Multiplica dos registros de 8 bits.
+                      00016 ; - Arit_Multiplica_16Bit: Multiplica dos registros de 16 bits.
+                      00017 ; - Arit_Divide_8Bit: Divide dos registros de 8 bits.
+                      00018 ; - Arit_Divide_16Bit: Divide un registro de 16 bits entre otro de 7 bits.
+                      00019 ; - Arit_BCD_Bin_16Bit: Convierte un número BCD de 5 dígitos a binario natural de 16 bits.
+                      00020 ; - Arit_Bin_BCD_16Bit: Convierte un número binario de 16 bits a BCD de 5 dígitos.
+                      00021 ; - Arit_VisualizaBCD: Visualiza en el LCD un número decimal de varios dígitos.
+                      00022 
+                      00023         CBLOCK
+  0000000C            00024         Arit_Operando_1L        ; Byte bajo del operando 1.
+  0000000D            00025         Arit_Operando_1H        ; Byte alto del operando 1.
+  0000000E            00026         Arit_Operando_2L        ; Byte bajo del operando 2.
+  0000000F            00027         Arit_Operando_2H        ; Byte alto del operando 2.
+  00000010            00028         Arit_Resultado_1L       ; Byte bajo del byte 1 del resultado.
+  00000011            00029         Arit_Resultado_1H       ; Byte alto del byte 1 del resultado.
+  00000012            00030         Arit_Resultado_2L       ; Byte bajo del byte 2 del resultado.
+  00000013            00031         Arit_Resultado_2H       ; Byte alto del byte 2 del resultado.
+  00000014            00032         Arit_ContadorBits       ; Para realizar diferentes contadores con bits.
+  00000015            00033         Arit_Auxiliar           ; Registro temporal para realizar operaciones intermedias.
+                      00034         ENDC
+                      00035 
+                      00036 ; Subrutina "Arit_VisualizaBinario" -------------------------------------------------------
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00037 ;
+                      00038 ; Visualiza en binario en el visualizador LCD el dato que le entra por el registro W.
+                      00039 ;
+0029                  00040 Arit_VisualizaBinario
+0029   0095           00041         movwf   Arit_Auxiliar           ; Pasa el dato a visualizar a un registro auxiliar.
+002A   3008           00042         movlw   .8
+002B   0094           00043         movwf   Arit_ContadorBits       ; Se van a visualizar ocho bits en el LCD
+002C                  00044 Arit_VisualizaBit
+002C   0D95           00045         rlf     Arit_Auxiliar,F         ; El bit a visualizar pasa al Carry .
+002D   3031           00046         movlw   '1'                     ; En principio supone que es un "1".
+002E   1C03           00047         btfss   STATUS,C                ; Comprueba su valor.
+002F   3030           00048         movlw   '0'                     ; Ha sido cero.
+0030   2151           00049         call    LCD_Caracter            ; Lo visualiza.
+0031   0B94           00050         decfsz  Arit_ContadorBits,F     ; ¿Ha terminado de visualizar los 8 bits?
+0032   282C           00051         goto    Arit_VisualizaBit       ; No, sigue visualizando otro bit.
+0033   0008           00052         return
+                      00053 
+                      00054 ; Subrutina "Arit_Negar" ----------------------------------------------------------------
+                      00055 ;
+                      00056 ; Niega el contenido de un número de 16 bits almacenado en dos registros
+                      00057 ; (Arit_Operando_1H, Arit_Operando_1L).
+                      00058 ;
+                      00059 ; Lo hace en complemento a 2 por el método clásico, es decir, primero invierte todos los bits
+                      00060 ; y después le suma "1".
+                      00061 ;
+                      00062 ; Se utiliza la instrucción "addwf __", en lugar de "incf ___", porque ésta no posiciona
+                      00063 ; el flag de Carry.
+                      00064 ;
+                      00065 ; En el registro de trabajo W también aparece el resultado de la negación del byte bajo.
+                      00066 ;
+                      00067 ; Entrada:      En los registros (Arit_Operando_1H, Arit_Operando_1L) el dato de 
+                      00068 ;               16 bits a negar.
+                      00069 ; Salida:       En los mismo registros (Arit_Operando_1H, Arit_Operando_1L) el dato de 
+                      00070 ;               16 bits negado. En (W) el byte más bajo negado.
+                      00071 
+0034                  00072 Arit_Negar
+0034   098D           00073         comf    Arit_Operando_1H,F      ; Invierte los registros que contienen los operandos.
+0035   098C           00074         comf    Arit_Operando_1L,F
+0036   3001           00075         movlw   .1                      ; Le suma 1.
+0037   078C           00076         addwf   Arit_Operando_1L,F              
+0038   1803           00077         btfsc   STATUS,C                ; Si hay acarreo tiene que llevarlo al byte superior.
+0039   0A8D           00078         incf    Arit_Operando_1H,F      
+003A   080C           00079         movf    Arit_Operando_1L,W      ; En (W) el resultado del byte bajo.
+003B   0008           00080         return
+                      00081         
+                      00082 ; Subrutinas "Arit_Suma_16Bit" y "Arit_Resta_16Bit" ---------------------------------------
+                      00083 ;
+                      00084 ; Realiza la suma/resta en 16 bits (Operando 2) +/- (Operando 1) y el resultado lo guarda en
+                      00085 ; (Operando 2). El resultado lo guarda en 16 bits. Es decir:
+                      00086 ; (Arit_Operando_2H, Arit_Operando_2L) +/- (Arit_Operando_1H, Arit_Operando_1L) --> 
+                      00087 ; (Arit_Operando_2H, Arit_Operando_2L).
+                      00088 ;
+003C                  00089 Arit_Resta_16Bit
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+003C   2034           00090         call    Arit_Negar              ; Para la resta, simplemente niega el numero de 16 bits
+003D                  00091 Arit_Suma_16Bit                         ; (Arit_Operando_1H, Arit_Operando_1L) y suma.
+003D   080C           00092         movf    Arit_Operando_1L,W      ; Suma el byte más bajo.
+003E   078E           00093         addwf   Arit_Operando_2L,F      ; y lo guarda en Arit_Operando_2L.
+003F   1803           00094         btfsc   STATUS,C                ; Si hay acarreo incrementa en una unidad uno de
+0040   0A8D           00095         incf    Arit_Operando_1H,F      ; de los bytes altos.
+0041   080D           00096         movf    Arit_Operando_1H,W
+0042   078F           00097         addwf   Arit_Operando_2H,F      ; Suma el byte alto.
+0043   0008           00098         return
+                      00099 
+                      00100 ; Subrutinas "Arit_Multiplica_8Bit" ------------------------------------------------------
+                      00101 ;
+                      00102 ; Realiza la multiplicación del contenido de dos registros de 8 bits. El resultado se almacena
+                      00103 ; en 16 bits. La operación se realiza sin signo.
+                      00104 ;
+                      00105 ; El algoritmo utilizado se basa en el método empleado para efectuar una multiplicación
+                      00106 ; manualmente con lápiz y papel. En este método, la multiplicación se lleva a cabo tomando
+                      00107 ; un bit del multiplicador, empezando por el menos significativo: 
+                      00108 ; - Si es "1" se efectúa la suma del multiplicando y el producto parcial anterior. El producto
+                      00109 ;   parcial resultante se desplaza un bit a la derecha, introduciendo un cero por la izquierda.
+                      00110 ; - Si es "0" la suma no es necesaria y el producto parcial resultante anterior se desplaza un
+                      00111 ;   bit a la derecha, introduciendo además un cero por la izquierda.
+                      00112 ;
+                      00113 ; Este proceso se repite tantas veces como bits tiene el multiplicador.
+                      00114 ;
+                      00115 ; Previo a la llamada de esta subrutinas los números a multiplicar se almacenan en los registros
+                      00116 ; Arit_Multiplicando y Arit_Multiplicador. El resultado se almacena en 16 bits en los registros 
+                      00117 ; (Arit_Producto_H, Arit_Producto_L). Es decir:
+                      00118 ; (Arit_Multiplicando) * (Arit_Multiplicador) --> (Arit_Producto_H, Arit_Producto_L)
+                      00119 ;
+                      00120 ; Se utilizan posiciones de memoria definidas anteriormente, a las que se les cambia el nombre 
+                      00121 ; por motivos puramente pedagógicos:
+                      00122 
+  0000000C            00123 Arit_Multiplicando      EQU     Arit_Operando_1L
+  0000000E            00124 Arit_Multiplicador      EQU     Arit_Operando_2L
+  00000011            00125 Arit_Producto_H         EQU     Arit_Resultado_1H
+  00000010            00126 Arit_Producto_L         EQU     Arit_Resultado_1L
+                      00127 
+0044                  00128 Arit_Multiplica_8Bit
+0044   0191           00129         clrf    Arit_Producto_H         ; En principio el resultado es cero.
+0045   0190           00130         clrf    Arit_Producto_L
+0046   3008           00131         movlw   .8                      ; Carga el contador de 8 bits.
+0047   0094           00132         movwf   Arit_ContadorBits
+0048   080C           00133         movf    Arit_Multiplicando,W    ; Carga el multiplicando.
+0049                  00134 Arit_MultiplicaBit8
+0049   0C8E           00135         rrf     Arit_Multiplicador,F    ; Va a comprobar el siguiente bit del multiplicador.
+004A   1803           00136         btfsc   STATUS,C                ; Si el bit del multiplicador es "1"
+004B   0791           00137         addwf   Arit_Producto_H,F       ; suma el resultado parcial anterior más el multiplicando.
+004C   0C91           00138         rrf     Arit_Producto_H,F       ; Desplaza el resultado parcial un lugar hacia la 
+004D   0C90           00139         rrf     Arit_Producto_L,F       ; derecha, introduciendo un "0" por la izquierda.
+004E   0B94           00140         decfsz  Arit_ContadorBits,F     ; ¿Ha multiplicado los 8 bits?
+004F   2849           00141         goto    Arit_MultiplicaBit8     ; Repite la operación.
+0050   0008           00142         return
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00143         
+                      00144 ; Subrutinas "Arit_Multiplica_16Bit" ------------------------------------------------------
+                      00145 ;
+                      00146 ; Realiza la multiplicación del contenido de dos registros de 16 bits. El resultado se almacena
+                      00147 ; en 32 bits. La operación se realizan sin signo.
+                      00148 ;
+                      00149 ; El algoritmo utilizado es similar al de la multiplicación de 8 bits.
+                      00150 ;
+                      00151 ; Previo a la llamada de esta subrutinas los números a multiplicar se almacenan en los registros
+                      00152 ; (Arit_Multiplicando_H, Arit_Multiplicando_L) y (Arit_Multiplicador_H, Arit_Multiplicador_L).
+                      00153 ; El resultado en 32 bits se proporciona en los registros 
+                      00154 ; (Arit_Producto_2H, Arit_Producto_2L, Arit_Producto_1H, Arit_Producto_1L).
+                      00155 ;
+                      00156 ; Se utilizan posiciones de memoria definidas anteriormente, a las que se les cambia el nombre 
+                      00157 ; por motivos puramente pedagógicos:
+                      00158 
+  0000000D            00159 Arit_Multiplicando_H    EQU     Arit_Operando_1H
+  0000000C            00160 Arit_Multiplicando_L    EQU     Arit_Operando_1L
+  0000000F            00161 Arit_Multiplicador_H    EQU     Arit_Operando_2H
+  0000000E            00162 Arit_Multiplicador_L    EQU     Arit_Operando_2L
+  00000011            00163 Arit_Producto_1H        EQU     Arit_Resultado_1H
+  00000010            00164 Arit_Producto_1L        EQU     Arit_Resultado_1L
+  00000013            00165 Arit_Producto_2H        EQU     Arit_Resultado_2H
+  00000012            00166 Arit_Producto_2L        EQU     Arit_Resultado_2L
+                      00167 
+0051                  00168 Arit_Multiplica_16Bit
+0051   0191           00169         clrf    Arit_Producto_1H        ; En principio el resultado es cero.
+0052   0190           00170         clrf    Arit_Producto_1L
+0053   0193           00171         clrf    Arit_Producto_2H
+0054   0192           00172         clrf    Arit_Producto_2L
+0055   3010           00173         movlw   .16                     ; Carga el contador de 16 bits.
+0056   0094           00174         movwf   Arit_ContadorBits
+0057                  00175 Arit_Multiplica16Bit
+0057   0C8F           00176         rrf     Arit_Multiplicador_H,F  ; Va a comprobar el siguiente bit del multiplicador.
+0058   0C8E           00177         rrf     Arit_Multiplicador_L,F
+0059   1C03           00178         btfss   STATUS,C
+005A   2861           00179         goto    Arit_Multiplicador_BitCero
+005B   080C           00180         movf    Arit_Multiplicando_L,W  ; Suma en 16 bits el resultado parcial y
+005C   0792           00181         addwf   Arit_Producto_2L,F      ; y el multiplicando.
+005D   1803           00182         btfsc   STATUS,C
+005E   0A93           00183         incf    Arit_Producto_2H,F
+005F   080D           00184         movf    Arit_Multiplicando_H,W
+0060   0793           00185         addwf   Arit_Producto_2H,F
+0061                  00186 Arit_Multiplicador_BitCero
+0061   0C93           00187         rrf     Arit_Producto_2H,F      ; Desplaza el resultado parcial un lugar hacia la 
+0062   0C92           00188         rrf     Arit_Producto_2L,F      ; derecha, introduciendo un "0" por la izquierda.
+0063   0C91           00189         rrf     Arit_Producto_1H,F
+0064   0C90           00190         rrf     Arit_Producto_1L,F
+0065   0B94           00191         decfsz  Arit_ContadorBits,F     ; ¿Ha multiplicado los 16 bits?
+0066   2857           00192         goto    Arit_Multiplica16Bit    ; Repite la operación.
+0067   0008           00193         return
+                      00194 
+                      00195 ; Subrutinas "Arit_Divide_8Bit" ---------------------------------------------------------
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00196 ;
+                      00197 ; Realiza la división del contenido del dividendo de 8 bits entre un divisor de 8 bits.
+                      00198 ;
+                      00199 ; El algoritmo utilizado se basa en el método empleado para resolver una división de 
+                      00200 ; números binarios con lápiz y papel. En este método se van tomando los bits del dividendo
+                      00201 ; uno a uno, comenzando por el más significativo: por cada bit del dividendo se genera un
+                      00202 ; bit en el cociente. Los bits separados constituyen el dividendo parcial. Cada vez que se
+                      00203 ; toma un nuevo bit del dividendo, el valor conjunto de los bits en el dividendo parcial se 
+                      00204 ; compara con el divisor. El el primero resulta ser mayor o igual al segundo, entonces al 
+                      00205 ; dividendo parcial se le resta el valor del divisor, el bit respectivo del cociente se pone
+                      00206 ; a "1" y el resultado de la resta se convierte en el nuevo dividendo parcial, una vez que
+                      00207 ; se le agrega el siguiente bit del dividendo. Si la comparación entre dividendo y divisor
+                      00208 ; indica que éste último es mayor, entonces el bit del cociente se pone a "0" y al dividendo
+                      00209 ; parcial anterior se le añade el siguiente bit del dividendo para formar el nuevo dividendo
+                      00210 ; parcial. El proceso termina cuando se agotan los bits del dividendo; el contenido del 
+                      00211 ; dividendo parcial en ese momento constituye precisamente el resto de la operación de
+                      00212 ; división.
+                      00213 ;
+                      00214 ; Entradas:     - (Arit_Dividendo) que hacen de dividendo de 8 bits.
+                      00215 ;               - (Arit_Divisor) que es el divisor de 8 bits.
+                      00216 ; Salidas:      - (Arit_Cociente). 
+                      00217 ;               - (Resto).
+                      00218 ;               - (W), en el registro de trabajo también el resto.
+                      00219 ;
+                      00220 ; La división se hará sin signo y el programa que le llame deberá detectar que el divisor no
+                      00221 ; es cero.
+                      00222 ;
+                      00223 ; Se utilizan posiciones de memoria definidas anteriormente, a las que se les cambia el nombre 
+                      00224 ; por motivos puramente pedagógicos:
+                      00225 
+  0000000C            00226 Arit_Dividendo  EQU     Arit_Operando_1L
+  0000000E            00227 Arit_Divisor    EQU     Arit_Operando_2L
+  00000010            00228 Arit_Cociente   EQU     Arit_Resultado_1L
+  00000012            00229 Arit_Resto      EQU     Arit_Resultado_2L
+                      00230 
+0068                  00231 Arit_Divide_8Bit
+0068   0190           00232         clrf    Arit_Cociente           ; En principio el resultado es cero.
+0069   0192           00233         clrf    Arit_Resto
+006A   3008           00234         movlw   .8                      ; Carga el contador.
+006B   0094           00235         movwf   Arit_ContadorBits
+006C                  00236 Arit_DivideBit8
+006C   0D8C           00237         rlf     Arit_Dividendo,F
+006D   0D92           00238         rlf     Arit_Resto,F            ; (Arit_Resto) contiene el dividendo parcial.
+006E   080E           00239         movf    Arit_Divisor,W
+006F   0212           00240         subwf   Arit_Resto,W            ; Compara dividendo parcial y divisor.
+0070   1803           00241         btfsc   STATUS,C                ; Si (dividendo parcial)>(divisor)
+0071   0092           00242         movwf   Arit_Resto              ; (dividendo parcial) - (divisor) --> (dividendo parcial)
+0072   0D90           00243         rlf     Arit_Cociente,F         ; Desplaza el cociente introduciendo el bit apropiado.
+0073   0B94           00244         decfsz  Arit_ContadorBits,F
+0074   286C           00245         goto    Arit_DivideBit8
+0075   0812           00246         movf    Arit_Resto,W            ; El resto también en (W)
+0076   0008           00247         return
+                      00248         
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00249 ; Subrutinas "Arit_Divide_16Bit" --------------------------------------------------------
+                      00250 ;
+                      00251 ; Realiza la división del contenido del dividendo de 16 bits entre un divisor de 7 bits.
+                      00252 ; El máximo valor del divisor será 127.
+                      00253 ;
+                      00254 ; Se utiliza el mismo algoritmo explicado para la subrutina Arit_Divide_8bit.
+                      00255 ;
+                      00256 ; Entradas:     - (Arit_Dividendo_H) y (Arit_Dividendo_L) que hacen de dividendo de 16 bits.
+                      00257 ;               - (Arit_Divisor) que es el divisor de 7 bits, (máximo b'01111111'=0x7F=d'127').
+                      00258 ; Salidas:      - (Arit_Cociente_H) y (Arit_Cociente_L) que hacen de cociente de 16 bits.
+                      00259 ;               - (Resto) de 8 bits.
+                      00260 ;               - (W), en el registro de trabajo también el resto.
+                      00261 ;
+                      00262 ; La división se hará sin signo y el programa que le llame deberá detectar que el divisor no
+                      00263 ; es cero. El divisor será de 7 bits, es decir su valor máximo será:
+                      00264 ; b'01111111'=0x7F=d'127'.
+                      00265 ;
+                      00266 ; Se utilizan posiciones de memoria definidas anteriormente, a las que se les cambia el nombre 
+                      00267 ; por motivos puramente pedagógicos:
+                      00268 ;
+  0000000D            00269 Arit_Dividendo_H        EQU     Arit_Operando_1H
+  0000000C            00270 Arit_Dividendo_L        EQU     Arit_Operando_1L
+  00000011            00271 Arit_Cociente_H         EQU     Arit_Resultado_1H
+  00000010            00272 Arit_Cociente_L         EQU     Arit_Resultado_1L
+                      00273 
+0077                  00274 Arit_Divide_16Bit
+0077   0191           00275         clrf    Arit_Cociente_H         ; En principio el resultado es cero.
+0078   0190           00276         clrf    Arit_Cociente_L
+0079   0192           00277         clrf    Arit_Resto
+007A   3010           00278         movlw   .16                     ; Carga el contador.
+007B   0094           00279         movwf   Arit_ContadorBits
+007C                  00280 Arit_DivideBit16
+007C   0D8C           00281         rlf     Arit_Dividendo_L,F
+007D   0D8D           00282         rlf     Arit_Dividendo_H,F
+007E   0D92           00283         rlf     Arit_Resto,F            ; (Arit_Resto) contiene el dividendo parcial.
+007F   080E           00284         movf    Arit_Divisor,W
+0080   0212           00285         subwf   Arit_Resto,W            ; Compara dividendo parcial y divisor.
+0081   1803           00286         btfsc   STATUS,C                ; Si (dividendo parcial)>(divisor)
+0082   0092           00287         movwf   Arit_Resto              ; (dividendo parcial) - (divisor) --> (dividendo parcial)
+0083   0D90           00288         rlf     Arit_Cociente_L,F       ; Desplaza el cociente introduciendo el bit apropiado
+0084   0D91           00289         rlf     Arit_Cociente_H,F       ; "0" ó "1" según corresponda.
+0085   0B94           00290         decfsz  Arit_ContadorBits,F
+0086   287C           00291         goto    Arit_DivideBit16
+0087   0812           00292         movf    Arit_Resto,W            ; El resto también en (W).
+0088   0008           00293         return
+                      00294         
+                      00295 ; Subrutinas "Arit_BCD_Bin_16Bit" ------------------------------------------------------
+                      00296 ;
+                      00297 ; Realiza la conversión de un número decimal de 5 digitos a binario natural de 16 bits.
+                      00298 ; El máximo número a convertir será pues el b'1111111111111111'=0xFFFF=d'65535'
+                      00299 ;
+                      00300 ; El metodo usado para la conversión de un número BCD a binario natural, se basa en que
+                      00301 ; cada dígito de un número codificado en BCD tiene un peso igual a la potencia de diez
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00302 ; asociada a su posición. Para convertir el número BCD a su equivalente binario sólo es
+                      00303 ; necesario multiplicar cada dígito BCD por su peso correspondiente y luego sumar todos
+                      00304 ; los productos parciales obtenidos, el resultado es el número binario natural buscado.
+                      00305 ; Es decir el valor de un número BCD de 5 dígitos se puede expresar como:
+                      00306 ;
+                      00307 ; 10^4 DecenasMillar + 10^3 Millares + 10^2 Centenas + 10 Decenas + Unidades =
+                      00308 ; 10*10*10*10 DecenasMillar + 10*10*10 Millares + 10*10 Centenas + 10 Decenas + Unidades
+                      00309 ;
+                      00310 ; Finalmente la subrutina aplica el siguiente algoritmo:
+                      00311 ; 10(10(10(10 DecenasMillar + Millares) + Centenas) + Decenas) + Unidades = Resultado
+                      00312 ;
+                      00313 ; El resultado se obtiene en 16 bits, es decir en 2 registros de 8 bits, que son:
+                      00314 ; (Arit_Resultado_1H, Arit_Resultado_1L). Esta subrutina no tiene sistema alguno para 
+                      00315 ; detectar desbordamiento que debe preveerse en el programa que la llame.
+                      00316 
+                      00317 ; Previo a la llamada de esta subrutinas, cada digito del número decimal a convertir se
+                      00318 ; almacenan en registros independientes, que son:
+                      00319 
+                      00320         CBLOCK
+  00000016            00321         Arit_Unidades
+  00000017            00322         Arit_Decenas
+  00000018            00323         Arit_Centenas
+  00000019            00324         Arit_Millares
+  0000001A            00325         Arit_DecenasMillar
+                      00326         ENDC
+                      00327 
+0089                  00328 Arit_BCD_Bin_16Bit
+0089   0191           00329         clrf    Arit_Resultado_1H       ; Realiza la carga inicial de los registros.
+008A   081A           00330         movf    Arit_DecenasMillar,W
+008B   0090           00331         movwf   Arit_Resultado_1L       ; (Resultado Parcial) = (DecenasMillar)
+                      00332 ;
+008C   0819           00333         movf    Arit_Millares,W         
+008D   2095           00334         call    Arit_BCD_Operacion      ; (10*DecenasMillar+Millares)
+008E   0818           00335         movf    Arit_Centenas,W
+008F   2095           00336         call    Arit_BCD_Operacion      ; (10(10*DecenasMillar+Millares)+Centenas)
+0090   0817           00337         movf    Arit_Decenas,W
+0091   2095           00338         call    Arit_BCD_Operacion      ; (10(10(10*DecenasMillar+Millares)+Centenas)+Decenas)
+0092   0816           00339         movf    Arit_Unidades,W
+0093   2095           00340         call    Arit_BCD_Operacion      ; Resultado final.
+0094   0008           00341         return
+                      00342         
+0095                  00343 Arit_BCD_Operacion                      ; Realiza la operacion: (10 * Resultado Anterior + W)
+0095   0095           00344         movwf   Arit_Auxiliar           ; Guarda la variable de entrada.
+0096   0810           00345         movf    Arit_Resultado_1L,W
+0097   008C           00346         movwf   Arit_Multiplicando_L    ; (Resultado Anterior) --> (Multiplicando)
+0098   0811           00347         movf    Arit_Resultado_1H,W
+0099   008D           00348         movwf   Arit_Multiplicando_H
+009A   018F           00349         clrf    Arit_Multiplicador_H    ; Carga el multiplicador con 10.
+009B   300A           00350         movlw   .10
+009C   008E           00351         movwf   Arit_Multiplicador_L
+009D   2051           00352         call    Arit_Multiplica_16Bit   ; (10 * Resultado Anterior)
+009E   0815           00353         movf    Arit_Auxiliar,W
+009F   0790           00354         addwf   Arit_Resultado_1L,F
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00A0   1803           00355         btfsc   STATUS,C
+00A1   0A91           00356         incf    Arit_Resultado_1H,F     ; (10 * Resultado Anterior + W)
+00A2   0008           00357         return
+                      00358         
+                      00359 ; Subrutinas "Arit_Bin_BCD_16Bit" --------------------------------------------------------
+                      00360 ;
+                      00361 ; Convierte un número binario de 16 bits almacenado en los registros 
+                      00362 ; (Arit_Binario_H, Arit_Binario_L) a BCD. 
+                      00363 
+                      00364 ; La conversión de binario a BCD se puede realizar a través de la división sucesiva del número
+                      00365 ; binario entre diez (0x0A). El resto generado después de la primera división proporciona el 
+                      00366 ; dígito BCD correspondiente a la unidades y cada división subsecuente proporciona el dígito
+                      00367 ; siguiente, es decir, decenas, centenas, etc. A continuación se explica un ejemplo expresado
+                      00368 ; en decimal:
+                      00369 ;               58634 : 10 = 5863       Resto = 4 (Unidades)
+                      00370 ;                5863 : 10 = 586        Resto = 3 (Decenas)
+                      00371 ;                 586 : 10 = 58         Resto = 6 (Centenas)
+                      00372 ;                  58 : 10 = 5          Resto = 8 (Millares)
+                      00373 ;                   5 : 10 = 0          Resto = 5 (Decenas de Millar) 
+                      00374 
+                      00375 ; El mismo ejemplo expresado en hexadecimal:
+                      00376 ;               0xE50A : 0x0A = 0x16E7  Resto = 0x04 (Unidades)
+                      00377 ;               0x16E7 : 0x0A = 0x024A  Resto = 0x03 (Decenas)
+                      00378 ;               0x024A : 0x0A = 0x003A  Resto = 0x06 (Centenas)
+                      00379 ;               0x003A : 0x0A = 0x0005  Resto = 0x08 (Millares)
+                      00380 ;               0x0005 : 0x0A = 0x0000  Resto = 0x05 (Decenas de Millar) 
+                      00381 ;
+                      00382 ; Entrada: Número binario de 16 bits en los registros (Arit_Binario_H, Arit_Binario_L)
+                      00383 ; Salida: Número decimal de 5 digitos en los registros:
+                      00384 ;         (Arit_DecenasMillar, Arit_Millares, Arit_Centenas, Arit_Decenas, Arit_Unidades).
+                      00385 
+                      00386         CBLOCK
+  0000001B            00387         Arit_ContadorDigitos
+  0000001C            00388         Arit_Binario_H
+  0000001D            00389         Arit_Binario_L
+                      00390         ENDC
+                      00391 
+00A3                  00392 Arit_Bin_BCD_16Bit
+00A3   081C           00393         movf    Arit_Binario_H,W        ; Carga el número de entrada como primer dividendo
+00A4   008D           00394         movwf   Arit_Dividendo_H        ; parcial para realizar las sucesivas divisiones
+00A5   081D           00395         movf    Arit_Binario_L,W        ; entre 10.
+00A6   008C           00396         movwf   Arit_Dividendo_L
+00A7   3005           00397         movlw   .5                      ; El número decimal tendrá 5 digitos.
+00A8   009B           00398         movwf   Arit_ContadorDigitos
+00A9   3016           00399         movlw   Arit_Unidades           ; Se va a utilizar direccionamiento indirecto.
+00AA   0084           00400         movwf   FSR                     ; Apunta al primer digito BCD, las unidades.
+00AB                  00401 Arit_DigitoBCD  
+00AB   300A           00402         movlw   .10                     ; Carga 10 en el divisor.
+00AC   008E           00403         movwf   Arit_Divisor
+00AD   2077           00404         call    Arit_Divide_16Bit       ; Divide el cociente anterior entre 10.
+00AE   0080           00405         movwf   INDF                    ; El resto producido en la división es el digito BCD.
+00AF   0A84           00406         incf    FSR,F                   ; Apunta a siguiente posición de registros de salida.
+00B0   0811           00407         movf    Arit_Cociente_H,W       ; El cociente anterior será el dividendo de la
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B1   008D           00408         movwf   Arit_Dividendo_H        ; próxima division de 16 bits.
+00B2   0810           00409         movf    Arit_Cociente_L,W
+00B3   008C           00410         movwf   Arit_Dividendo_L        
+00B4   0B9B           00411         decfsz  Arit_ContadorDigitos,F
+00B5   28AB           00412         goto    Arit_DigitoBCD
+00B6   0008           00413         return
+                      00414         
+                      00415 ; Subrutinas "Arit_VisualizaBCD" --------------------------------------------------------
+                      00416 ;
+                      00417 ; Visualiza en el LCD un número decimal de varios dígitos de manera tal que no se representan
+                      00418 ; los ceros no significativos de la izquierda. El número decimal de entrada se almacena en los
+                      00419 ; registros:(Arit_DecenasMillar, Arit_Millares, Arit_Centenas, Arit_Decenas, Arit_Unidades).
+                      00420 
+                      00421         CBLOCK                          ; Si (Arit_FlagVisual)=0x00 No escribe el siguiente
+  0000001E            00422         Arit_FlagVisual                 ; nibble si es "0".
+                      00423         ENDC                            ; Si (Arit_FlagVisual)=b'00000001' SI escribe el                
+                                                    ; siguiente nibble aunque sea "0".
+  00000005            00424 Arit_NumeroDigitos      EQU     .5
+                      00425 
+00B7                  00426 Arit_VisualizaBCD
+00B7   019E           00427         clrf    Arit_FlagVisual         ; En principio no escribe si el dígito es cero.
+00B8   3004           00428         movlw   Arit_NumeroDigitos-1    ; El último dígito de unidades se visualizará siempre
+00B9   009B           00429         movwf   Arit_ContadorDigitos    ; por tanto son n-1 digitos a comprobar.
+00BA   301A           00430         movlw   Arit_DecenasMillar      ; Se va a utilizar direccionamiento indirecto.
+00BB   0084           00431         movwf   FSR                     ; Apunta al dígito BCD más a la izquierda.
+00BC                  00432 Arit_VisualizaDigitoBCD 
+00BC   0800           00433         movf    INDF,W                  ; Carga el dígito a visualizar.
+00BD   181E           00434         btfsc   Arit_FlagVisual,0       ; Si el dígito anterior fue visualizado también 
+00BE   28C1           00435         goto    Arit_VisualizaDigito    ; visualiza el actual.
+00BF   1903           00436         btfsc   STATUS,Z                ; Comprueba si el digito actual es cero
+00C0   28C3           00437         goto    Arit_PasaAlSiguiente    ; No visualiza y pasa al siguiente dígito.
+00C1                  00438 Arit_VisualizaDigito
+00C1   2189           00439         call    LCD_Nibble              ; Visualiza en digito
+00C2   141E           00440         bsf     Arit_FlagVisual,0       ; Señala que ha visualizado el dígito actual.
+00C3                  00441 Arit_PasaAlSiguiente
+00C3   0384           00442         decf    FSR,F                   ; Apunta a la siguiente posición de los registros
+00C4   0B9B           00443         decfsz  Arit_ContadorDigitos,F  ; de entrada.
+00C5   28BC           00444         goto    Arit_VisualizaDigitoBCD
+00C6   0816           00445         movf    Arit_Unidades,W         ; Las unidades siempre se visualizan, aunque sean 
+00C7   2189           00446         call    LCD_Nibble              ; cero.
+00C8   0008           00447         return
+                      00448         
+                      00449 ;       ===================================================================
+                      00450 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00451 ;         E. Palacios, F. Remiro y L. López.            www.pic16f84a.com
+                      00452 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00453 ;       ===================================================================
+                      00064         INCLUDE <RETARDOS.INC>
+                      00001 ;**************************** Librería "RETARDOS.INC" *********************************
+                      00002 ;
+                      00003 ;       ===================================================================
+                      00004 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00005 ;         E. Palacios, F. Remiro y L. López.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00006 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00007 ;       ===================================================================
+                      00008 ;
+                      00009 ; Librería con múltiples subrutinas de retardos, desde 4 microsegundos hasta 20 segundos. 
+                      00010 ; Además se pueden implementar otras subrutinas muy fácilmente.
+                      00011 ;
+                      00012 ; Se han calculado para un sistema microcontrolador con un PIC trabajando con un cristal
+                      00013 ; de cuarzo a 4 MHz. Como cada ciclo máquina son 4 ciclos de reloj, resulta que cada
+                      00014 ; ciclo máquina tarda 4 x 1/4MHz = 1 µs.
+                      00015 ;
+                      00016 ; En los comentarios, "cm" significa "ciclos máquina".
+                      00017 ;
+                      00018 ; ZONA DE DATOS *********************************************************************
+                      00019 
+                      00020         CBLOCK
+  0000001F            00021         R_ContA                         ; Contadores para los retardos.
+  00000020            00022         R_ContB
+  00000021            00023         R_ContC
+                      00024         ENDC
+                      00025 ;
+                      00026 ; RETARDOS de 4 hasta 10 microsegundos ---------------------------------------------------
+                      00027 ;
+                      00028 ; A continuación retardos pequeños teniendo en cuenta que para una frecuencia de 4 MHZ,
+                      00029 ; la llamada a subrutina "call" tarda 2 ciclos máquina, el retorno de subrutina
+                      00030 ; "return" toma otros 2 ciclos máquina y cada instrucción "nop" tarda 1 ciclo máquina.
+                      00031 ;
+00C9                  00032 Retardo_10micros                                ; La llamada "call" aporta 2 ciclos máquina.
+00C9   0000           00033         nop                             ; Aporta 1 ciclo máquina.
+00CA   0000           00034         nop                             ; Aporta 1 ciclo máquina.
+00CB   0000           00035         nop                             ; Aporta 1 ciclo máquina.
+00CC   0000           00036         nop                             ; Aporta 1 ciclo máquina.
+00CD   0000           00037         nop                             ; Aporta 1 ciclo máquina.
+00CE                  00038 Retardo_5micros                         ; La llamada "call" aporta 2 ciclos máquina.
+00CE   0000           00039         nop                             ; Aporta 1 ciclo máquina.
+00CF                  00040 Retardo_4micros                         ; La llamada "call" aporta 2 ciclos máquina.
+00CF   0008           00041         return                          ; El salto del retorno aporta 2 ciclos máquina.
+                      00042 ;
+                      00043 ; RETARDOS de 20 hasta 500 microsegundos ------------------------------------------------
+                      00044 ;
+00D0                  00045 Retardo_500micros                               ; La llamada "call" aporta 2 ciclos máquina.
+00D0   0000           00046         nop                             ; Aporta 1 ciclo máquina.
+00D1   30A4           00047         movlw   d'164'                  ; Aporta 1 ciclo máquina. Este es el valor de "K".
+00D2   28DC           00048         goto    RetardoMicros           ; Aporta 2 ciclos máquina.
+00D3                  00049 Retardo_200micros                               ; La llamada "call" aporta 2 ciclos máquina.
+00D3   0000           00050         nop                             ; Aporta 1 ciclo máquina.
+00D4   3040           00051         movlw   d'64'                   ; Aporta 1 ciclo máquina. Este es el valor de "K".
+00D5   28DC           00052         goto    RetardoMicros           ; Aporta 2 ciclos máquina.
+00D6                  00053 Retardo_100micros                               ; La llamada "call" aporta 2 ciclos máquina.
+00D6   301F           00054         movlw   d'31'                   ; Aporta 1 ciclo máquina. Este es el valor de "K".
+00D7   28DC           00055         goto    RetardoMicros           ; Aporta 2 ciclos máquina.
+00D8                  00056 Retardo_50micros                                ; La llamada "call" aporta 2 ciclos máquina.
+00D8   0000           00057         nop                             ; Aporta 1 ciclo máquina.
+00D9   300E           00058         movlw   d'14'                   ; Aporta 1 ciclo máquina. Este es el valor de "K".
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00DA   28DC           00059         goto    RetardoMicros           ; Aporta 2 ciclos máquina.
+00DB                  00060 Retardo_20micros                                ; La llamada "call" aporta 2 ciclos máquina.
+00DB   3005           00061         movlw   d'5'                    ; Aporta 1 ciclo máquina. Este es el valor de "K".
+                      00062 ;
+                      00063 ; El próximo bloque "RetardoMicros" tarda:
+                      00064 ; 1 + (K-1) + 2 + (K-1)x2 + 2 = (2 + 3K) ciclos máquina.
+                      00065 ;
+00DC                  00066 RetardoMicros
+00DC   009F           00067         movwf   R_ContA                 ; Aporta 1 ciclo máquina.
+00DD                  00068 Rmicros_Bucle
+00DD   0B9F           00069         decfsz  R_ContA,F               ; (K-1)x1 cm (cuando no salta) + 2 cm (al saltar).
+00DE   28DD           00070         goto    Rmicros_Bucle           ; Aporta (K-1)x2 ciclos máquina.
+00DF   0008           00071         return                          ; El salto del retorno aporta 2 ciclos máquina.
+                      00072 ;
+                      00073 ;En total estas subrutinas tardan:
+                      00074 ; - Retardo_500micros:  2 + 1 + 1 + 2 + (2 + 3K) = 500 cm = 500 µs. (para K=164 y 4 MHz).
+                      00075 ; - Retardo_200micros:  2 + 1 + 1 + 2 + (2 + 3K) = 200 cm = 200 µs. (para K= 64 y 4 MHz).
+                      00076 ; - Retardo_100micros:  2     + 1 + 2 + (2 + 3K) = 100 cm = 100 µs. (para K= 31 y 4 MHz).
+                      00077 ; - Retardo_50micros :  2 + 1 + 1 + 2 + (2 + 3K) =  50 cm =  50 µs. (para K= 14 y 4 MHz).
+                      00078 ; - Retardo_20micros :  2     + 1     + (2 + 3K) =  20 cm =  20 µs. (para K=  5 y 4 MHz).
+                      00079 ;
+                      00080 ; RETARDOS de 1 ms hasta 200 ms. --------------------------------------------------------
+                      00081 ;
+00E0                  00082 Retardo_200ms                           ; La llamada "call" aporta 2 ciclos máquina.
+00E0   30C8           00083         movlw   d'200'                  ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00E1   28EF           00084         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00E2                  00085 Retardo_100ms                           ; La llamada "call" aporta 2 ciclos máquina.
+00E2   3064           00086         movlw   d'100'                  ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00E3   28EF           00087         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00E4                  00088 Retardo_50ms                            ; La llamada "call" aporta 2 ciclos máquina.
+00E4   3032           00089         movlw   d'50'                   ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00E5   28EF           00090         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00E6                  00091 Retardo_20ms                            ; La llamada "call" aporta 2 ciclos máquina.
+00E6   3014           00092         movlw   d'20'                   ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00E7   28EF           00093         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00E8                  00094 Retardo_10ms                            ; La llamada "call" aporta 2 ciclos máquina.
+00E8   300A           00095         movlw   d'10'                   ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00E9   28EF           00096         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00EA                  00097 Retardo_5ms                             ; La llamada "call" aporta 2 ciclos máquina.
+00EA   3005           00098         movlw   d'5'                    ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00EB   28EF           00099         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00EC                  00100 Retardo_2ms                             ; La llamada "call" aporta 2 ciclos máquina.
+00EC   3002           00101         movlw   d'2'                    ; Aporta 1 ciclo máquina. Este es el valor de "M".
+00ED   28EF           00102         goto    Retardos_ms             ; Aporta 2 ciclos máquina.
+00EE                  00103 Retardo_1ms                             ; La llamada "call" aporta 2 ciclos máquina.
+00EE   3001           00104         movlw   d'1'                    ; Aporta 1 ciclo máquina. Este es el valor de "M".
+                      00105 ;
+                      00106 ; El próximo bloque "Retardos_ms" tarda:
+                      00107 ; 1 + M + M + KxM + (K-1)xM + Mx2 + (K-1)Mx2 + (M-1) + 2 + (M-1)x2 + 2 =
+                      00108 ; = (2 + 4M + 4KM) ciclos máquina. Para K=249 y M=1 supone 1002 ciclos máquina
+                      00109 ; que a 4 MHz son 1002 µs = 1 ms.
+                      00110 ;
+00EF                  00111 Retardos_ms
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00EF   00A0           00112         movwf   R_ContB                 ; Aporta 1 ciclo máquina.
+00F0                  00113 R1ms_BucleExterno
+00F0   30F9           00114         movlw   d'249'                  ; Aporta Mx1 ciclos máquina. Este es el valor de "K".
+00F1   009F           00115         movwf   R_ContA                 ; Aporta Mx1 ciclos máquina.
+00F2                  00116 R1ms_BucleInterno
+00F2   0000           00117         nop                             ; Aporta KxMx1 ciclos máquina.
+00F3   0B9F           00118         decfsz  R_ContA,F               ; (K-1)xMx1 cm (cuando no salta) + Mx2 cm (al saltar).
+00F4   28F2           00119         goto    R1ms_BucleInterno               ; Aporta (K-1)xMx2 ciclos máquina.
+00F5   0BA0           00120         decfsz  R_ContB,F               ; (M-1)x1 cm (cuando no salta) + 2 cm (al saltar).
+00F6   28F0           00121         goto    R1ms_BucleExterno       ; Aporta (M-1)x2 ciclos máquina.
+00F7   0008           00122         return                          ; El salto del retorno aporta 2 ciclos máquina.
+                      00123 ;
+                      00124 ;En total estas subrutinas tardan:
+                      00125 ; - Retardo_200ms:      2 + 1 + 2 + (2 + 4M + 4KM) = 200007 cm = 200 ms. (M=200 y K=249).
+                      00126 ; - Retardo_100ms:      2 + 1 + 2 + (2 + 4M + 4KM) = 100007 cm = 100 ms. (M=100 y K=249).
+                      00127 ; - Retardo_50ms :      2 + 1 + 2 + (2 + 4M + 4KM) =  50007 cm =  50 ms. (M= 50 y K=249).
+                      00128 ; - Retardo_20ms :      2 + 1 + 2 + (2 + 4M + 4KM) =  20007 cm =  20 ms. (M= 20 y K=249).
+                      00129 ; - Retardo_10ms :      2 + 1 + 2 + (2 + 4M + 4KM) =  10007 cm =  10 ms. (M= 10 y K=249).
+                      00130 ; - Retardo_5ms  :      2 + 1 + 2 + (2 + 4M + 4KM) =   5007 cm =   5 ms. (M=  5 y K=249).
+                      00131 ; - Retardo_2ms  :      2 + 1 + 2 + (2 + 4M + 4KM) =   2007 cm =   2 ms. (M=  2 y K=249).
+                      00132 ; - Retardo_1ms  :      2 + 1     + (2 + 4M + 4KM) =   1005 cm =   1 ms. (M=  1 y K=249).
+                      00133 ;
+                      00134 ; RETARDOS de 0.5 hasta 20 segundos ---------------------------------------------------
+                      00135 ;
+00F8                  00136 Retardo_20s                             ; La llamada "call" aporta 2 ciclos máquina.
+00F8   30C8           00137         movlw   d'200'                  ; Aporta 1 ciclo máquina. Este es el valor de "N".
+00F9   2903           00138         goto    Retardo_1Decima         ; Aporta 2 ciclos máquina.
+00FA                  00139 Retardo_10s                             ; La llamada "call" aporta 2 ciclos máquina.
+00FA   3064           00140         movlw   d'100'                  ; Aporta 1 ciclo máquina. Este es el valor de "N".
+00FB   2903           00141         goto    Retardo_1Decima         ; Aporta 2 ciclos máquina.
+00FC                  00142 Retardo_5s                              ; La llamada "call" aporta 2 ciclos máquina.
+00FC   3032           00143         movlw   d'50'                   ; Aporta 1 ciclo máquina. Este es el valor de "N".
+00FD   2903           00144         goto    Retardo_1Decima         ; Aporta 2 ciclos máquina.
+00FE                  00145 Retardo_2s                              ; La llamada "call" aporta 2 ciclos máquina.
+00FE   3014           00146         movlw   d'20'                   ; Aporta 1 ciclo máquina. Este es el valor de "N".
+00FF   2903           00147         goto    Retardo_1Decima         ; Aporta 2 ciclos máquina.
+0100                  00148 Retardo_1s                              ; La llamada "call" aporta 2 ciclos máquina.
+0100   300A           00149         movlw   d'10'                   ; Aporta 1 ciclo máquina. Este es el valor de "N".
+0101   2903           00150         goto    Retardo_1Decima         ; Aporta 2 ciclos máquina.
+0102                  00151 Retardo_500ms                           ; La llamada "call" aporta 2 ciclos máquina.
+0102   3005           00152         movlw   d'5'                    ; Aporta 1 ciclo máquina. Este es el valor de "N".
+                      00153 ;
+                      00154 ; El próximo bloque "Retardo_1Decima" tarda:
+                      00155 ; 1 + N + N + MxN + MxN + KxMxN + (K-1)xMxN + MxNx2 + (K-1)xMxNx2 +
+                      00156 ;   + (M-1)xN + Nx2 + (M-1)xNx2 + (N-1) + 2 + (N-1)x2 + 2 =
+                      00157 ; = (2 + 4M + 4MN + 4KM) ciclos máquina. Para K=249, M=100 y N=1 supone 100011
+                      00158 ; ciclos máquina que a 4 MHz son 100011 µs = 100 ms = 0,1 s = 1 décima de segundo.
+                      00159 ;
+0103                  00160 Retardo_1Decima
+0103   00A1           00161         movwf   R_ContC                 ; Aporta 1 ciclo máquina.
+0104                  00162 R1Decima_BucleExterno2
+0104   3064           00163         movlw   d'100'                  ; Aporta Nx1 ciclos máquina. Este es el valor de "M".
+0105   00A0           00164         movwf   R_ContB                 ; Aporta Nx1 ciclos máquina.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0106                  00165 R1Decima_BucleExterno
+0106   30F9           00166         movlw   d'249'                  ; Aporta MxNx1 ciclos máquina. Este es el valor de "K".
+0107   009F           00167         movwf   R_ContA                 ; Aporta MxNx1 ciclos máquina.
+0108                  00168 R1Decima_BucleInterno          
+0108   0000           00169         nop                             ; Aporta KxMxNx1 ciclos máquina.
+0109   0B9F           00170         decfsz  R_ContA,F               ; (K-1)xMxNx1 cm (si no salta) + MxNx2 cm (al saltar).
+010A   2908           00171         goto    R1Decima_BucleInterno   ; Aporta (K-1)xMxNx2 ciclos máquina.
+010B   0BA0           00172         decfsz  R_ContB,F               ; (M-1)xNx1 cm (cuando no salta) + Nx2 cm (al saltar).
+010C   2906           00173         goto    R1Decima_BucleExterno   ; Aporta (M-1)xNx2 ciclos máquina.
+010D   0BA1           00174         decfsz  R_ContC,F               ; (N-1)x1 cm (cuando no salta) + 2 cm (al saltar).
+010E   2904           00175         goto    R1Decima_BucleExterno2  ; Aporta (N-1)x2 ciclos máquina.
+010F   0008           00176         return                          ; El salto del retorno aporta 2 ciclos máquina.
+                      00177 ;
+                      00178 ;En total estas subrutinas tardan:
+                      00179 ; - Retardo_20s:        2 + 1 + 2 + (2 + 4N + 4MN + 4KMN) = 20000807 cm = 20 s.
+                      00180 ;                       (N=200, M=100 y K=249).
+                      00181 ; - Retardo_10s:        2 + 1 + 2 + (2 + 4N + 4MN + 4KMN) = 10000407 cm = 10 s.
+                      00182 ;                       (N=100, M=100 y K=249).
+                      00183 ; - Retardo_5s:         2 + 1 + 2 + (2 + 4N + 4MN + 4KMN) =  5000207 cm =  5 s.
+                      00184 ;                       (N= 50, M=100 y K=249).
+                      00185 ; - Retardo_2s:         2 + 1 + 2 + (2 + 4N + 4MN + 4KMN) =  2000087 cm =  2 s.
+                      00186 ;                       (N= 20, M=100 y K=249).
+                      00187 ; - Retardo_1s:         2 + 1 + 2 + (2 + 4N + 4MN + 4KMN) =  1000047 cm =  1 s.
+                      00188 ;                       (N= 10, M=100 y K=249).
+                      00189 ; - Retardo_500ms:      2 + 1     + (2 + 4N + 4MN + 4KMN) =   500025 cm = 0,5 s.
+                      00190 ;                       (N=  5, M=100 y K=249).
+                      00191 
+                      00192 ;       ===================================================================
+                      00193 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00194 ;         E. Palacios, F. Remiro y L. López.
+                      00195 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00196 ;       ===================================================================
+                      00197 
+                      00198 
+                      00199 
+                      00200 
+                      00065         INCLUDE <LCD_4BIT.INC>
+                      00001 ;**************************** Librería "LCD_4BIT.INC" ***********************************
+                      00002 ;
+                      00003 ;       ===================================================================
+                      00004 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00005 ;         E. Palacios, F. Remiro y L. López.
+                      00006 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00007 ;       ===================================================================
+                      00008 ;
+                      00009 ; Estas subrutinas permiten realizar las tareas básicas de control de un módulo LCD de 2
+                      00010 ; líneas por 16 caracteres, compatible con el modelo LM016L.
+                      00011 ;
+                      00012 ; El visualizador LCD está conectado al Puerto B del PIC mediante un bus de 4 bits. Las
+                      00013 ; conexiones son:
+                      00014 ;    -  Las 4 líneas superiores del módulo LCD, pines <DB7:DB4>  se conectan a las 4
+                      00015 ;       líneas superiores del Puerto B del PIC, pines <RB7:RB4>.
+                      00016 ;    -  Pin RS del LCD a la línea RA0 del PIC.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00017 ;    -  Pin R/W del LCD a la línea RA1 del PIC, o a masa.
+                      00018 ;    -  Pin Enable del LCD a la línea RA2 del PIC.
+                      00019 ;
+                      00020 ; Se utilizan llamadas a subrutinas de retardo de tiempo localizadas en la librería RETARDOS.INC.
+                      00021 ;
+                      00022 ; ZONA DE DATOS *********************************************************************
+                      00023 
+                      00024         CBLOCK
+  00000022            00025         LCD_Dato
+  00000023            00026         LCD_GuardaDato
+  00000024            00027         LCD_GuardaTRISB
+  00000025            00028         LCD_Auxiliar1
+  00000026            00029         LCD_Auxiliar2
+                      00030         ENDC
+                      00031 
+  00000010            00032 LCD_CaracteresPorLinea  EQU     .16     ; Número de caracteres por línea de la pantalla.
+                      00033 
+                      00034 #DEFINE  LCD_PinRS      PORTA,0
+                      00035 #DEFINE  LCD_PinRW      PORTA,1
+                      00036 #DEFINE  LCD_PinEnable  PORTA,2
+                      00037 #DEFINE  LCD_BusDatos   PORTB
+                      00038 
+                      00039 ; Subrutina "LCD_Inicializa" ------------------------------------------------------------
+                      00040 ;
+                      00041 ; Inicialización del módulo LCD: Configura funciones del LCD, produce reset por software,
+                      00042 ; borra memoria y enciende pantalla. El fabricante especifica que para garantizar la
+                      00043 ; configuración inicial hay que hacerla como sigue:
+                      00044 ;
+0110                  00045 LCD_Inicializa
+0110   1683           00046         bsf     STATUS,RP0              ; Configura las líneas conectadas al pines RS,
+0111   1005           00047         bcf     LCD_PinRS               ; R/W y E.
+0112   1105           00048         bcf     LCD_PinEnable
+0113   1085           00049         bcf     LCD_PinRW
+0114   1283           00050         bcf     STATUS,RP0
+0115   1085           00051         bcf     LCD_PinRW               ; En caso de que esté conectado le indica
+                      00052                                         ; que se va a escribir en el LCD.
+0116   1105           00053         bcf     LCD_PinEnable           ; Impide funcionamiento del LCD poniendo E=0.
+0117   1005           00054         bcf     LCD_PinRS               ; Activa el Modo Comando poniendo RS=0.
+0118   20E6           00055         call    Retardo_20ms
+0119   3030           00056         movlw   b'00110000'     
+011A   2128           00057         call    LCD_EscribeLCD          ; Escribe el dato en el LCD.
+011B   20EA           00058         call    Retardo_5ms     
+011C   3030           00059         movlw   b'00110000'     
+011D   2128           00060         call    LCD_EscribeLCD
+011E   20D3           00061         call    Retardo_200micros
+011F   3030           00062         movlw   b'00110000'     
+0120   2128           00063         call    LCD_EscribeLCD
+0121   3020           00064         movlw   b'00100000'             ; Interface de 4 bits.
+0122   2128           00065         call    LCD_EscribeLCD
+                      00066 
+                      00067 ; Ahora configura el resto de los parámetros: 
+                      00068 
+0123   214E           00069         call    LCD_2Lineas4Bits5x7     ; LCD de 2 líneas y caracteres de 5x7 puntos.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0124   214C           00070         call    LCD_Borra               ; Pantalla encendida y limpia. Cursor al principio
+0125   214A           00071         call    LCD_CursorOFF           ; de la línea 1. Cursor apagado.
+0126   213C           00072         call    LCD_CursorIncr          ; Cursor en modo incrementar.
+0127   0008           00073         return
+                      00074 
+                      00075 ; Subrutina "LCD_EscribeLCD" -----------------------------------------------------------
+                      00076 ;
+                      00077 ; Envía el dato del registro de trabajo W al bus de dato y produce un pequeño pulso en el pin
+                      00078 ; Enable del LCD. Para no alterar el contenido de las líneas de la parte baja del Puerto B que
+                      00079 ; no son utilizadas para el LCD (pines RB3:RB0), primero se lee estas líneas y después se
+                      00080 ; vuelve a enviar este dato sin cambiarlo.
+                      00081 
+0128                  00082 LCD_EscribeLCD
+0128   39F0           00083         andlw   b'11110000'             ; Se queda con el nibble alto del dato que es el
+0129   00A2           00084         movwf   LCD_Dato                ; que hay que enviar y lo guarda.
+012A   0806           00085         movf    LCD_BusDatos,W          ; Lee la información actual de la parte baja
+012B   390F           00086         andlw   b'00001111'             ; del Puerto B, que no se debe alterar.
+012C   04A2           00087         iorwf   LCD_Dato,F              ; Enviará la parte alta del dato de entrada
+                      00088                                         ; y en la parte baja lo que había antes.
+012D   1683           00089         bsf     STATUS,RP0              ; Acceso al Banco 1.
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+012E   0806           00090         movf    TRISB,W         ; Guarda la configuración que tenía antes TRISB.
+012F   00A4           00091         movwf   LCD_GuardaTRISB
+0130   300F           00092         movlw   b'00001111'             ; Las 4 líneas inferiores del Puerto B se dejan 
+0131   0586           00093         andwf   PORTB,F                 ; como estaban y las 4 superiores como salida.
+0132   1283           00094         bcf     STATUS,RP0              ; Acceso al Banco 0.
+                      00095 ;
+0133   0822           00096         movf    LCD_Dato,W              ; Recupera el dato a enviar.
+0134   0086           00097         movwf   LCD_BusDatos            ; Envía el dato al módulo LCD.
+0135   1505           00098         bsf     LCD_PinEnable           ; Permite funcionamiento del LCD mediante un pequeño
+0136   1105           00099         bcf     LCD_PinEnable           ; pulso y termina impidiendo el funcionamiento del LCD.
+0137   1683           00100         bsf     STATUS,RP0              ; Acceso al Banco 1. Restaura el antiguo valor en
+0138   0824           00101         movf    LCD_GuardaTRISB,W       ; la configuración del Puerto B.
+0139   0086           00102         movwf   PORTB                   ; Realmente es TRISB.
+013A   1283           00103         bcf     STATUS,RP0              ; Acceso al Banco 0.
+013B   0008           00104         return
+                      00105 
+                      00106 ; Subrutinas variadas para el control del módulo LCD -----------------------------------------
+                      00107 ;
+                      00108 ;Los comandos que pueden ser ejecutados son:
+                      00109 ;
+013C                  00110 LCD_CursorIncr                          ; Cursor en modo incrementar.
+013C   3006           00111         movlw   b'00000110'
+013D   294F           00112         goto    LCD_EnviaComando
+013E                  00113 LCD_Linea1                              ; Cursor al principio de la Línea 1.
+013E   3080           00114         movlw   b'10000000'             ; Dirección 00h de la DDRAM
+013F   294F           00115         goto    LCD_EnviaComando
+0140                  00116 LCD_Linea2                              ; Cursor al principio de la Línea 2.
+0140   30C0           00117         movlw   b'11000000'             ; Dirección 40h de la DDRAM
+0141   294F           00118         goto    LCD_EnviaComando
+0142                  00119 LCD_PosicionLinea1                      ; Cursor a posición de la Línea 1, a partir de la
+0142   3880           00120         iorlw   b'10000000'             ; dirección 00h de la DDRAM más el valor del
+0143   294F           00121         goto    LCD_EnviaComando        ; registro W.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0144                  00122 LCD_PosicionLinea2                      ; Cursor a posición de la Línea 2, a partir de la
+0144   38C0           00123         iorlw   b'11000000'             ; dirección 40h de la DDRAM más el valor del
+0145   294F           00124         goto    LCD_EnviaComando        ; registro W.
+0146                  00125 LCD_OFF                         ; Pantalla apagada.
+0146   3008           00126         movlw   b'00001000'
+0147   294F           00127         goto    LCD_EnviaComando
+0148                  00128 LCD_CursorON                            ; Pantalla encendida y cursor encendido.
+0148   300E           00129         movlw   b'00001110'
+0149   294F           00130         goto    LCD_EnviaComando
+014A                  00131 LCD_CursorOFF                           ; Pantalla encendida y cursor apagado.
+014A   300C           00132         movlw   b'00001100'
+014B   294F           00133         goto    LCD_EnviaComando
+014C                  00134 LCD_Borra                               ; Borra toda la pantalla, memoria DDRAM y pone el 
+014C   3001           00135         movlw   b'00000001'             ; cursor a principio de la línea 1.
+014D   294F           00136         goto    LCD_EnviaComando
+014E                  00137 LCD_2Lineas4Bits5x7                     ; Define la pantalla de 2 líneas, con caracteres
+014E   3028           00138         movlw   b'00101000'             ; de 5x7 puntos y conexión al PIC mediante bus de
+                      00139 ;       goto    LCD_EnviaComando        ; 4 bits. 
+                      00140 
+                      00141 ; Subrutinas "LCD_EnviaComando" y "LCD_Caracter" ------------------------------------
+                      00142 ;
+                      00143 ; "LCD_EnviaComando". Escribe un comando en el registro del módulo LCD. La palabra de
+                      00144 ; comando ha sido entregada a través del registro W.  Trabaja en Modo Comando.
+                      00145 ; "LCD_Caracter". Escribe en la memoria DDRAM del LCD el carácter ASCII introducido a
+                      00146 ; a través del registro W. Trabaja en Modo Dato.
+                      00147 ;
+014F                  00148 LCD_EnviaComando
+014F   1005           00149         bcf     LCD_PinRS               ; Activa el Modo Comando, poniendo RS=0.
+0150   2953           00150         goto    LCD_Envia
+0151                  00151 LCD_Caracter
+0151   1405           00152         bsf     LCD_PinRS               ; Activa el "Modo Dato", poniendo RS=1.
+0152   215B           00153         call    LCD_CodigoCGROM ; Obtiene el código para correcta visualización.
+0153                  00154 LCD_Envia
+0153   00A3           00155         movwf   LCD_GuardaDato          ; Guarda el dato a enviar.
+0154   2128           00156         call    LCD_EscribeLCD          ; Primero envía el nibble alto.
+0155   0E23           00157         swapf   LCD_GuardaDato,W        ; Ahora envía el nibble bajo. Para ello pasa el
+                      00158                                         ; nibble bajo del dato a enviar a parte alta del byte.
+0156   2128           00159         call    LCD_EscribeLCD          ; Se envía al visualizador LCD.
+0157   1C05           00160         btfss   LCD_PinRS               ; Debe garantizar una correcta escritura manteniendo 
+0158   20EC           00161         call    Retardo_2ms             ; 2 ms en modo comando y 50 µs en modo cáracter.
+0159   20D8           00162         call    Retardo_50micros
+015A   0008           00163         return  
+                      00164 
+                      00165 ; Subrutina "LCD_CodigoCGROM" -----------------------------------------------------------
+                      00166 ;
+                      00167 ; A partir del carácter ASCII número 127 los códigos de los caracteres definidos en la
+                      00168 ; tabla CGROM del LM016L no coinciden con los códigos ASCII. Así por ejemplo, el código
+                      00169 ; ASCII de la "Ñ" en la tabla CGRAM del LM016L es EEh.
+                      00170 ;
+                      00171 ; Esta subrutina convierte los códigos ASCII de la "Ñ", "º" y otros, a códigos CGROM para que
+                      00172 ; que puedan ser visualizado en el módulo LM016L.
+                      00173 ; 
+                      00174 ; Entrada:      En (W) el código ASCII del carácter que se desea visualizar.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00175 ; Salida:       En (W) el código definido en la tabla CGROM.
+                      00176 
+015B                  00177 LCD_CodigoCGROM
+015B   00A2           00178         movwf   LCD_Dato                ; Guarda el valor del carácter y comprueba si es
+015C                  00179 LCD_EnheMinuscula                       ; un carácter especial.
+015C   3CF1           00180         sublw   'ñ'                     ; ¿Es la "ñ"?
+015D   1D03           00181         btfss   STATUS,Z
+015E   2962           00182         goto    LCD_EnheMayuscula       ; No es "ñ".
+015F   30EE           00183         movlw   b'11101110'             ; Código CGROM de la "ñ".
+0160   00A2           00184         movwf   LCD_Dato
+0161   296F           00185         goto    LCD_FinCGROM
+0162                  00186 LCD_EnheMayuscula
+0162   0822           00187         movf    LCD_Dato,W              ; Recupera el código ASCII de entrada.
+0163   3CD1           00188         sublw   'Ñ'                     ; ¿Es la "Ñ"?
+0164   1D03           00189         btfss   STATUS,Z
+0165   2969           00190         goto    LCD_Grado               ; No es "Ñ".
+0166   30EE           00191         movlw   b'11101110'             ; Código CGROM de la "ñ". (No hay símbolo para
+0167   00A2           00192         movwf   LCD_Dato                ; la "Ñ" mayúscula en la CGROM).
+0168   296F           00193         goto    LCD_FinCGROM    
+0169                  00194 LCD_Grado
+0169   0822           00195         movf    LCD_Dato,W              ; Recupera el código ASCII de entrada.
+016A   3CBA           00196         sublw   'º'                     ; ¿Es el símbolo "º"?
+016B   1D03           00197         btfss   STATUS,Z
+016C   296F           00198         goto    LCD_FinCGROM            ; No es "º".
+016D   30DF           00199         movlw   b'11011111'             ; Código CGROM del símbolo "º".
+016E   00A2           00200         movwf   LCD_Dato
+016F                  00201 LCD_FinCGROM
+016F   0822           00202         movf    LCD_Dato,W              ; En (W) el código buscado.
+0170   0008           00203         return
+                      00204 
+                      00205 ; Subrutina "LCD_DosEspaciosBlancos" y "LCD_LineaBlanco" --------------------------------
+                      00206 ;
+                      00207 ; Visualiza espacios en blanco.
+                      00208 
+0171                  00209 LCD_LineaEnBlanco
+0171   3010           00210         movlw   LCD_CaracteresPorLinea
+0172   2978           00211         goto    LCD_EnviaBlancos
+0173                  00212 LCD_UnEspacioBlanco
+0173   3001           00213         movlw   .1
+0174   2978           00214         goto    LCD_EnviaBlancos
+0175                  00215 LCD_DosEspaciosBlancos
+0175   3002           00216         movlw   .2
+0176   2978           00217         goto    LCD_EnviaBlancos
+0177                  00218 LCD_TresEspaciosBlancos
+0177   3003           00219         movlw   .3
+0178                  00220 LCD_EnviaBlancos
+0178   00A5           00221         movwf   LCD_Auxiliar1           ; (LCD_Auxiliar1) se utiliza como contador.
+0179                  00222 LCD_EnviaOtroBlanco     
+0179   3020           00223         movlw   ' '                     ; Esto es un espacio en blanco.
+017A   2151           00224         call    LCD_Caracter            ; Visualiza tanto espacios en blanco como se
+017B   0BA5           00225         decfsz  LCD_Auxiliar1,F         ; haya cargado en (LCD_Auxiliar1).
+017C   2979           00226         goto    LCD_EnviaOtroBlanco
+017D   0008           00227         return
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00228 
+                      00229 ; Subrutinas "LCD_ByteCompleto" y "LCD_Byte" --------------------------------------------
+                      00230 ;
+                      00231 ; Subrutina "LCD_ByteCompleto", visualiza el byte que almacena el registro W en el
+                      00232 ; lugar actual de la pantalla. Por ejemplo, si (W)=b'10101110' visualiza "AE".
+                      00233 ;
+                      00234 ; Subrutina "LCD_Byte" igual que la anterior, pero en caso de que el nibble alto sea cero 
+                      00235 ; visualiza en su lugar un espacio en blanco. Por ejemplo si (W)=b'10101110' visualiza "AE"
+                      00236 ; y si (W)=b'00001110', visualiza " E" (un espacio blanco delante).
+                      00237 ;
+                      00238 ; Utilizan la subrutina "LCD_Nibble" que se analiza más adelante.
+                      00239 ;
+017E                  00240 LCD_Byte
+017E   00A6           00241         movwf   LCD_Auxiliar2           ; Guarda el valor de entrada.
+017F   39F0           00242         andlw   b'11110000'             ; Analiza si el nibble alto es cero.
+0180   1D03           00243         btfss   STATUS,Z                ; Si es cero lo apaga.
+0181   2986           00244         goto    LCD_VisualizaAlto               ; No es cero y lo visualiza.
+0182   3020           00245         movlw   ' '                     ; Visualiza un espacio en blanco.
+0183   2151           00246         call    LCD_Caracter
+0184   2988           00247         goto    LCD_VisualizaBajo
+                      00248 
+0185                  00249 LCD_ByteCompleto
+0185   00A6           00250         movwf   LCD_Auxiliar2           ; Guarda el valor de entrada.
+0186                  00251 LCD_VisualizaAlto
+0186   0E26           00252         swapf   LCD_Auxiliar2,W         ; Pone el nibble alto en la parte baja.
+0187   2189           00253         call    LCD_Nibble              ; Lo visualiza.
+0188                  00254 LCD_VisualizaBajo
+0188   0826           00255         movf    LCD_Auxiliar2,W         ; Repite el proceso con el nibble bajo.
+                      00256 ;       call    LCD_Nibble              ; Lo visualiza.
+                      00257 ;       return
+                      00258 
+                      00259 ; Subrutina "LCD_Nibble" ----------------------------------------------------------------
+                      00260 ;
+                      00261 ; Visualiza en el lugar actual de la pantalla, el valor hexadecimal que almacena en el nibble
+                      00262 ; bajo del registro W. El nibble alto de W no es tenido en cuenta. Ejemplos:
+                      00263 ; - Si (W)=b'01010110', se visualizará "6". 
+                      00264 ; - Si (W)=b'10101110', se visualizará "E". 
+                      00265 ;
+0189                  00266 LCD_Nibble
+0189   390F           00267         andlw   b'00001111'             ; Se queda con la parte baja.
+018A   00A5           00268         movwf   LCD_Auxiliar1           ; Lo guarda.
+018B   3C09           00269         sublw   0x09                    ; Comprueba si hay que representarlo con letra.
+018C   1C03           00270         btfss   STATUS,C        
+018D   2991           00271         goto    LCD_EnviaByteLetra
+018E   0825           00272         movf    LCD_Auxiliar1,W
+018F   3E30           00273         addlw   '0'                     ; El número se pasa a carácter ASCII sumándole
+0190   2993           00274         goto    LCD_FinVisualizaDigito  ; el ASCII del cero y lo visualiza.
+0191                  00275 LCD_EnviaByteLetra
+0191   0825           00276         movf    LCD_Auxiliar1,W
+0192   3E37           00277         addlw   'A'-0x0A                        ; Sí, por tanto, se le suma el ASCII de la 'A'.
+0193                  00278 LCD_FinVisualizaDigito
+0193   2951           00279         goto    LCD_Caracter            ; Y visualiza el carácter. Se hace con un "goto"
+                      00280                                         ; para no sobrecargar la pila.
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00281                                         
+                      00282 ;       ===================================================================
+                      00283 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00284 ;         E. Palacios, F. Remiro y L. López.
+                      00285 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00286 ;       ===================================================================
+                      00066         INCLUDE <LCD_MENS.INC>
+                      00001 ;**************************** Librería "LCD_MENS.INC" ********************************
+                      00002 ;
+                      00003 ;       ===================================================================
+                      00004 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00005 ;         E. Palacios, F. Remiro y L. López.
+                      00006 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00007 ;       ===================================================================
+                      00008 ;
+                      00009 ; Librería de subrutinas para el manejo de mensajes a visualizar en un visualizador LCD.
+                      00010 
+                      00011         CBLOCK
+  00000027            00012         LCD_ApuntaCaracter              ; Indica la posición del carácter a visualizar
+                      00013                                         ; respecto del comienzo de todos los mensajes,
+                      00014                                         ; (posición de la etiqueta "Mensajes").
+  00000028            00015         LCD_ValorCaracter                       ; Código ASCII del carácter a 
+                      00016         ENDC                            ; visualizar.
+                      00017 
+                      00018 ; Los mensajes tienen que estar situados dentro de las 256 primeras posiciones de la 
+                      00019 ; memoria de programa, es decir, no pueden superar la dirección 0FFh.
+                      00020 
+                      00021 ; Subrutina "LCD_Mensaje" ---------------------------------------------------------------
+                      00022 ;
+                      00023 ; Visualiza por pantalla el mensaje apuntado por el registro W.
+                      00024 ;
+                      00025 ; Los mensajes deben localizarse dentro de una zona encabezada por la etiqueta "Mensajes" y que
+                      00026 ; tenga la siguiente estructura:
+                      00027 ;
+                      00028 ; Mensajes                              ; ¡Etiqueta obligatoria!
+                      00029 ;       addwf   PCL,F
+                      00030 ; Mensaje0                              ; Posición inicial del mensaje.
+                      00031 ;       DT ".. ..", 0x00                        ; Mensaje terminado en 0x00.
+                      00032 ; Mensaje1
+                      00033 ;       ...     
+                      00034 ;       ...
+                      00035 ; FinMensajes
+                      00036 ;
+                      00037 ; La llamada a esta subrutina se realizará siguiendo este ejemplo:
+                      00038 ;
+                      00039 ;       movlw   Mensaje0                        ; Carga la posición del mensaje.
+                      00040 ;       call    LCD_Mensaje             ; Visualiza el mensaje.
+                      00041 ;
+0194                  00042 LCD_Mensaje
+0194   00A7           00043         movwf   LCD_ApuntaCaracter      ; Posición del primer carácter del mensaje.
+0195   3018           00044         movlw   Mensajes                        ; Halla la posición relativa del primer carácter
+0196   02A7           00045         subwf   LCD_ApuntaCaracter,F    ; del mensaje respecto de etiqueta "Mensajes".
+0197   03A7           00046         decf    LCD_ApuntaCaracter,F    ; Compensa la posición que ocupa "addwf PCL,F".
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0198                  00047 LCD_VisualizaOtroCaracter
+0198   0827           00048         movf    LCD_ApuntaCaracter,W
+0199   2018           00049         call    Mensajes                        ; Obtiene el código ASCII del carácter apuntado.
+019A   00A8           00050         movwf   LCD_ValorCaracter               ; Guarda el valor de carácter.
+019B   08A8           00051         movf    LCD_ValorCaracter,F     ; Lo único que hace es posicionar flag Z. En caso
+019C   1903           00052         btfsc   STATUS,Z                ; que sea "0x00", que es código indicador final 
+019D   29A1           00053         goto    LCD_FinMensaje          ; de mensaje, sale fuera.
+019E                  00054 LCD_NoUltimoCaracter
+019E   2151           00055         call    LCD_Caracter            ; Visualiza el carácter ASCII leído.
+019F   0AA7           00056         incf    LCD_ApuntaCaracter,F    ; Apunta a la posición del siguiente carácter 
+01A0   2998           00057         goto    LCD_VisualizaOtroCaracter       ; dentro del mensaje.
+01A1                  00058 LCD_FinMensaje
+01A1   0008           00059         return                          ; Vuelve al programa principal.
+                      00060 
+                      00061 ; Subrutina "LCD_MensajeMovimiento" -----------------------------------------------------
+                      00062 ;
+                      00063 ; Visualiza un mensaje de mayor longitud que los 16 caracteres que pueden representarse
+                      00064 ; en una línea, por tanto se desplaza a través de la pantalla.
+                      00065 ;
+                      00066 ; En el mensaje debe dejarse 16 espacios en blanco, al principio y al final para
+                      00067 ; conseguir que el desplazamiento del mensaje sea lo más legible posible.
+                      00068 ;
+                      00069         CBLOCK  
+  00000029            00070         LCD_CursorPosicion              ; Contabiliza la posición del cursor dentro de la
+                      00071         ENDC                            ; pantalla LCD
+                      00072 
+01A2                  00073 LCD_MensajeMovimiento
+01A2   00A7           00074         movwf   LCD_ApuntaCaracter      ; Posición del primer carácter del mensaje.
+01A3   3018           00075         movlw   Mensajes                        ; Halla la posición relativa del primer carácter
+01A4   02A7           00076         subwf   LCD_ApuntaCaracter,F    ; del mensaje respecto de la etiqueta "Mensajes".
+01A5   03A7           00077         decf    LCD_ApuntaCaracter,F    ; Compensa la posición que ocupa "addwf PCL,F".
+01A6                  00078 LCD_PrimeraPosicion
+01A6   01A9           00079         clrf    LCD_CursorPosicion      ; El cursor en la posición 0 de la línea.
+01A7   214C           00080         call    LCD_Borra               ; Se sitúa en la primera posición de la línea 1 y
+01A8                  00081 LCD_VisualizaCaracter                   ; borra la pantalla.
+01A8   3010           00082         movlw   LCD_CaracteresPorLinea  ; ¿Ha llegado a final de línea?
+01A9   0229           00083         subwf   LCD_CursorPosicion,W
+01AA   1D03           00084         btfss   STATUS,Z
+01AB   29B1           00085         goto    LCD_NoEsFinalLinea
+01AC                  00086 LCD_EsFinalLinea
+01AC   20E0           00087         call    Retardo_200ms           ; Lo mantiene visualizado durante este tiempo.
+01AD   20E0           00088         call    Retardo_200ms
+01AE   300F           00089         movlw   LCD_CaracteresPorLinea-1; Apunta a la posición del segundo carácter visualizado
+01AF   02A7           00090         subwf   LCD_ApuntaCaracter,F    ; en pantalla, que será el primero en la siguiente
+01B0   29A6           00091         goto    LCD_PrimeraPosicion      ; visualización de línea, para producir el efecto
+01B1                  00092 LCD_NoEsFinalLinea                      ; de desplazamiento hacia la izquierda.
+01B1   0827           00093         movf    LCD_ApuntaCaracter,W
+01B2   2018           00094         call    Mensajes                        ; Obtiene el ASCII del carácter apuntado.
+01B3   00A8           00095         movwf   LCD_ValorCaracter               ; Guarda el valor de carácter.
+01B4   08A8           00096         movf    LCD_ValorCaracter,F     ; Lo único que hace es posicionar flag Z. En caso
+01B5   1903           00097         btfsc   STATUS,Z                ; que sea "0x00", que es código indicador final 
+01B6   29BB           00098         goto    LCD_FinMovimiento       ; de mensaje, sale fuera.
+01B7                  00099 LCD_NoUltimoCaracter2
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01B7   2151           00100         call    LCD_Caracter            ; Visualiza el carácter ASCII leído.
+01B8   0AA9           00101         incf    LCD_CursorPosicion,F    ; Contabiliza el incremento de posición del 
+                      00102                                         ; cursor en la pantalla.
+01B9   0AA7           00103         incf    LCD_ApuntaCaracter,F    ; Apunta a la siguiente posición por visualizar.
+01BA   29A8           00104         goto    LCD_VisualizaCaracter   ; Vuelve a visualizar el siguiente carácter
+01BB                  00105 LCD_FinMovimiento                       ; de la línea.
+01BB   0008           00106         return                          ; Vuelve al programa principal.
+                      00107         
+                      00108 ;       ===================================================================
+                      00109 ;         Del libro "MICROCONTROLADOR PIC16F84. DESARROLLO DE PROYECTOS"
+                      00110 ;         E. Palacios, F. Remiro y L. López.
+                      00111 ;         Editorial Ra-Ma.  www.ra-ma.es
+                      00112 ;       ===================================================================     
+                      00113         
+                      00067         END
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Arit_Auxiliar                     00000015
+Arit_BCD_Bin_16Bit                00000089
+Arit_BCD_Operacion                00000095
+Arit_Bin_BCD_16Bit                000000A3
+Arit_Binario_H                    0000001C
+Arit_Binario_L                    0000001D
+Arit_Centenas                     00000018
+Arit_Cociente                     00000010
+Arit_Cociente_H                   00000011
+Arit_Cociente_L                   00000010
+Arit_ContadorBits                 00000014
+Arit_ContadorDigitos              0000001B
+Arit_Decenas                      00000017
+Arit_DecenasMillar                0000001A
+Arit_DigitoBCD                    000000AB
+Arit_DivideBit16                  0000007C
+Arit_DivideBit8                   0000006C
+Arit_Divide_16Bit                 00000077
+Arit_Divide_8Bit                  00000068
+Arit_Dividendo                    0000000C
+Arit_Dividendo_H                  0000000D
+Arit_Dividendo_L                  0000000C
+Arit_Divisor                      0000000E
+Arit_FlagVisual                   0000001E
+Arit_Millares                     00000019
+Arit_Multiplica16Bit              00000057
+Arit_MultiplicaBit8               00000049
+Arit_Multiplica_16Bit             00000051
+Arit_Multiplica_8Bit              00000044
+Arit_Multiplicador                0000000E
+Arit_Multiplicador_BitCero        00000061
+Arit_Multiplicador_H              0000000F
+Arit_Multiplicador_L              0000000E
+Arit_Multiplicando                0000000C
+Arit_Multiplicando_H              0000000D
+Arit_Multiplicando_L              0000000C
+Arit_Negar                        00000034
+Arit_NumeroDigitos                00000005
+Arit_Operando_1H                  0000000D
+Arit_Operando_1L                  0000000C
+Arit_Operando_2H                  0000000F
+Arit_Operando_2L                  0000000E
+Arit_PasaAlSiguiente              000000C3
+Arit_Producto_1H                  00000011
+Arit_Producto_1L                  00000010
+Arit_Producto_2H                  00000013
+Arit_Producto_2L                  00000012
+Arit_Producto_H                   00000011
+Arit_Producto_L                   00000010
+Arit_Resta_16Bit                  0000003C
+Arit_Resto                        00000012
+Arit_Resultado_1H                 00000011
+Arit_Resultado_1L                 00000010
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Arit_Resultado_2H                 00000013
+Arit_Resultado_2L                 00000012
+Arit_Suma_16Bit                   0000003D
+Arit_Unidades                     00000016
+Arit_VisualizaBCD                 000000B7
+Arit_VisualizaBinario             00000029
+Arit_VisualizaBit                 0000002C
+Arit_VisualizaDigito              000000C1
+Arit_VisualizaDigitoBCD           000000BC
+Binario                           000025E9
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+Inicio                            00000000
+LCD_2Lineas4Bits5x7               0000014E
+LCD_ApuntaCaracter                00000027
+LCD_Auxiliar1                     00000025
+LCD_Auxiliar2                     00000026
+LCD_Borra                         0000014C
+LCD_BusDatos                      PORTB
+LCD_Byte                          0000017E
+LCD_ByteCompleto                  00000185
+LCD_Caracter                      00000151
+LCD_CaracteresPorLinea            00000010
+LCD_CodigoCGROM                   0000015B
+LCD_CursorIncr                    0000013C
+LCD_CursorOFF                     0000014A
+LCD_CursorON                      00000148
+LCD_CursorPosicion                00000029
+LCD_Dato                          00000022
+LCD_DosEspaciosBlancos            00000175
+LCD_EnheMayuscula                 00000162
+LCD_EnheMinuscula                 0000015C
+LCD_Envia                         00000153
+LCD_EnviaBlancos                  00000178
+LCD_EnviaByteLetra                00000191
+LCD_EnviaComando                  0000014F
+LCD_EnviaOtroBlanco               00000179
+LCD_EsFinalLinea                  000001AC
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+LCD_EscribeLCD                    00000128
+LCD_FinCGROM                      0000016F
+LCD_FinMensaje                    000001A1
+LCD_FinMovimiento                 000001BB
+LCD_FinVisualizaDigito            00000193
+LCD_Grado                         00000169
+LCD_GuardaDato                    00000023
+LCD_GuardaTRISB                   00000024
+LCD_Inicializa                    00000110
+LCD_Linea1                        0000013E
+LCD_Linea2                        00000140
+LCD_LineaEnBlanco                 00000171
+LCD_Mensaje                       00000194
+LCD_MensajeMovimiento             000001A2
+LCD_Nibble                        00000189
+LCD_NoEsFinalLinea                000001B1
+LCD_NoUltimoCaracter              0000019E
+LCD_NoUltimoCaracter2             000001B7
+LCD_OFF                           00000146
+LCD_PinEnable                     PORTA,2
+LCD_PinRS                         PORTA,0
+LCD_PinRW                         PORTA,1
+LCD_PosicionLinea1                00000142
+LCD_PosicionLinea2                00000144
+LCD_PrimeraPosicion               000001A6
+LCD_TresEspaciosBlancos           00000177
+LCD_UnEspacioBlanco               00000173
+LCD_ValorCaracter                 00000028
+LCD_VisualizaAlto                 00000186
+LCD_VisualizaBajo                 00000188
+LCD_VisualizaCaracter             000001A8
+LCD_VisualizaOtroCaracter         00000198
+MensajeBCD                        00000019
+MensajeHex                        00000021
+Mensajes                          00000018
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+R1Decima_BucleExterno             00000106
+R1Decima_BucleExterno2            00000104
+R1Decima_BucleInterno             00000108
+R1ms_BucleExterno                 000000F0
+R1ms_BucleInterno                 000000F2
+RBIE                              00000003
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+R_ContA                           0000001F
+R_ContB                           00000020
+R_ContC                           00000021
+RetardoMicros                     000000DC
+Retardo_100micros                 000000D6
+Retardo_100ms                     000000E2
+Retardo_10micros                  000000C9
+Retardo_10ms                      000000E8
+Retardo_10s                       000000FA
+Retardo_1Decima                   00000103
+Retardo_1ms                       000000EE
+Retardo_1s                        00000100
+Retardo_200micros                 000000D3
+Retardo_200ms                     000000E0
+Retardo_20micros                  000000DB
+Retardo_20ms                      000000E6
+Retardo_20s                       000000F8
+Retardo_2ms                       000000EC
+Retardo_2s                        000000FE
+Retardo_4micros                   000000CF
+Retardo_500micros                 000000D0
+Retardo_500ms                     00000102
+Retardo_50micros                  000000D8
+Retardo_50ms                      000000E4
+Retardo_5micros                   000000CE
+Retardo_5ms                       000000EA
+Retardo_5s                        000000FC
+Retardos_ms                       000000EF
+Rmicros_Bucle                     000000DD
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+MPASM  5.33                 ARITMETICA_11.ASM   12-15-2009  12:02:42         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXX----
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   444
+Program Memory Words Free:   580
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     1 reported,     0 suppressed
+
+

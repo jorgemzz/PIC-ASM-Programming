@@ -1,0 +1,19 @@
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 8 : Found label after column 1. (Digito)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 9 : Found label after column 1. (DATO_A)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 10 : Found label after column 1. (DATO_B)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 11 : Found label after column 1. (PDel0)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 12 : Found label after column 1. (PDel1)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 13 : Found label after column 1. (PDel2)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 14 : Found label after column 1. (RA)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.ASM 15 : Found label after column 1. (RB)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 13 : Found label after column 1. (LCD_E)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 18 : Found label after column 1. (LCD_BUSY)
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 21 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 25 : Found label after column 1. (L_BUSY)
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 29 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 34 : Found label after column 1. (LCD_REG)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 39 : Found label after column 1. (LCD_DATOS)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 45 : Found label after column 1. (LCD_INI)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 56 : Found label after column 1. (LCD_PORT)
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 57 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\LCD\LCD_ROBOTIX_COPY\LCD.LIB 59 : Register in operand not in bank 0.  Ensure that bank bits are correct.

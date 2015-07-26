@@ -1,0 +1,82 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Thu Nov 05 20:57:17 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x0003a2
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x0001d5      
+            466 out of 1093 program addresses used, program memory utilization is 42%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    BLINK   0x000129    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  BLINK_1   0x00012e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    DATOS   0x000011    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   DATO_1   0x0000d5    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   DATO_2   0x0000e6    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  DELAY10   0x00011d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                DELAY10_1   0x000120    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  DELAY1S   0x000125    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  DELAY_1   0x000118    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                DELAY_5MS   0x000115    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                 LCD_BUSY   0x0000ef    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                LCD_DATOS   0x000102    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    LCD_E   0x0000fe    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  LCD_INI   0x00010b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  LCD_REG   0x000107    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   L_BUSY   0x0000f6    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                     MENS   0x000155    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    MENS1   0x000156    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   MENS_1   0x00013b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                 MENS_1_1   0x00013c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   MENS_2   0x000149    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                 MENS_2_1   0x00014a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    START   0x000162    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  START_1   0x000163    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    DATOS   0x000011    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   DATO_1   0x0000d5    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   DATO_2   0x0000e6    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                 LCD_BUSY   0x0000ef    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   L_BUSY   0x0000f6    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    LCD_E   0x0000fe    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                LCD_DATOS   0x000102    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  LCD_REG   0x000107    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  LCD_INI   0x00010b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                DELAY_5MS   0x000115    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  DELAY_1   0x000118    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  DELAY10   0x00011d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                DELAY10_1   0x000120    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  DELAY1S   0x000125    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    BLINK   0x000129    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  BLINK_1   0x00012e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   MENS_1   0x00013b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                 MENS_1_1   0x00013c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                   MENS_2   0x000149    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                 MENS_2_1   0x00014a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                     MENS   0x000155    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    MENS1   0x000156    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                    START   0x000162    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+                  START_1   0x000163    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_LCD\MODIFICADOS\PRESENTA_COPY\PRESENTA.ASM
+
+

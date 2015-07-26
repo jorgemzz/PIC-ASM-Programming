@@ -1,0 +1,72 @@
+
+
+	LIST	P=16F84A
+	INCLUDE	"P16F84A.INC"
+
+	PDel0	EQU	0X0F
+	PDel1	EQU	0X10
+
+;------CONFIGURACION DE PUERTOS-------
+
+		ORG	 	0X00			;INDICA DONDE SE ESCRIBE LA SIGUIENTE INSTRUCCION
+		GOTO	INICIO			;SALTA A LA ETIQUETA INICIO
+		ORG		0X04
+		GOTO	ISR				;RUTINA DE SERVICIO DE INTERRUPCION
+		ORG		0X05
+
+INICIO	BSF		STATUS,RP0		;CONFIGUTRACION DE LOS PUERTOS
+		MOVLW	0X01			;CARGA W CON  00000001
+		MOVWF	TRISB			;RB0 INT ES ENTRADA
+		BCF		OPTION_REG,6	;SELECCIONAMOS FLANCO DESCENDENTE
+		BCF		STATUS,RP0
+
+;-----HABILITACION DE INTERRUPCIONES-----
+
+		BSF		INTCON,GIE		;HABILITAMOS TODAS LAS INERRUPCIONES
+		BSF		INTCON,INTE		;QUE SEAN INTERRUPCIONES EXTERNAS
+		CLRF	PORTB			;LIMPIO EL PUERTO B
+
+SUEÑO	SLEEP
+		GOTO	SUEÑO			;DULCES	SUEÑOS
+
+;-----RUTINA DE SERVICIO DE INTERRUPCIONES----
+	;	CALL	PDelay			;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms)	
+	;	BTFSS	INTCON,INTF		;VERIFICA SI ES INTERRUPCION ESTEERNAA POR RB0
+	;	RETFIE					; SI ES ASI LO ATIENDE, SINO REGERSA CON GIE=1
+						
+
+ISR		BTFSS	PORTB,0			;VERIFICAMOS QUE SUELTEN EL PULSADOR
+		GOTO	ISR
+
+		CALL	PDelay			;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms)	
+
+		BTFSC	PORTB,1			;AHORA SI EL LED ESTA A UNO 
+		GOTO	OFF_LED			;IRE A OFF_LED PARA APAGARLO
+		BSF		PORTB,1			;SINOO ENCIENDO EL LED
+		BCF		INTCON,INTF		;BORRO LA BANDETA DE INTERRUPCION ESTERNA
+		RETFIE
+
+OFF_LED	BCF		PORTB,1			;APAGO EL LED
+		BCF		INTCON,INTF		;BORRO BANDERA DE INTERRUPCION
+		RETFIE
+
+;--------AMORTIGUANDO----------
+
+PDelay  movlw     .55       ; 1 set number of repetitions (B)
+        movwf     PDel0     ; 1 |
+PLoop1  movlw     .181      ; 1 set number of repetitions (A)
+        movwf     PDel1     ; 1 |
+PLoop2  clrwdt              ; 1 clear watchdog
+        clrwdt              ; 1 cycle delay
+        decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+        goto      PLoop2    ; 2 no, loop
+        decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+        goto      PLoop1    ; 2 no, loop
+        return              ; 2+2 Done
+
+;----------------------------------------------
+
+	END
+
+;------------------
+		

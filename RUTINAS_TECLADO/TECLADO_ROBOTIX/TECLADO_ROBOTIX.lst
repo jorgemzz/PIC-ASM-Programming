@@ -1,0 +1,290 @@
+MPASM  5.33               TECLADO_ROBOTIX.ASM   1-4-1980  0:25:34         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001                 
+                      00002 
+                      00003                 LIST    P=16F84A
+                      00004                 INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00005 
+Warning[207]: Found label after column 1. (Tecla)
+  0000000C            00006         Tecla   EQU     0X0C
+Warning[207]: Found label after column 1. (PDel0)
+  0000000D            00007         PDel0   EQU     0X0D
+Warning[207]: Found label after column 1. (PDel1)
+  0000000E            00008         PDel1   EQU     0X0E
+                      00009 
+0000                  00010                 ORG     0X00
+0000   2805           00011                 GOTO    INICIO
+                      00012 
+0005                  00013                 ORG     0X05
+0005                  00014 INICIO
+0005   1683           00015         BSF             STATUS,RP0
+0006   0185           00016         CLRF    PORTA
+0007   200F           00017         CALL    KB_Port
+                      00018         
+0008                  00019 INIXIO          
+                      00020 
+                      00021         
+0008   2015           00022         CALL    KB_Scan 
+                      00023 
+0009   1283           00024         BCF             STATUS,RP0
+000A   080C           00025         MOVF    Tecla,W
+000B   0085           00026         MOVWF   PORTA
+000C   204D           00027         CALL    PDelay
+000D   204D           00028         CALL    PDelay
+                      00029 
+000E   2808           00030         GOTO    INIXIO
+                      00031 
+                      00032         INCLUDE "TECLADO.INC"
+                      00001 ;  - TECLADO.LIB -        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
+                      00002 ;                                          www.x-robotics.com
+                      00003 ; Descipcion:             \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                      00004 ; Esta libreria realiza un escaneo en un teclado matricial de 4x4 teclas,  
+                      00005 ; el escaneo lo realiza poniendo un cero logico en las filas correspondientes
+                      00006 ; y verificando las columnas para encontrar la interseccion provocada por   
+                      00007 ; el accionamiento de una tecla y asi saber la fila y columna de la tecla.  
+                      00008 ; ESTA SUBRUTINA CONVIERTE LA TECLA PULSADA EN SU EQUIVALENTE ASCII
+                      00009 ;       para ser usada con el display LCD.
+                      00010 ;                                         
+                      00011 ; Se tienen que inicializar las siguientes variables en el programa que
+                      00012 ; use esta libreria:
+                      00013 ;                       - ( Tecla )  ;Devuelve la tecla pulsada
+                      00014 ;****************************************** http://www.x-robotics.com *******
+                      00015                   
+MPASM  5.33               TECLADO_ROBOTIX.ASM   1-4-1980  0:25:34         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000F                  00016 KB_Port                        ;Inicializa la puerta B para las entradas del
+                      00017                                ;teclado. Programa RB0-3 como salidas y RB4-7
+                      00018                                ;entradas con las resistencias de polarizacion
+                      00019                                ;habilitadas.           
+000F   1683           00020                 BSF     STATUS,RP0      ;Selecciona P gina 1:banco 1             
+0010   30F0           00021                 MOVLW   0F0h            ;PB4-7 como entradas  
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0011   0086           00022                 MOVWF   TRISB           ;y PB0-3 como salidas
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0012   1381           00023                 BCF     OPTION_REG,NOT_RBPU     ;Habilita R de polarizacion en entradas
+0013   1283           00024                 BCF     STATUS,RP0      ;Vuelve a la p gina 0.
+0014   0008           00025                 RETURN                  ;Retorna.
+                      00026                                         
+0015                  00027 KB_Scan                                 ;Escanea el teclado
+0015   018C           00028                 CLRF    Tecla           ;Borra Tecla y
+0016   0A8C           00029                 INCF    Tecla,f         ;prepara Tecla para primer c¢digo.
+0017   300E           00030                 MOVLW   0Eh             ;Saca 0 a la primera fila
+0018   0086           00031                 MOVWF   PORTB           ;de la Puerta B
+0019   0000           00032                 NOP                     ;Nada para estabilizaci¢n de señal.  
+001A   1E06           00033 Cheq_Col        BTFSS   PORTB,4         ;Primera columna = 0        
+001B   282F           00034                 GOTO    antirebotes     ;Sale si se ha pulsado tecla.
+001C   0A8C           00035                 INCF    Tecla,f         ;Si no tecla pulsada, incrementa tecla.
+001D   1E86           00036                 BTFSS   PORTB,5         ;Segunda columna = 0
+001E   282F           00037                 GOTO    antirebotes     ;Sale si se ha pulsado tecla.
+001F   0A8C           00038                 INCF    Tecla,f         ;Si no tecla pulsada, incrementa tecla.
+0020   1F06           00039                 BTFSS   PORTB,6         ;Tercera columna = 0
+0021   282F           00040                 GOTO    antirebotes     ;Sale si se ha pulsado tecla.
+0022   0A8C           00041                 INCF    Tecla,f         ;Si no tecla pulsada, incrementa tecla.
+0023   1F86           00042                 BTFSS   PORTB,7         ;Cuarta columna = 0
+0024   282F           00043                 GOTO    antirebotes     ;Sale si se ha pulsado tecla.
+0025   0A8C           00044                 INCF    Tecla,f         ;Si no tecla pulsada,incrementa Tecla.
+                      00045                                         
+0026   3011           00046 Ultima_Tecla    MOVLW   d'17'           ;Carga W con el n£mero de Teclas + 1.
+0027   020C           00047                 SUBWF   Tecla,w         ;y lo compara con el valor actual de Tecla.
+0028   1903           00048                 BTFSC   STATUS,Z        ;Si Tecla + 1 = valor actual.
+0029   282D           00049                 GOTO    NTeclas         ;No ha sido pulsada ninguna tecla.
+002A   1403           00050                 BSF     STATUS,C        ;Pone a 1 Bit C.    
+002B   0D86           00051                 RLF     PORTB,f     ;as¡ la Fila 1 pasa a 1 con la rotaci¢n a izqda.
+002C   281A           00052                 GOTO    Cheq_Col                                             
+                      00053                                                             
+002D   018C           00054 NTeclas         CLRF    Tecla           ;Coloca variable Tecla a 0
+002E   0008           00055                 RETURN                  ;y regresa.         
+                      00056                                                             
+002F                  00057 antirebotes     ;ahora se espera a que la tecla sea soltada para evitar rebotes
+                      00058                 ;y reactivaciones de tecla
+                      00059                 ;esta parte puede ser eliminada si para nuestro proyecto no es necesaria
+                      00060                 ;o es un inconveniente.
+                      00061 
+002F   1E06           00062 Espera1         BTFSS   PORTB,4         ;Si no se suelta la tecla FILA 1
+0030   282F           00063                 GOTO    Espera1         ;vuelve a esperar. 
+0031   1E86           00064 Espera2         BTFSS   PORTB,5         ;Si no se suelta la tecla FILA 2
+0032   2831           00065                 GOTO    Espera2         ;vuelve a esperar.
+0033   1F06           00066 Espera3         BTFSS   PORTB,6         ;Si no se suelta la tecla FILA 3
+MPASM  5.33               TECLADO_ROBOTIX.ASM   1-4-1980  0:25:34         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0034   2833           00067                 GOTO    Espera3         ;vuelve a esperar.              
+0035   1F86           00068 Espera4         BTFSS   PORTB,7         ;Si no se suelta la tecla FILA 4
+0036   2835           00069                 GOTO    Espera4         ;vuelve a esperar.          
+                      00070                 
+0037   080C           00071                 MOVF    Tecla,w         ;pone en w el numero contenido en la variable
+0038   203B           00072                 CALL    T_Conv          ;llama a la tabla de conversion y retorna
+0039   008C           00073                 MOVWF   Tecla           ;con el valor en hexadecimal y lo pone en la variable.
+003A   0008           00074                 RETURN                  ;vuelve al programa principal que hizo la llamada.
+                      00075                  
+                      00076                              
+003B   0782           00077 T_Conv          ADDWF   PCL,1
+003C   3400           00078                                 RETLW   .0
+003D   340F           00079                 RETLW   .15             ;Tecla nº0 = 0
+003E   3401           00080                 RETLW   .1             ;Tecla nº1 = 1
+003F   3402           00081                 RETLW   .2             ;Tecla nº2 = 4
+0040   3403           00082                 RETLW   .3             ;Tecla nº3 = 7 
+0041   3404           00083                 RETLW   .4             ;Tecla nº4 = A                       
+0042   3405           00084                 RETLW   .5             ;Tecla nº5 = 2 
+0043   3406           00085                 RETLW   .6             ;Tecla nº6 = 5 
+0044   3407           00086                 RETLW   .7             ;Tecla nº7 = 8 
+0045   3408           00087                 RETLW   .8             ;Tecla nº8 = 0 
+0046   3409           00088                 RETLW   .9             ;Tecla nº9 = 3 
+0047   340A           00089                 RETLW   .10             ;Tecla nº10 = 6
+0048   340B           00090                 RETLW   .11             ;Tecla nº11 = 9
+0049   340C           00091                 RETLW   .12             ;Tecla nº12 = B
+004A   340D           00092                 RETLW   .13             ;Tecla nº13 = F
+004B   340E           00093                 RETLW   .14             ;Tecla nº14 = E
+004C   340F           00094                 RETLW   .15             ;Tecla nº15 = D
+                      00095 
+                      00096                                  
+                      00097                                  
+                      00033 
+                      00034 ;-------------------------------------------------------------
+                      00035 ; Code generated by PDEL  ver 1.0  on 04/01/1980 at 12:34:07 a.m.
+                      00036 ; Description: Waits 300000 cycles
+                      00037 ;-------------------------------------------------------------
+004D   309A           00038 PDelay  movlw     .154      ; 1 set number of repetitions (B)
+004E   008D           00039         movwf     PDel0     ; 1 |
+004F   30F3           00040 PLoop1  movlw     .243      ; 1 set number of repetitions (A)
+0050   008E           00041         movwf     PDel1     ; 1 |
+0051   0064           00042 PLoop2  clrwdt              ; 1 clear watchdog
+0052   2853           00043 PDelL1  goto PDelL2         ; 2 cycles delay
+0053   2854           00044 PDelL2  goto PDelL3         ; 2 cycles delay
+0054                  00045 PDelL3  
+0054   0B8E           00046         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+0055   2851           00047         goto      PLoop2    ; 2 no, loop
+0056   0B8D           00048         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+0057   284F           00049         goto      PLoop1    ; 2 no, loop
+0058   2859           00050 PDelL4  goto PDelL5         ; 2 cycles delay
+0059   0064           00051 PDelL5  clrwdt              ; 1 cycle delay
+005A   0008           00052         return              ; 2+2 Done
+                      00053 ;-------------------------------------------------------------
+                      00054                 END
+MPASM  5.33               TECLADO_ROBOTIX.ASM   1-4-1980  0:25:34         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+Cheq_Col                          0000001A
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+Espera1                           0000002F
+Espera2                           00000031
+Espera3                           00000033
+Espera4                           00000035
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+INIXIO                            00000008
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+KB_Port                           0000000F
+KB_Scan                           00000015
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+NTeclas                           0000002D
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             0000000D
+PDel1                             0000000E
+PDelL1                            00000052
+PDelL2                            00000053
+PDelL3                            00000054
+PDelL4                            00000058
+PDelL5                            00000059
+PDelay                            0000004D
+PLoop1                            0000004F
+PLoop2                            00000051
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+MPASM  5.33               TECLADO_ROBOTIX.ASM   1-4-1980  0:25:34         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+T_Conv                            0000003B
+Tecla                             0000000C
+Ultima_Tecla                      00000026
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+antirebotes                       0000002F
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXX----- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    87
+Program Memory Words Free:   937
+
+
+Errors   :     0
+Warnings :     3 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

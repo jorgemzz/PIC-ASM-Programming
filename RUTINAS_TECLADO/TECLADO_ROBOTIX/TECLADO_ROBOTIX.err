@@ -1,0 +1,5 @@
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM 6 : Found label after column 1. (Tecla)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM 7 : Found label after column 1. (PDel0)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO_ROBOTIX.ASM 8 : Found label after column 1. (PDel1)
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC 22 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO_ROBOTIX\TECLADO.INC 23 : Register in operand not in bank 0.  Ensure that bank bits are correct.

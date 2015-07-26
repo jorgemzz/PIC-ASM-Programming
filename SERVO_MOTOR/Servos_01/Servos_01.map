@@ -1,0 +1,110 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Sat Dec 12 07:50:57 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x0000ec
+ .config_2007_SERVOS_01.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x000079      
+                            0x002007    0x002007      
+            120 out of 1093 program addresses used, program memory utilization is 10%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               EstabaAlto   0x000028    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+               EstabaBajo   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+  Fin_Timer0_Interrupcion   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+                   Inicio   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+                Principal   0x00000e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+    R1Decima_BucleExterno   0x000070    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+   R1Decima_BucleExterno2   0x00006e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+    R1Decima_BucleInterno   0x000072    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        R1ms_BucleExterno   0x00005a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        R1ms_BucleInterno   0x00005c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            RetardoMicros   0x000046    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        Retardo_100micros   0x000040    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Retardo_100ms   0x00004c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+         Retardo_10micros   0x000033    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+             Retardo_10ms   0x000052    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_10s   0x000064    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+          Retardo_1Decima   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_1ms   0x000058    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+               Retardo_1s   0x00006a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        Retardo_200micros   0x00003d    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Retardo_200ms   0x00004a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+         Retardo_20micros   0x000045    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+             Retardo_20ms   0x000050    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_20s   0x000062    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_2ms   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+               Retardo_2s   0x000068    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+          Retardo_4micros   0x000039    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        Retardo_500micros   0x00003a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Retardo_500ms   0x00006c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+         Retardo_50micros   0x000042    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+             Retardo_50ms   0x00004e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+          Retardo_5micros   0x000038    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_5ms   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+               Retardo_5s   0x000066    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardos_ms   0x000059    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Rmicros_Bucle   0x000047    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+     SeleccionaFactorAlto   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+      Timer0_Interrupcion   0x00001a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   Inicio   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+                Principal   0x00000e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+     SeleccionaFactorAlto   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+      Timer0_Interrupcion   0x00001a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+               EstabaBajo   0x000024    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+               EstabaAlto   0x000028    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+  Fin_Timer0_Interrupcion   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\Servos_01.ASM
+         Retardo_10micros   0x000033    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+          Retardo_5micros   0x000038    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+          Retardo_4micros   0x000039    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        Retardo_500micros   0x00003a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        Retardo_200micros   0x00003d    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        Retardo_100micros   0x000040    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+         Retardo_50micros   0x000042    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+         Retardo_20micros   0x000045    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            RetardoMicros   0x000046    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Rmicros_Bucle   0x000047    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Retardo_200ms   0x00004a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Retardo_100ms   0x00004c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+             Retardo_50ms   0x00004e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+             Retardo_20ms   0x000050    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+             Retardo_10ms   0x000052    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_5ms   0x000054    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_2ms   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_1ms   0x000058    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardos_ms   0x000059    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        R1ms_BucleExterno   0x00005a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+        R1ms_BucleInterno   0x00005c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_20s   0x000062    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+              Retardo_10s   0x000064    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+               Retardo_5s   0x000066    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+               Retardo_2s   0x000068    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+               Retardo_1s   0x00006a    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+            Retardo_500ms   0x00006c    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+          Retardo_1Decima   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+   R1Decima_BucleExterno2   0x00006e    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+    R1Decima_BucleExterno   0x000070    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+    R1Decima_BucleInterno   0x000072    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_01\RETARDOS.INC
+
+

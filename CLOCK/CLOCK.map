@@ -1,0 +1,68 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Sat Oct 17 17:25:35 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000180
+     .config_2007_CLOCK.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0000bf      
+                            0x002007    0x002007      
+            193 out of 1093 program addresses used, program memory utilization is 17%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    CHKSW   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   CHKSW0   0x00009f    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   CHKSW1   0x0000a6    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    CLOCK   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     DEL1   0x0000ba    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    DELAY   0x0000b8    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    DHOUR   0x000080    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                  DHOUR10   0x00007d    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                  DISPLAY   0x000088    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     DMIN   0x000086    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   DMIN10   0x000083    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   INCDIG   0x000097    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    INCHR   0x00005b    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     INIT   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     MAIN   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   SEGTAB   0x000019    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     SHOW   0x000065    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     WAIT   0x000012    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     INIT   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     MAIN   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     WAIT   0x000012    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   SEGTAB   0x000019    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    CLOCK   0x00002b    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    INCHR   0x00005b    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     SHOW   0x000065    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                  DHOUR10   0x00007d    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    DHOUR   0x000080    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   DMIN10   0x000083    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     DMIN   0x000086    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                  DISPLAY   0x000088    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    CHKSW   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   INCDIG   0x000097    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   CHKSW0   0x00009f    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                   CHKSW1   0x0000a6    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                    DELAY   0x0000b8    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+                     DEL1   0x0000ba    program     static E:\Jorge\PROG_PIC_NUEVOS\CLOCK\CLOCK.ASM
+
+

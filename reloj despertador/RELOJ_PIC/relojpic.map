@@ -1,0 +1,166 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Fri Jan 04 00:31:18 1980
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x00035a
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x0001b0      
+            430 out of 1093 program addresses used, program memory utilization is 39%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                      ACA   0x000153    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   AJUAJU   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   BLABLA   0x000016    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    BORRA   0x00002e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAHORA2   0x000176    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAHORA3   0x00018c    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAHORAL   0x000174    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   CAMBAL   0x00014e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAMBHOR   0x000113    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CONECAL   0x000111    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     CONT   0x00004a    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      DEL   0x000199    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    DELAY   0x000194    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY1   0x000196    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY2   0x000198    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY3   0x000106    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY4   0x000109    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY5   0x00010e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS1   0x000023    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS2   0x000030    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS3   0x000039    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS4   0x000042    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     HOR0   0x00008d    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    HOR02   0x00018e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   HORAL0   0x00018b    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCMIN   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCREH   0x00013a    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INCREH1   0x00018f    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCREM   0x000122    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INCREM1   0x000138    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCSEG   0x000052    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INICIO   0x00008f    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INMINA2   0x000160    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INMINA3   0x000172    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INMINAL   0x00015e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      JOD   0x00019a    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     JODE   0x00019e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    JODER   0x00019c    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     MIN0   0x00007b    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    MIN02   0x000137    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   MINAL0   0x000171    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    MIRAL   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   MIRHOR   0x000074    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    MUEAL   0x0001a9    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   MUEAL2   0x0001ab    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   PARPAD   0x0001a5    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   PULSA1   0x000119    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   PULSA2   0x000155    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     REBA   0x0000f1    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    REBA2   0x000104    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     REBO   0x0000bf    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    REBOT   0x0000bd    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      REP   0x0000ad    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     REP1   0x0000ba    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      SAL   0x000066    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     SAL1   0x000068    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    SALAL   0x000187    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   SALHOR   0x000191    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   SALSON   0x0000d2    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SALSON1   0x0000e9    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SALSON2   0x0000e8    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     SON1   0x00000f    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    SONAR   0x0000c2    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   SONAR1   0x0000c4    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SUELTA1   0x000117    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SUELTA3   0x000188    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    SUMA6   0x0000ee    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     SON1   0x00000f    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   AJUAJU   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   BLABLA   0x000016    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS1   0x000023    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    BORRA   0x00002e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS2   0x000030    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS3   0x000039    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  ESCDIS4   0x000042    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     CONT   0x00004a    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCSEG   0x000052    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCMIN   0x000056    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      SAL   0x000066    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     SAL1   0x000068    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    MIRAL   0x00006d    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   MIRHOR   0x000074    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     MIN0   0x00007b    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     HOR0   0x00008d    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INICIO   0x00008f    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      REP   0x0000ad    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     REP1   0x0000ba    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    REBOT   0x0000bd    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     REBO   0x0000bf    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    SONAR   0x0000c2    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   SONAR1   0x0000c4    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   SALSON   0x0000d2    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SALSON2   0x0000e8    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SALSON1   0x0000e9    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    SUMA6   0x0000ee    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     REBA   0x0000f1    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    REBA2   0x000104    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY3   0x000106    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY4   0x000109    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY5   0x00010e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CONECAL   0x000111    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAMBHOR   0x000113    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SUELTA1   0x000117    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   PULSA1   0x000119    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCREM   0x000122    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    MIN02   0x000137    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INCREM1   0x000138    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   INCREH   0x00013a    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   CAMBAL   0x00014e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      ACA   0x000153    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   PULSA2   0x000155    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INMINAL   0x00015e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INMINA2   0x000160    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   MINAL0   0x000171    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INMINA3   0x000172    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAHORAL   0x000174    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAHORA2   0x000176    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    SALAL   0x000187    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  SUELTA3   0x000188    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   HORAL0   0x00018b    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  CAHORA3   0x00018c    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    HOR02   0x00018e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                  INCREH1   0x00018f    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   SALHOR   0x000191    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    DELAY   0x000194    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY1   0x000196    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   DELAY2   0x000198    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      DEL   0x000199    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                      JOD   0x00019a    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    JODER   0x00019c    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                     JODE   0x00019e    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   PARPAD   0x0001a5    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                    MUEAL   0x0001a9    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+                   MUEAL2   0x0001ab    program     static E:\Jorge\PROG_PIC_NUEVOS\reloj despertador\RELOJ_PIC\relojpic.asm
+
+

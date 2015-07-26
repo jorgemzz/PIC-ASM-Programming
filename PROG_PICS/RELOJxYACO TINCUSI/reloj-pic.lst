@@ -1,0 +1,1215 @@
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;****************************************************************************
+                      00002 ;viernes 01-05-07
+                      00003 ;diseño de un reloj temporizado ya exacto  con cuatro lineas , rb4= detiene el tiempo
+                      00004 ;rb5:selecciona hora y/o minuto, rb6=incrementa lo seleccionado
+                      00005 ;AUTOR: CARLOS ALBERTO YACO TINCUSI
+                      00006 ; digito4digito3:digito2digito1:digito6digto5 formato de hora
+                      00007 ;****************************************************************************
+Warning[205]: Found directive in column 1. (list)
+                      00008 list P=16F84A
+Warning[205]: Found directive in column 1. (include)
+                      00009 include<P16F84A.inc>
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+Warning[205]: Found directive in column 1. (cblock)
+                      00010 cblock 0x0C
+  0000000C            00011 segundo_uni
+  0000000D            00012 segundo_dec
+  0000000E            00013 unidad 
+  0000000F            00014 decena 
+  00000010            00015 centena 
+  00000011            00016 unidmil 
+  00000012            00017 digito1  ;minutos
+  00000013            00018 digito2 ;munutos
+  00000014            00019 digito3 ;hora
+  00000015            00020 digito4 ;hora
+  00000016            00021 digito5
+  00000017            00022 digito6
+  00000018            00023 alar_digito1; digito alarma minuto
+  00000019            00024 alar_digito2; digito alarma minuto
+  0000001A            00025 alar_digito3; digito alarma hora
+  0000001B            00026 alar_digito4; digito alarma hora
+  0000001C            00027 contador 
+  0000001D            00028 segundo 
+  0000001E            00029 contador_interupcion  ; controla la  sincronizacion del reloj
+  0000001F            00030 controlador_interupcion;  se encarga de controlar las interupciones
+  00000020            00031 controlador_cambio; 
+  00000021            00032 contador_alarma
+  00000022            00033 activar ; controlar la sincronizacion del reloj
+  00000023            00034 timbre_alarma
+Warning[205]: Found directive in column 1. (ENDC)
+                      00035 endc
+Warning[205]: Found directive in column 1. (org)
+0000                  00036 org 0
+Warning[203]: Found opcode in column 1. (goto)
+0000   2805           00037 goto inicio
+Warning[205]: Found directive in column 1. (org)
+0004                  00038 org 4
+Warning[203]: Found opcode in column 1. (goto)
+0004   2894           00039 goto controlador
+                      00040 
+0005                  00041 inicio ;configuracion  de pines
+Warning[203]: Found opcode in column 1. (bsf)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0005   1683           00042 bsf  STATUS, RP0
+Warning[203]: Found opcode in column 1. (movlw)
+0006   3070           00043 movlw b'01110000'
+Warning[203]: Found opcode in column 1. (movwf)
+0007   0086           00044 movwf PORTB
+Warning[203]: Found opcode in column 1. (movlw)
+0008   30F0           00045 movlw b'11110000'
+Warning[203]: Found opcode in column 1. (movwf)
+0009   0085           00046 movwf PORTA
+Warning[203]: Found opcode in column 1. (movlw)
+000A   30A0           00047 movlw b'10100000'
+Warning[203]: Found opcode in column 1. (movwf)
+000B   008B           00048 movwf INTCON
+Warning[203]: Found opcode in column 1. (movlw)
+000C   3003           00049 movlw b'00000011'
+Warning[203]: Found opcode in column 1. (movwf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000D   0081           00050 movwf OPTION_REG
+Warning[203]: Found opcode in column 1. (bcf)
+000E   1283           00051 bcf STATUS,RP0
+Warning[203]: Found opcode in column 1. (clrf)
+000F   018C           00052 clrf segundo_uni
+Warning[203]: Found opcode in column 1. (clrf)
+0010   018D           00053 clrf segundo_dec
+Warning[203]: Found opcode in column 1. (clrf)
+0011   018E           00054 clrf unidad
+Warning[203]: Found opcode in column 1. (clrf)
+0012   018F           00055 clrf decena
+Warning[203]: Found opcode in column 1. (clrf)
+0013   0190           00056 clrf centena
+Warning[203]: Found opcode in column 1. (clrf)
+0014   0191           00057 clrf unidmil
+Warning[203]: Found opcode in column 1. (clrf)
+0015   019C           00058 clrf contador
+Warning[203]: Found opcode in column 1. (clrf)
+0016   019D           00059 clrf segundo
+Warning[203]: Found opcode in column 1. (clrf)
+0017   01A2           00060 clrf activar
+Warning[203]: Found opcode in column 1. (clrf)
+0018   019E           00061 clrf contador_interupcion
+Warning[203]: Found opcode in column 1. (clrf)
+0019   019F           00062 clrf controlador_interupcion
+Warning[203]: Found opcode in column 1. (clrf)
+001A   01A0           00063 clrf controlador_cambio
+Warning[203]: Found opcode in column 1. (clrf)
+001B   0197           00064 clrf digito6
+Warning[203]: Found opcode in column 1. (clrf)
+001C   0196           00065 clrf digito5
+Warning[203]: Found opcode in column 1. (clrf)
+001D   01A3           00066 clrf timbre_alarma
+Warning[203]: Found opcode in column 1. (movlw)
+001E   3000           00067 movlw d'0'
+Warning[203]: Found opcode in column 1. (movwf)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001F   0081           00068 movwf TMR0
+                      00069 ;inicializacion de los digitos del display
+Warning[203]: Found opcode in column 1. (clrf)
+0020   0195           00070 clrf digito4
+Warning[203]: Found opcode in column 1. (clrf)
+0021   0194           00071 clrf digito3
+Warning[203]: Found opcode in column 1. (clrf)
+0022   0193           00072 clrf digito2
+Warning[203]: Found opcode in column 1. (clrf)
+0023   0192           00073 clrf digito1
+Warning[203]: Found opcode in column 1. (clrf)
+0024   019B           00074 clrf alar_digito4
+Warning[203]: Found opcode in column 1. (clrf)
+0025   0199           00075 clrf alar_digito2
+Warning[203]: Found opcode in column 1. (clrf)
+0026   019A           00076 clrf alar_digito3
+Warning[203]: Found opcode in column 1. (movlw)
+0027   3001           00077 movlw d'1'
+Warning[203]: Found opcode in column 1. (movwf)
+0028   0098           00078 movwf alar_digito1
+Warning[203]: Found opcode in column 1. (clrf)
+0029   01A1           00079 clrf contador_alarma
+Warning[203]: Found opcode in column 1. (call)
+002A   207B           00080 call visualizar
+                      00081 
+                      00082 ; contador de segundos unidad
+002B                  00083 contador_unidad_segundo
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+002B   0A8C           00084 incf segundo_uni
+Warning[204]: Found pseudo-op in column 1. (movfw)
+002C   080C           00085 movfw segundo_uni
+Warning[203]: Found opcode in column 1. (sublw)
+002D   3C0A           00086 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+002E   1903           00087 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+002F   2033           00088 call contador_decena_segundo
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0030   080C           00089 movfw segundo_uni
+Warning[203]: Found opcode in column 1. (movwf)
+0031   0096           00090 movwf digito5
+Warning[203]: Found opcode in column 1. (call)
+0032   207B           00091 call visualizar
+                      00092 
+                      00093 ; contador de segundos decena
+0033                  00094 contador_decena_segundo
+Warning[203]: Found opcode in column 1. (clrf)
+0033   018C           00095 clrf segundo_uni
+Warning[203]: Found opcode in column 1. (clrf)
+0034   0196           00096 clrf digito5
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0035   0A8D           00097 incf segundo_dec
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0036   080D           00098 movfw segundo_dec
+Warning[203]: Found opcode in column 1. (sublw)
+0037   3C06           00099 sublw d'6'
+Warning[203]: Found opcode in column 1. (btfsc)
+0038   1903           00100 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0039   203D           00101 call contador_unidad_minuto
+Warning[204]: Found pseudo-op in column 1. (movfw)
+003A   080D           00102 movfw segundo_dec
+Warning[203]: Found opcode in column 1. (movwf)
+003B   0097           00103 movwf digito6
+Warning[203]: Found opcode in column 1. (call)
+003C   207B           00104 call visualizar
+                      00105 
+                      00106 ;contador de unidades minuto
+003D                  00107 contador_unidad_minuto 
+Warning[203]: Found opcode in column 1. (clrf)
+003D   018D           00108 clrf segundo_dec
+Warning[203]: Found opcode in column 1. (clrf)
+003E   0197           00109 clrf digito6
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+003F   0A8E           00110 incf unidad
+Warning[203]: Found opcode in column 1. (movf)
+0040   080E           00111 movf unidad,w
+Warning[203]: Found opcode in column 1. (sublw)
+0041   3C0A           00112 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+0042   1903           00113 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0043   204B           00114 call contador_decena_minuto
+Warning[203]: Found opcode in column 1. (movf)
+0044   080E           00115 movf unidad,w
+Warning[203]: Found opcode in column 1. (movwf)
+0045   0092           00116 movwf digito1
+                      00117 ;  es hora de alarma 
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0046   0810           00118 movfw centena
+Warning[203]: Found opcode in column 1. (subwf)
+0047   021A           00119 subwf alar_digito3,0
+Warning[203]: Found opcode in column 1. (btfsc)
+0048   1903           00120 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0049   213A           00121 call activar_alarma
+                      00122 ;
+Warning[203]: Found opcode in column 1. (call)
+004A   207B           00123 call visualizar
+                      00124 
+                      00125 ;contador de decena minuto
+004B                  00126 contador_decena_minuto
+Warning[203]: Found opcode in column 1. (clrf)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+004B   018E           00127 clrf unidad
+Warning[203]: Found opcode in column 1. (clrf)
+004C   0192           00128 clrf digito1
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+004D   0A8F           00129 incf decena
+Warning[203]: Found opcode in column 1. (movf)
+004E   080F           00130 movf decena,w
+Warning[203]: Found opcode in column 1. (sublw)
+004F   3C06           00131 sublw d'6'
+Warning[203]: Found opcode in column 1. (btfsc)
+0050   1903           00132 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0051   2059           00133 call contador_unidad_hora
+Warning[203]: Found opcode in column 1. (movf)
+0052   080F           00134 movf decena,w
+Warning[203]: Found opcode in column 1. (movwf)
+0053   0093           00135 movwf digito2
+                      00136 ;  es hora de alarma 
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0054   0810           00137 movfw centena
+Warning[203]: Found opcode in column 1. (subwf)
+0055   021A           00138 subwf alar_digito3,0
+Warning[203]: Found opcode in column 1. (btfsc)
+0056   1903           00139 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0057   213A           00140 call activar_alarma
+                      00141 ;
+Warning[203]: Found opcode in column 1. (call)
+0058   207B           00142 call visualizar
+                      00143 
+                      00144 ;contador de unidad hora
+0059                  00145 contador_unidad_hora
+Warning[203]: Found opcode in column 1. (clrf)
+0059   018F           00146 clrf decena
+Warning[203]: Found opcode in column 1. (clrf)
+005A   0193           00147 clrf digito2
+005B                  00148 incrementar_hora
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+005B   0A90           00149 incf centena
+Warning[203]: Found opcode in column 1. (movf)
+005C   0810           00150 movf centena,w
+Warning[203]: Found opcode in column 1. (sublw)
+005D   3C0A           00151 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+005E   1903           00152 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+005F   2071           00153 call contador_decena_hora
+Warning[203]: Found opcode in column 1. (movf)
+0060   0810           00154 movf centena,w
+Warning[203]: Found opcode in column 1. (movwf)
+0061   0094           00155 movwf digito3
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0062   0810           00156 movfw centena
+Warning[203]: Found opcode in column 1. (sublw)
+0063   3C04           00157 sublw d'4'
+Warning[203]: Found opcode in column 1. (btfss)
+0064   1D03           00158 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0065   207B           00159 call visualizar
+Warning[203]: Found opcode in column 1. (incf)
+0066   0A9C           00160 incf contador,1
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0067   081C           00161 movfw contador
+Warning[203]: Found opcode in column 1. (sublw)
+0068   3C03           00162 sublw d'3'
+Warning[203]: Found opcode in column 1. (btfss)
+0069   1D03           00163 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+006A   207B           00164 call visualizar
+Warning[203]: Found opcode in column 1. (clrf)
+006B   0194           00165 clrf digito3
+Warning[203]: Found opcode in column 1. (clrf)
+006C   0195           00166 clrf digito4
+Warning[203]: Found opcode in column 1. (clrf)
+006D   0190           00167 clrf centena
+Warning[203]: Found opcode in column 1. (clrf)
+006E   0191           00168 clrf unidmil
+Warning[203]: Found opcode in column 1. (clrf)
+006F   019C           00169 clrf contador
+Warning[203]: Found opcode in column 1. (call)
+0070   207B           00170 call visualizar
+                      00171 
+                      00172 ;contador de decena hora
+0071                  00173 contador_decena_hora
+Warning[203]: Found opcode in column 1. (clrf)
+0071   0190           00174 clrf centena
+Warning[203]: Found opcode in column 1. (clrf)
+0072   0194           00175 clrf digito3
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+0073   0A91           00176 incf unidmil
+Warning[203]: Found opcode in column 1. (movf)
+0074   0811           00177 movf unidmil,w
+Warning[203]: Found opcode in column 1. (sublw)
+0075   3C0A           00178 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+0076   1903           00179 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (clrf)
+0077   0191           00180 clrf unidmil
+Warning[203]: Found opcode in column 1. (movf)
+0078   0811           00181 movf unidmil,w
+Warning[203]: Found opcode in column 1. (movwf)
+0079   0095           00182 movwf digito4
+Warning[203]: Found opcode in column 1. (call)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+007A   207B           00183 call visualizar
+                      00184 
+007B                  00185 visualizar
+Warning[204]: Found pseudo-op in column 1. (movfw)
+007B   0812           00186 movfw digito1
+Warning[203]: Found opcode in column 1. (bcf)
+007C   1085           00187 bcf PORTA,1 ;DESHABILTAR DECENAS
+Warning[203]: Found opcode in column 1. (bcf)
+007D   1105           00188 bcf PORTA,2 ;DESHABILTAR CENTENAS
+Warning[203]: Found opcode in column 1. (bcf)
+007E   1185           00189 bcf PORTA,3 ;DESHABILTAR UNIDAD DE MILLAR
+Warning[203]: Found opcode in column 1. (movwf)
+007F   0086           00190 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+0080   1405           00191 bsf PORTA,0 ; HABILITAR UNIDADES
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0081   0813           00192 movfw digito2
+Warning[203]: Found opcode in column 1. (bcf)
+0082   1005           00193 bcf PORTA,0; DESHABILITAS UNIDADES
+Warning[203]: Found opcode in column 1. (movwf)
+0083   0086           00194 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+0084   1485           00195 bsf PORTA,1; HABILITAS DECENAS
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0085   0814           00196 movfw digito3
+Warning[203]: Found opcode in column 1. (bcf)
+0086   1085           00197 bcf PORTA,1; DESHABILITAS DECENAS
+Warning[203]: Found opcode in column 1. (movwf)
+0087   0086           00198 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+0088   1505           00199 bsf PORTA,2 ; HABILITO CENTENAS
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0089   0815           00200 movfw digito4
+Warning[203]: Found opcode in column 1. (bcf)
+008A   1105           00201 bcf PORTA,2 ;DESHABILITO CENTENAS
+Warning[203]: Found opcode in column 1. (movwf)
+008B   0086           00202 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+008C   1585           00203 bsf PORTA,3 ; HABILITO UNIDAD DE MILLAR
+Warning[203]: Found opcode in column 1. (btfsc)
+008D   1A06           00204 btfsc PORTB,4
+Warning[203]: Found opcode in column 1. (goto)
+008E   289F           00205 goto stop; detener el tiempo
+Warning[204]: Found pseudo-op in column 1. (movfw)
+008F   081F           00206 movfw controlador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+0090   3C05           00207 sublw d'5'
+Warning[203]: Found opcode in column 1. (btfsc)
+0091   1903           00208 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (goto)
+0092   28A2           00209 goto activar_interupcion
+Warning[203]: Found opcode in column 1. (goto)
+0093   287B           00210 goto visualizar
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00211 
+0094                  00212 controlador ; se encarga de controlar la ocurenncia de un segundo
+Warning[203]: Found opcode in column 1. (bsf)
+0094   178B           00213 bsf INTCON,7
+Warning[203]: Found opcode in column 1. (bcf)
+0095   110B           00214 bcf INTCON,2
+Warning[203]: Found opcode in column 1. (movlw)
+0096   3000           00215 movlw d'0'
+Warning[203]: Found opcode in column 1. (movwf)
+0097   0081           00216 movwf TMR0
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+0098   0A9D           00217 incf segundo
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0099   081D           00218 movfw segundo
+Warning[203]: Found opcode in column 1. (sublw)
+009A   3CF3           00219 sublw d'243'
+Warning[203]: Found opcode in column 1. (btfss)
+009B   1D03           00220 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+009C   207B           00221 call visualizar
+Warning[203]: Found opcode in column 1. (clrf)
+009D   019D           00222 clrf segundo
+Warning[203]: Found opcode in column 1. (call)
+009E   202B           00223 call contador_unidad_segundo
+                      00224 
+                      00225 
+009F                  00226 stop
+Warning[203]: Found opcode in column 1. (bcf)
+009F   138B           00227 bcf INTCON,7 ; deshabilitas cualquier tipo de interupcion
+Warning[203]: Found opcode in column 1. (btfsc)
+00A0   1A06           00228 btfsc PORTB,4
+Warning[203]: Found opcode in column 1. (call)
+00A1   20AB           00229 call continuamos_stop
+00A2                  00230 activar_interupcion
+Warning[203]: Found opcode in column 1. (bsf)
+00A2   178B           00231 bsf INTCON,7
+Warning[203]: Found opcode in column 1. (bcf)
+00A3   110B           00232 bcf INTCON,2
+Warning[203]: Found opcode in column 1. (movlw)
+00A4   3000           00233 movlw d'0'
+Warning[203]: Found opcode in column 1. (movwf)
+00A5   0081           00234 movwf TMR0
+Warning[203]: Found opcode in column 1. (clrf)
+00A6   01A2           00235 clrf activar
+Warning[203]: Found opcode in column 1. (clrf)
+00A7   019E           00236 clrf contador_interupcion
+Warning[203]: Found opcode in column 1. (clrf)
+00A8   019F           00237 clrf controlador_interupcion
+Warning[203]: Found opcode in column 1. (clrf)
+00A9   01A0           00238 clrf controlador_cambio
+Warning[203]: Found opcode in column 1. (goto)
+00AA   287B           00239 goto visualizar  
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00240 
+00AB                  00241 continuamos_stop
+Warning[203]: Found opcode in column 1. (movlw)
+00AB   3005           00242 movlw d'5'
+Warning[203]: Found opcode in column 1. (movwf)
+00AC   009F           00243 movwf controlador_interupcion ; activamos el controlador
+Warning[203]: Found opcode in column 1. (btfsc)
+00AD   1A86           00244 btfsc PORTB,5
+Warning[203]: Found opcode in column 1. (goto)
+00AE   28D5           00245 goto pre_controlador
+Warning[203]: Found opcode in column 1. (call)
+00AF   2159           00246 call RETARDO_10MS
+Warning[203]: Found opcode in column 1. (btfsc)
+00B0   1A86           00247 btfsc PORTB,5
+Warning[203]: Found opcode in column 1. (goto)
+00B1   28D5           00248 goto pre_controlador
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+00B2   0A9E           00249 incf contador_interupcion
+00B3                  00250 cambio
+00B3                  00251 bucle
+Warning[203]: Found opcode in column 1. (btfss)
+00B3   1E86           00252 btfss PORTB,5
+Warning[203]: Found opcode in column 1. (goto)
+00B4   28B3           00253 goto bucle
+Warning[203]: Found opcode in column 1. (call)
+00B5   2159           00254 call RETARDO_10MS
+Warning[203]: Found opcode in column 1. (btfss)
+00B6   1E86           00255 btfss PORTB,5
+Warning[203]: Found opcode in column 1. (goto)
+00B7   28B3           00256 goto bucle
+00B8                  00257 sigue
+Warning[203]: Found opcode in column 1. (movlw)
+00B8   3005           00258 movlw d'5'
+Warning[203]: Found opcode in column 1. (movwf)
+00B9   00A2           00259 movwf activar; activamos que se produjo un intento de camibo de horairo
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00BA   081E           00260 movfw contador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00BB   3C06           00261 sublw d'6' ;;
+Warning[203]: Found opcode in column 1. (btfsc)
+00BC   1903           00262 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+00BD   20D2           00263 call special
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00BE   081E           00264 movfw contador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00BF   3C01           00265 sublw d'1'
+Warning[203]: Found opcode in column 1. (btfsc)
+00C0   1903           00266 btfsc STATUS,Z ; horas?
+Warning[203]: Found opcode in column 1. (goto)
+00C1   28DA           00267 goto pre_incrementar_hora
+Warning[204]: Found pseudo-op in column 1. (movfw)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00C2   081E           00268 movfw contador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00C3   3C02           00269 sublw d'2'
+Warning[203]: Found opcode in column 1. (btfsc)
+00C4   1903           00270 btfsc STATUS,Z  ; minutos?
+Warning[203]: Found opcode in column 1. (goto)
+00C5   28E2           00271 goto pre_incrementar_minuto
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00C6   081E           00272 movfw contador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00C7   3C03           00273 sublw d'3'
+Warning[203]: Found opcode in column 1. (btfsc)
+00C8   1903           00274 btfsc STATUS,Z ; mostrar alarma?
+Warning[203]: Found opcode in column 1. (goto)
+00C9   28EA           00275 goto visualizar_especial
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00CA   081E           00276 movfw contador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00CB   3C04           00277 sublw d'4'
+Warning[203]: Found opcode in column 1. (btfsc)
+00CC   1903           00278 btfsc STATUS,Z ; horas_alarma?
+Warning[203]: Found opcode in column 1. (goto)
+00CD   292A           00279 goto pre_incrementar_hora_alarma
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00CE   081E           00280 movfw contador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00CF   3C05           00281 sublw d'5'
+Warning[203]: Found opcode in column 1. (btfsc)
+00D0   1903           00282 btfsc STATUS,Z ; minutos_alaram?
+Warning[203]: Found opcode in column 1. (goto)
+00D1   2932           00283 goto pre_incrementar_minuto_alarma
+                      00284 
+00D2                  00285 special 
+Warning[203]: Found opcode in column 1. (movlw)
+00D2   3001           00286 movlw d'1'
+Warning[203]: Found opcode in column 1. (movwf)
+00D3   009E           00287 movwf contador_interupcion
+Warning[203]: Found opcode in column 1. (return)
+00D4   0008           00288 return
+00D5                  00289 pre_controlador
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00D5   0822           00290 movfw activar
+Warning[203]: Found opcode in column 1. (sublw)
+00D6   3C05           00291 sublw d'5'
+Warning[203]: Found opcode in column 1. (btfss)
+00D7   1D03           00292 btfss STATUS, Z
+Warning[203]: Found opcode in column 1. (goto)
+00D8   287B           00293 goto visualizar
+Warning[203]: Found opcode in column 1. (goto)
+00D9   28B8           00294 goto sigue
+                      00295 
+00DA                  00296 pre_incrementar_hora  ; espera que se pulse para incrementar
+Warning[203]: Found opcode in column 1. (btfsc)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00DA   1B06           00297 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+00DB   287B           00298 goto visualizar
+Warning[203]: Found opcode in column 1. (call)
+00DC   2159           00299 call RETARDO_10MS
+Warning[203]: Found opcode in column 1. (btfsc)
+00DD   1B06           00300 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+00DE   287B           00301 goto visualizar
+00DF                  00302 bucle2
+Warning[203]: Found opcode in column 1. (btfss)
+00DF   1F06           00303 btfss PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+00E0   28DF           00304 goto bucle2
+Warning[203]: Found opcode in column 1. (goto)
+00E1   285B           00305 goto incrementar_hora
+                      00306 
+00E2                  00307 pre_incrementar_minuto; espera que se pulse para incrementar
+Warning[203]: Found opcode in column 1. (btfsc)
+00E2   1B06           00308 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+00E3   287B           00309 goto visualizar
+Warning[203]: Found opcode in column 1. (call)
+00E4   2159           00310 call RETARDO_10MS
+Warning[203]: Found opcode in column 1. (btfsc)
+00E5   1B06           00311 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+00E6   287B           00312 goto visualizar
+00E7                  00313 bulce3
+Warning[203]: Found opcode in column 1. (btfss)
+00E7   1F06           00314 btfss PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+00E8   28E7           00315 goto bulce3
+Warning[203]: Found opcode in column 1. (goto)
+00E9   283D           00316 goto contador_unidad_minuto
+                      00317 
+00EA                  00318 visualizar_especial
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00EA   0818           00319 movfw alar_digito1
+Warning[203]: Found opcode in column 1. (bcf)
+00EB   1085           00320 bcf PORTA,1 ;DESHABILTAR DECENAS
+Warning[203]: Found opcode in column 1. (bcf)
+00EC   1105           00321 bcf PORTA,2 ;DESHABILTAR CENTENAS
+Warning[203]: Found opcode in column 1. (bcf)
+00ED   1185           00322 bcf PORTA,3 ;DESHABILTAR UNIDAD DE MILLAR
+Warning[203]: Found opcode in column 1. (movwf)
+00EE   0086           00323 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+00EF   1405           00324 bsf PORTA,0 ; HABILITAR UNIDADES
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00F0   0819           00325 movfw alar_digito2
+Warning[203]: Found opcode in column 1. (bcf)
+00F1   1005           00326 bcf PORTA,0; DESHABILITAS UNIDADES
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (movwf)
+00F2   0086           00327 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+00F3   1485           00328 bsf PORTA,1; HABILITAS DECENAS
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00F4   081A           00329 movfw alar_digito3
+Warning[203]: Found opcode in column 1. (bcf)
+00F5   1085           00330 bcf PORTA,1; DESHABILITAS DECENAS
+Warning[203]: Found opcode in column 1. (movwf)
+00F6   0086           00331 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+00F7   1505           00332 bsf PORTA,2 ; HABILITO CENTENAS
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00F8   081B           00333 movfw alar_digito4
+Warning[203]: Found opcode in column 1. (bcf)
+00F9   1105           00334 bcf PORTA,2 ;DESHABILITO CENTENAS
+Warning[203]: Found opcode in column 1. (movwf)
+00FA   0086           00335 movwf PORTB
+Warning[203]: Found opcode in column 1. (bsf)
+00FB   1585           00336 bsf PORTA,3 ; HABILITO UNIDAD DE MILLAR
+Warning[203]: Found opcode in column 1. (btfsc)
+00FC   1A06           00337 btfsc PORTB,4
+Warning[203]: Found opcode in column 1. (goto)
+00FD   289F           00338 goto stop; detener el tiempo
+Warning[204]: Found pseudo-op in column 1. (movfw)
+00FE   081F           00339 movfw controlador_interupcion
+Warning[203]: Found opcode in column 1. (sublw)
+00FF   3C05           00340 sublw d'5'
+Warning[203]: Found opcode in column 1. (btfsc)
+0100   1903           00341 btfsc STATUS,Z
+Warning[203]: Found opcode in column 1. (goto)
+0101   28A2           00342 goto activar_interupcion
+Warning[203]: Found opcode in column 1. (goto)
+0102   28EA           00343 goto visualizar_especial
+                      00344 
+                      00345 ;contador de unidades minuto alarma
+0103                  00346 contador_unidad_minuto_alarma
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+0103   0A98           00347 incf alar_digito1
+Warning[203]: Found opcode in column 1. (movf)
+0104   0818           00348 movf alar_digito1,w
+Warning[203]: Found opcode in column 1. (sublw)
+0105   3C0A           00349 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+0106   1903           00350 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0107   2109           00351 call contador_decena_minuto_alarma
+Warning[203]: Found opcode in column 1. (call)
+0108   20EA           00352 call visualizar_especial
+                      00353 
+                      00354 ;contador de decena minuto
+0109                  00355 contador_decena_minuto_alarma
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (clrf)
+0109   0198           00356 clrf alar_digito1
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+010A   0A99           00357 incf alar_digito2
+Warning[203]: Found opcode in column 1. (movf)
+010B   0819           00358 movf alar_digito2,w
+Warning[203]: Found opcode in column 1. (sublw)
+010C   3C06           00359 sublw d'6'
+Warning[203]: Found opcode in column 1. (btfsc)
+010D   1903           00360 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+010E   2110           00361 call contador_unidad_hora_alarma
+Warning[203]: Found opcode in column 1. (call)
+010F   20EA           00362 call visualizar_especial
+                      00363 
+                      00364 ;contador de unidad hora
+0110                  00365 contador_unidad_hora_alarma
+Warning[203]: Found opcode in column 1. (clrf)
+0110   0199           00366 clrf alar_digito2
+0111                  00367 incrementar_hora_alarma
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+0111   0A9A           00368 incf alar_digito3
+Warning[203]: Found opcode in column 1. (movf)
+0112   081A           00369 movf alar_digito3,w
+Warning[203]: Found opcode in column 1. (sublw)
+0113   3C0A           00370 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+0114   1903           00371 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0115   2123           00372 call contador_decena_hora_alarma
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0116   081A           00373 movfw alar_digito3
+Warning[203]: Found opcode in column 1. (sublw)
+0117   3C04           00374 sublw d'4'
+Warning[203]: Found opcode in column 1. (btfss)
+0118   1D03           00375 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+0119   20EA           00376 call visualizar_especial
+Warning[203]: Found opcode in column 1. (incf)
+011A   0AA1           00377 incf contador_alarma,1
+Warning[204]: Found pseudo-op in column 1. (movfw)
+011B   0821           00378 movfw contador_alarma
+Warning[203]: Found opcode in column 1. (sublw)
+011C   3C03           00379 sublw d'3'
+Warning[203]: Found opcode in column 1. (btfss)
+011D   1D03           00380 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (call)
+011E   20EA           00381 call visualizar_especial
+Warning[203]: Found opcode in column 1. (clrf)
+011F   019A           00382 clrf alar_digito3
+Warning[203]: Found opcode in column 1. (clrf)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0120   019B           00383 clrf alar_digito4
+Warning[203]: Found opcode in column 1. (clrf)
+0121   01A1           00384 clrf contador_alarma
+Warning[203]: Found opcode in column 1. (call)
+0122   20EA           00385 call visualizar_especial
+                      00386 
+                      00387 ;contador de decena hora
+0123                  00388 contador_decena_hora_alarma
+Warning[203]: Found opcode in column 1. (clrf)
+0123   019A           00389 clrf alar_digito3
+Warning[203]: Found opcode in column 1. (incf)
+Message[305]: Using default destination of 1 (file).
+0124   0A9B           00390 incf alar_digito4
+Warning[203]: Found opcode in column 1. (movf)
+0125   081B           00391 movf alar_digito4,w
+Warning[203]: Found opcode in column 1. (sublw)
+0126   3C0A           00392 sublw d'10'
+Warning[203]: Found opcode in column 1. (btfsc)
+0127   1903           00393 btfsc  STATUS,Z
+Warning[203]: Found opcode in column 1. (clrf)
+0128   019B           00394 clrf alar_digito4
+Warning[203]: Found opcode in column 1. (call)
+0129   20EA           00395 call visualizar_especial
+                      00396 
+012A                  00397 pre_incrementar_hora_alarma  ; espera que se pulse para incrementar
+Warning[203]: Found opcode in column 1. (btfsc)
+012A   1B06           00398 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+012B   28EA           00399 goto visualizar_especial
+Warning[203]: Found opcode in column 1. (call)
+012C   2159           00400 call RETARDO_10MS
+Warning[203]: Found opcode in column 1. (btfsc)
+012D   1B06           00401 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+012E   28EA           00402 goto visualizar_especial
+012F                  00403 bucle4
+Warning[203]: Found opcode in column 1. (btfss)
+012F   1F06           00404 btfss PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+0130   292F           00405 goto bucle4
+Warning[203]: Found opcode in column 1. (goto)
+0131   2911           00406 goto incrementar_hora_alarma
+                      00407 
+0132                  00408 pre_incrementar_minuto_alarma; espera que se pulse para incrementar
+Warning[203]: Found opcode in column 1. (btfsc)
+0132   1B06           00409 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+0133   28EA           00410 goto visualizar_especial
+Warning[203]: Found opcode in column 1. (call)
+0134   2159           00411 call RETARDO_10MS
+Warning[203]: Found opcode in column 1. (btfsc)
+0135   1B06           00412 btfsc PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0136   28EA           00413 goto visualizar_especial
+0137                  00414 bulce5
+Warning[203]: Found opcode in column 1. (btfss)
+0137   1F06           00415 btfss PORTB,6
+Warning[203]: Found opcode in column 1. (goto)
+0138   2937           00416 goto bulce5
+Warning[203]: Found opcode in column 1. (goto)
+0139   2903           00417 goto contador_unidad_minuto_alarma
+                      00418 
+013A                  00419 activar_alarma
+Warning[204]: Found pseudo-op in column 1. (movfw)
+013A   0811           00420 movfw unidmil
+Warning[203]: Found opcode in column 1. (subwf)
+013B   021B           00421 subwf alar_digito4,0
+Warning[203]: Found opcode in column 1. (btfss)
+013C   1D03           00422 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (return)
+013D   0008           00423 return
+Warning[204]: Found pseudo-op in column 1. (movfw)
+013E   080F           00424 movfw decena
+Warning[203]: Found opcode in column 1. (subwf)
+013F   0219           00425 subwf alar_digito2,0
+Warning[203]: Found opcode in column 1. (btfss)
+0140   1D03           00426 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (return)
+0141   0008           00427 return
+Warning[204]: Found pseudo-op in column 1. (movfw)
+0142   080E           00428 movfw unidad
+Warning[203]: Found opcode in column 1. (subwf)
+0143   0218           00429 subwf alar_digito1,0
+Warning[203]: Found opcode in column 1. (btfss)
+0144   1D03           00430 btfss STATUS,Z
+Warning[203]: Found opcode in column 1. (return)
+0145   0008           00431 return
+Warning[203]: Found opcode in column 1. (bcf)
+0146   138B           00432 bcf INTCON,7; deshabilitado todo tipo de  interupcion
+Warning[203]: Found opcode in column 1. (bsf)
+0147   1786           00433 bsf PORTB,7
+Warning[203]: Found opcode in column 1. (call)
+0148   2195           00434 call RETARDO_20S
+Warning[203]: Found opcode in column 1. (call)
+0149   2186           00435 call RETARDO_5S
+Warning[203]: Found opcode in column 1. (bcf)
+014A   1386           00436 bcf PORTB,7
+Warning[203]: Found opcode in column 1. (call)
+014B   2166           00437 call RETARDO_1S
+Warning[203]: Found opcode in column 1. (bsf)
+014C   1786           00438 bsf PORTB,7
+Warning[203]: Found opcode in column 1. (call)
+014D   2195           00439 call RETARDO_20S
+Warning[203]: Found opcode in column 1. (call)
+014E   2186           00440 call RETARDO_5S
+Warning[203]: Found opcode in column 1. (bcf)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+014F   1386           00441 bcf PORTB,7
+Warning[203]: Found opcode in column 1. (call)
+0150   2166           00442 call RETARDO_1S
+Warning[203]: Found opcode in column 1. (bsf)
+0151   1786           00443 bsf PORTB,7
+Warning[203]: Found opcode in column 1. (call)
+0152   2186           00444 call RETARDO_5S
+Warning[203]: Found opcode in column 1. (call)
+0153   2176           00445 call RETARDO_2S
+Warning[203]: Found opcode in column 1. (bcf)
+0154   110B           00446 bcf INTCON,2
+Warning[203]: Found opcode in column 1. (bsf)
+0155   178B           00447 bsf INTCON,7
+Warning[203]: Found opcode in column 1. (movlw)
+0156   3000           00448 movlw d'0'
+Warning[203]: Found opcode in column 1. (movwf)
+0157   0081           00449 movwf TMR0
+Warning[203]: Found opcode in column 1. (goto)
+0158   283D           00450 goto contador_unidad_minuto 
+                      00451 
+Warning[205]: Found directive in column 1. (include)
+                      00452 include<RETARDOS.inc>
+                      00001                 CBLOCK
+  00000024            00002                 PDel0           ;contadores para los retardos
+  00000025            00003                 PDel1
+  00000026            00004                 PDel2
+                      00005                 ENDC
+                      00006 
+0159                  00007 RETARDO_10MS
+0159   3008           00008 PDelay10  movlw     .8        ; 1 set number of repetitions (B)
+015A   00A4           00009         movwf     PDel0     ; 1 |
+015B   30F9           00010 PLoop10  movlw     .249      ; 1 set number of repetitions (A)
+015C   00A5           00011         movwf     PDel1     ; 1 |
+015D   0064           00012 PLoop210  clrwdt              ; 1 clear watchdog
+015E   0064           00013         clrwdt              ; 1 cycle delay
+015F   0BA5           00014         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+0160   295D           00015         goto      PLoop210    ; 2 no, loop
+0161   0BA4           00016         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+0162   295B           00017         goto      PLoop10    ; 2 no, loop
+0163   2964           00018 PDelL10  goto PDelL210         ; 2 cycles delay
+0164   0064           00019 PDelL210  clrwdt              ; 1 cycle delay
+0165   0008           00020         return              ; 2+2 Done
+                      00021 ;------------------------------------------------------------             
+0166                  00022 RETARDO_1S
+0166   300E           00023 PDelay1  movlw     .14       ; 1 set number of repetitions (C)
+0167   00A4           00024         movwf     PDel0     ; 1 |
+0168   3048           00025 PLoop01  movlw     .72       ; 1 set number of repetitions (B)
+0169   00A5           00026         movwf     PDel1     ; 1 |
+016A   30F7           00027 PLoop11  movlw     .247      ; 1 set number of repetitions (A)
+016B   00A6           00028         movwf     PDel2     ; 1 |
+016C   0064           00029 PLoop21  clrwdt              ; 1 clear watchdog
+016D   0BA6           00030         decfsz    PDel2, 1  ; 1 + (1) is the time over? (A)
+016E   296C           00031         goto      PLoop21    ; 2 no, loop
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+016F   0BA5           00032         decfsz    PDel1,  1 ; 1 + (1) is the time over? (B)
+0170   296A           00033         goto      PLoop11    ; 2 no, loop
+0171   0BA4           00034         decfsz    PDel0,  1 ; 1 + (1) is the time over? (C)
+0172   2968           00035         goto      PLoop01    ; 2 no, loop
+0173   2974           00036 PDelL1  goto      PDelL21         ; 2 cycles delay
+0174   0064           00037 PDelL21  clrwdt              ; 1 cycle delay
+0175   0008           00038         return              ; 2+2 Done
+                      00039 ;----------------------------------------------------------
+0176                  00040 RETARDO_2S
+0176   30A7           00041 PDelay2  movlw     .167      ; 1 set number of repetitions (C)
+0177   00A4           00042         movwf     PDel0     ; 1 |
+0178   3029           00043 PLoop02  movlw     .41       ; 1 set number of repetitions (B)
+0179   00A5           00044         movwf     PDel1     ; 1 |
+017A   3048           00045 PLoop12  movlw     .72       ; 1 set number of repetitions (A)
+017B   00A6           00046         movwf     PDel2     ; 1 |
+017C   0064           00047 PLoop22  clrwdt              ; 1 clear watchdog
+017D   0BA6           00048         decfsz    PDel2, 1  ; 1 + (1) is the time over? (A)
+017E   297C           00049         goto      PLoop22    ; 2 no, loop
+017F   0BA5           00050         decfsz    PDel1,  1 ; 1 + (1) is the time over? (B)
+0180   297A           00051         goto      PLoop12    ; 2 no, loop
+0181   0BA4           00052         decfsz    PDel0,  1 ; 1 + (1) is the time over? (C)
+0182   2978           00053         goto      PLoop02    ; 2 no, loop
+0183   2984           00054 PDelL12  goto PDelL22         ; 2 cycles delay
+0184   0064           00055 PDelL22  clrwdt              ; 1 cycle delay
+0185   0008           00056         return              ; 2+2 Done                  
+                      00057 ;-------------------------------------------------------------
+0186                  00058 RETARDO_5S
+0186   30A5           00059 PDelay5  movlw     .165      ; 1 set number of repetitions (C)
+0187   00A4           00060         movwf     PDel0     ; 1 |
+0188   3029           00061 PLoop05  movlw     .41       ; 1 set number of repetitions (B)
+0189   00A5           00062         movwf     PDel1     ; 1 |
+018A   3093           00063 PLoop15  movlw     .147      ; 1 set number of repetitions (A)
+018B   00A6           00064         movwf     PDel2     ; 1 |
+018C   0064           00065 PLoop25  clrwdt              ; 1 clear watchdog
+018D   0064           00066         clrwdt              ; 1 cycle delay
+018E   0BA6           00067         decfsz    PDel2, 1  ; 1 + (1) is the time over? (A)
+018F   298C           00068         goto      PLoop25    ; 2 no, loop
+0190   0BA5           00069         decfsz    PDel1,  1 ; 1 + (1) is the time over? (B)
+0191   298A           00070         goto      PLoop15    ; 2 no, loop
+0192   0BA4           00071         decfsz    PDel0,  1 ; 1 + (1) is the time over? (C)
+0193   2988           00072         goto      PLoop05    ; 2 no, loop
+0194   0008           00073         return              ; 2+2 Done
+                      00074 ;---------------------------------------------------------------
+0195                  00075 RETARDO_20S
+0195   3047           00076 PDelay20  movlw     .71       ; 1 set number of repetitions (C)
+0196   00A4           00077         movwf     PDel0     ; 1 |
+0197   30FE           00078 PLoop0  movlw     .254      ; 1 set number of repetitions (B)
+0198   00A5           00079         movwf     PDel1     ; 1 |
+0199   30DD           00080 PLoop1  movlw     .221      ; 1 set number of repetitions (A)
+019A   00A6           00081         movwf     PDel2     ; 1 |
+019B   0064           00082 PLoop2  clrwdt              ; 1 clear watchdog
+019C   0064           00083         clrwdt              ; 1 cycle delay
+019D   0BA6           00084         decfsz    PDel2, 1  ; 1 + (1) is the time over? (A)
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+019E   299B           00085         goto      PLoop2    ; 2 no, loop
+019F   0BA5           00086         decfsz    PDel1,  1 ; 1 + (1) is the time over? (B)
+01A0   2999           00087         goto      PLoop1    ; 2 no, loop
+01A1   0BA4           00088         decfsz    PDel0,  1 ; 1 + (1) is the time over? (C)
+01A2   2997           00089         goto      PLoop0    ; 2 no, loop
+01A3   29A4           00090 PDelL120  goto PDelL2         ; 2 cycles delay
+01A4   29A5           00091 PDelL2  goto PDelL3         ; 2 cycles delay
+01A5   0064           00092 PDelL3  clrwdt              ; 1 cycle delay
+01A6   0008           00093         return              ; 2+2 Done
+Warning[205]: Found directive in column 1. (END)
+                      00453 END
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             00000024
+PDel1                             00000025
+PDel2                             00000026
+PDelL1                            00000173
+PDelL10                           00000163
+PDelL12                           00000183
+PDelL120                          000001A3
+PDelL2                            000001A4
+PDelL21                           00000174
+PDelL210                          00000164
+PDelL22                           00000184
+PDelL3                            000001A5
+PDelay1                           00000166
+PDelay10                          00000159
+PDelay2                           00000176
+PDelay20                          00000195
+PDelay5                           00000186
+PLoop0                            00000197
+PLoop01                           00000168
+PLoop02                           00000178
+PLoop05                           00000188
+PLoop1                            00000199
+PLoop10                           0000015B
+PLoop11                           0000016A
+PLoop12                           0000017A
+PLoop15                           0000018A
+PLoop2                            0000019B
+PLoop21                           0000016C
+PLoop210                          0000015D
+PLoop22                           0000017C
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PLoop25                           0000018C
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RETARDO_10MS                      00000159
+RETARDO_1S                        00000166
+RETARDO_20S                       00000195
+RETARDO_2S                        00000176
+RETARDO_5S                        00000186
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+activar                           00000022
+activar_alarma                    0000013A
+activar_interupcion               000000A2
+alar_digito1                      00000018
+alar_digito2                      00000019
+alar_digito3                      0000001A
+alar_digito4                      0000001B
+bucle                             000000B3
+bucle2                            000000DF
+bucle4                            0000012F
+bulce3                            000000E7
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+bulce5                            00000137
+cambio                            000000B3
+centena                           00000010
+contador                          0000001C
+contador_alarma                   00000021
+contador_decena_hora              00000071
+contador_decena_hora_alarma       00000123
+contador_decena_minuto            0000004B
+contador_decena_minuto_alarma     00000109
+contador_decena_segundo           00000033
+contador_interupcion              0000001E
+contador_unidad_hora              00000059
+contador_unidad_hora_alarma       00000110
+contador_unidad_minuto            0000003D
+contador_unidad_minuto_alarma     00000103
+contador_unidad_segundo           0000002B
+continuamos_stop                  000000AB
+controlador                       00000094
+controlador_cambio                00000020
+controlador_interupcion           0000001F
+decena                            0000000F
+digito1                           00000012
+digito2                           00000013
+digito3                           00000014
+digito4                           00000015
+digito5                           00000016
+digito6                           00000017
+incrementar_hora                  0000005B
+incrementar_hora_alarma           00000111
+inicio                            00000005
+pre_controlador                   000000D5
+pre_incrementar_hora              000000DA
+pre_incrementar_hora_alarma       0000012A
+pre_incrementar_minuto            000000E2
+pre_incrementar_minuto_alarma     00000132
+segundo                           0000001D
+segundo_dec                       0000000D
+segundo_uni                       0000000C
+sigue                             000000B8
+special                           000000D2
+stop                              0000009F
+timbre_alarma                     00000023
+unidad                            0000000E
+unidmil                           00000011
+visualizar                        0000007B
+visualizar_especial               000000EA
+MPASM  5.33                     RELOJ-PIC.ASM   10-31-2009  17:41:04         PAGE 22
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXX--------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   420
+Program Memory Words Free:   604
+
+
+Errors   :     0
+Warnings :   350 reported,     0 suppressed
+Messages :    13 reported,     0 suppressed
+
+

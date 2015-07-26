@@ -1,0 +1,710 @@
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;---------------------------------------------------------------------------         
+                      00002 ; PRESENTA.ASM
+                      00003 ; Autor: Mikel Etxebarria
+                      00004 ;---------------------------------------------------------------------------
+                      00005 ;
+                      00006 ; El programa que se presenta a continuaci¢n consiste en sacar unos mensajes
+                      00007 ; de presentaci¢n del sistema de evaluaci¢n Micro'PIC Trainer por el m¢dulo
+                      00008 ; LCD de visualizaci¢n
+                      00009 ;---------------------------------------------------------------------------
+                      00010            
+Warning[215]: Processor superseded by command line.  Verify processor symbol.
+                      00011            list p=16c84      ;Procesador PIC16c84  
+                      00012            list c=132        ;Listado a 132 caracteres
+                      00013 
+  00000001            00014 TIMER0     equ 01            ;Registro del TIMER0
+  00000001            00015 OPCION     equ 0x1           ;Registro de opciones,p gina 1
+  00000002            00016 PCL        equ 0x2           ;Registro PC
+  0000000A            00017 PCLATH     equ 0xa           ;Registro alto del PC
+  00000003            00018 STATUS     equ 03            ;Registro de estado
+  00000005            00019 RA         equ 05            ;Puerta A
+  00000006            00020 RB         equ 06            ;Puerta B
+  00000005            00021 TRISA      equ 0x5           ;Reg. de programaci¢n de la puerta A, p gina 1
+  00000006            00022 TRISB      equ 0x6           ;Reg. de programaci¢n de la puerta B, p gina 1 
+  0000000B            00023 INTCON     equ 0xb           ;Registro de control de interrupciones
+  0000000C            00024 DATO_A     equ 0xc           ;Registro del dato A
+  0000000D            00025 DATO_B     equ 0xd           ;Registro del dato B
+  0000000E            00026 RESUL      equ 0xe           ;Registro de resultados
+  0000000F            00027 TEMPO1     equ 0xf           ;Registro temporal 1
+  00000010            00028 TEMPO2     equ 0x10          ;Registro temporal 2
+  00000011            00029 OFFSET     equ 0x11          ;Variable de desplazamientos de mensajes
+                      00030 
+0000                  00031            org 0             ;Vector de RESET
+0000   2805           00032            goto INICIO
+                      00033 
+0005                  00034            org 5
+                      00035 
+0005   1683           00036 INICIO     bsf STATUS,5      ;Selecciona el banco 1 de datos 
+0006   0186           00037            clrf TRISB        ;RB se programa como salida     
+0007   3018           00038            movlw b'00011000' ;RA<4:3> se programan como entradas
+0008   0085           00039            movwf TRISA       ;RA<2:0> se programan como salidas
+0009   3087           00040            movlw b'10000111'
+000A   0081           00041            movwf OPCION      ;Asigna preescaler al TMR0
+                      00042 
+000B   1283           00043            bcf STATUS,5      ;Selecciona el banco 0 de datos
+                      00044 
+000C   3000           00045            movlw b'00000000'
+000D   008B           00046            movwf INTCON      ;Desactiva interrupciones
+000E   1005           00047            bcf RA,0          ;Desactiva RS del m¢dulo LCD
+000F   1105           00048            bcf RA,2          ;Desactiva E del m¢dulo LCD
+0010   2962           00049            goto START
+                      00050 
+0011   0782           00051 DATOS      addwf PCL,1
+0012   342A           00052            retlw '*'         ;OFFSET = 0
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0013   342A           00053            retlw '*'
+0014   3420           00054            retlw ' '
+0015   3450           00055            retlw 'P'
+0016   3452           00056            retlw 'R'
+0017   3445           00057            retlw 'E'
+0018   3453           00058            retlw 'S'
+0019   3445           00059            retlw 'E'
+001A   344E           00060            retlw 'N'
+001B   3454           00061            retlw 'T'
+001C   3441           00062            retlw 'A'
+001D   3420           00063            retlw ' '
+001E   342A           00064            retlw '*'
+001F   342A           00065            retlw '*'
+0020   3400           00066            retlw 0x0
+                      00067 
+0021   3422           00068            retlw '"'         ;OFFSET 0xf
+0022   3422           00069            retlw '"'        ;
+0023   3452           00070            retlw 'R'
+0024   3455           00071            retlw 'U'
+0025   3454           00072            retlw 'T'
+0026   3449           00073            retlw 'I'
+0027   344E           00074            retlw 'N'
+0028   3441           00075            retlw 'A'
+0029   3453           00076            retlw 'S'
+002A   3420           00077            retlw ' '
+002B   3420           00078            retlw ' '
+002C   344C           00079            retlw 'L'
+002D   3443           00080            retlw 'C'
+002E   3444           00081            retlw 'D'
+002F   3422           00082            retlw '"'
+0030   3422           00083            retlw '"'
+0031   3400           00084            retlw 0
+                      00085 
+0032   3443           00086            retlw 'C'
+0033   344F           00087            retlw 'O'
+0034   344E           00088            retlw 'N'
+0035   3420           00089            retlw ' '
+0036   34E4           00090            retlw 0xe4         ;OFFSET 0x20
+0037   3443           00091            retlw 'C'
+0038   344F           00092            retlw 'O'
+0039   344E           00093            retlw 'N'
+003A   3454           00094            retlw 'T'
+003B   3452           00095            retlw 'R'
+003C   344F           00096            retlw 'O'
+003D   344C           00097            retlw 'L'
+003E   3441           00098            retlw 'A'
+003F   3444           00099            retlw 'D'
+0040   344F           00100            retlw 'O'
+0041   3452           00101            retlw 'R'
+0042   3400           00102            retlw 0
+                      00103 
+0043   3450           00104            retlw 'P'
+0044   3449           00105            retlw 'I'
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0045   3443           00106            retlw 'C'
+0046   3420           00107            retlw ' '
+0047   3431           00108            retlw '1'         ;OFFSET 0x31
+0048   3436           00109            retlw '6'
+0049   3446           00110            retlw 'F'
+004A   3438           00111            retlw '8'
+004B   3434           00112            retlw '4'
+004C   3441           00113            retlw 'A'
+004D   3420           00114            retlw ' '
+004E   3400           00115            retlw 0
+                      00116 
+004F   3444           00117            retlw 'D'
+0050   3445           00118            retlw 'E'
+0051   3420           00119            retlw ' '           
+0052   344D           00120            retlw 'M'         ;OFFSET 0x3d
+0053   3449           00121            retlw 'I'
+0054   3443           00122            retlw 'C'
+0055   3452           00123            retlw 'R'
+0056   344F           00124            retlw 'O'
+0057   3443           00125            retlw 'C'
+0058   3448           00126            retlw 'H'
+0059   3449           00127            retlw 'I'
+005A   3450           00128            retlw 'P'
+005B   3400           00129            retlw 0
+                      00130 
+005C   344D           00131            retlw 'M'         ;OFFSET 0x4a
+005D   346F           00132            retlw 'o'
+005E   3464           00133            retlw 'd'
+005F   3475           00134            retlw 'u'
+0060   346C           00135            retlw 'l'
+0061   346F           00136            retlw 'o'
+0062   3420           00137            retlw ' '
+0063   344C           00138            retlw 'L'
+0064   3443           00139            retlw 'C'
+0065   3444           00140            retlw 'D'
+0066   3420           00141            retlw ' '
+0067   3400           00142            retlw 0
+                      00143 
+0068   3454           00144            retlw 'T'         ;OFFSET 0x56
+0069   3453           00145            retlw 'S'
+006A   3420           00146            retlw ' '
+006B   3431           00147            retlw '1'
+006C   3436           00148            retlw '6'
+006D   3432           00149            retlw '2'
+006E   3430           00150            retlw '0'
+006F   3441           00151            retlw 'A'
+0070   342D           00152            retlw '-'
+0071   3431           00153            retlw '1'
+0072   3437           00154            retlw '7'
+0073   345F           00155            retlw '_'
+0074   3432           00156            retlw '2'
+0075   3420           00157            retlw ' '
+0076   3400           00158            retlw 0
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00159 
+0077   3446           00160            retlw 'F'         ;OFFSET 0x65
+0078   3455           00161            retlw 'U'
+0079   3445           00162            retlw 'E'
+007A   344E           00163            retlw 'N'
+007B   3454           00164            retlw 'T'
+007C   3445           00165            retlw 'E'
+007D   3453           00166            retlw 'S'
+007E   343A           00167            retlw ':'
+007F   3400           00168            retlw 0
+                      00169 
+0080   3474           00170            retlw 't'         ;OFFSET 0x6e
+0081   3475           00171            retlw 'u'
+0082   3474           00172            retlw 't'
+0083   346F           00173            retlw 'o'
+0084   3472           00174            retlw 'r'
+0085   3469           00175            retlw 'i'
+0086   3461           00176            retlw 'a'
+0087   346C           00177            retlw 'l'
+0088   3465           00178            retlw 'e'
+0089   3473           00179            retlw 's'
+008A   3420           00180            retlw ' '
+008B   3400           00181            retlw 0
+                      00182 
+008C   3462           00183            retlw 'b'         ;OFFSET 0x7a
+008D   3461           00184            retlw 'a'
+008E   346A           00185            retlw 'j'
+008F   3461           00186            retlw 'a'
+0090   3464           00187            retlw 'd'
+0091   346F           00188            retlw 'o'
+0092   3473           00189            retlw 's'
+0093   3420           00190            retlw ' '
+0094   3464           00191            retlw 'd'
+0095   3465           00192            retlw 'e'
+0096   3420           00193            retlw ' '
+0097   3400           00194            retlw 0
+                      00195 
+0098   3452           00196            retlw 'R'         ;OFFSET 0x86
+0099   344F           00197            retlw 'O'
+009A   3442           00198            retlw 'B'
+009B   344F           00199            retlw 'O'
+009C   3454           00200            retlw 'T'
+009D   3449           00201            retlw 'I'
+009E   3458           00202            retlw 'X'
+009F   3400           00203            retlw 0
+                      00204 
+00A0   34E4           00205            retlw 0xe4         ;OFFSET 0x8e
+00A1   3443           00206            retlw 'C'
+00A2   344F           00207            retlw 'O'
+00A3   344E           00208            retlw 'N'
+00A4   3454           00209            retlw 'T'
+00A5   3452           00210            retlw 'R'
+00A6   344F           00211            retlw 'O'
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00A7   344C           00212            retlw 'L'
+00A8   3420           00213            retlw ' '
+00A9   3400           00214            retlw 0
+                      00215 
+00AA   3479           00216            retlw 'y'         ;OFFSET 0x98
+00AB   3420           00217            retlw ' '
+00AC   344F           00218            retlw 'O'
+00AD   3454           00219            retlw 'T'
+00AE   3452           00220            retlw 'R'
+00AF   344F           00221            retlw 'O'
+00B0   3453           00222            retlw 'S'
+00B1   342E           00223            retlw '.'
+00B2   342E           00224            retlw '.'
+00B3   342E           00225            retlw '.'
+00B4   3400           00226            retlw 0
+                      00227            
+00B5   342A           00228            retlw '*'         ;OFFSET 0xA3
+00B6   342A           00229            retlw '*'
+00B7   3420           00230            retlw ' '
+00B8   3454           00231            retlw 'T'
+00B9   3448           00232            retlw 'H'
+00BA   3445           00233            retlw 'E'
+00BB   3420           00234            retlw ' '
+00BC   3420           00235            retlw ' '
+00BD   3445           00236            retlw 'E'
+00BE   344E           00237            retlw 'N'
+00BF   3444           00238            retlw 'D'
+00C0   3420           00239            retlw ' '
+00C1   342A           00240            retlw '*'
+00C2   342A           00241            retlw '*'
+00C3   3400           00242            retlw 0
+                      00243 
+00C4   342A           00244            retlw '*'         ;OFFSET 0xb2
+00C5   342A           00245            retlw '*'
+00C6   342A           00246            retlw '*'
+00C7   342A           00247            retlw '*'
+00C8   342A           00248            retlw '*'
+00C9   342A           00249            retlw '*'
+00CA   342A           00250            retlw '*'
+00CB   342A           00251            retlw '*'
+00CC   342A           00252            retlw '*'
+00CD   342A           00253            retlw '*'
+00CE   342A           00254            retlw '*'
+00CF   342A           00255            retlw '*'
+00D0   342A           00256            retlw '*'
+00D1   342A           00257            retlw '*'
+00D2   342A           00258            retlw '*'
+00D3   342A           00259            retlw '*'
+00D4   3400           00260            retlw 0
+                      00261 
+00D5   0782           00262 DATO_1     addwf PCL,1
+00D6   344C           00263            retlw 'L'
+00D7   346F           00264            retlw 'o'
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00D8   3462           00265            retlw 'b'
+00D9   346F           00266            retlw 'o'
+00DA   3420           00267            retlw ' '
+00DB   3456           00268            retlw 'V'
+00DC   3465           00269            retlw 'e'
+00DD   346C           00270            retlw 'l'
+00DE   346F           00271            retlw 'o'
+00DF   347A           00272            retlw 'z'
+00E0   3420           00273            retlw ' '
+00E1   3420           00274            retlw ' '
+00E2   3420           00275            retlw ' '
+00E3   3420           00276            retlw ' '
+00E4   3420           00277            retlw ' '
+00E5   3400           00278            retlw 0x0
+                      00279 
+00E6   0782           00280 DATO_2     addwf PCL,1
+00E7   3443           00281            retlw 'C'
+00E8   346F           00282            retlw 'o'
+00E9   346D           00283            retlw 'm'
+00EA   3470           00284            retlw 'p'
+00EB   3461           00285            retlw 'a'
+00EC   346E           00286            retlw 'n'
+00ED   3479           00287            retlw 'y'
+00EE   3400           00288            retlw 0x0
+                      00289 
+                      00290 ;LCD_BUSY Chequea el estado del flag Busy del LCD y espera a que finalice
+                      00291 ;cualquier comando previo antes de retornar
+                      00292 
+00EF   1485           00293 LCD_BUSY   bsf RA,1          ;Pone el LCD en modo RD
+00F0   1683           00294            bsf STATUS,5      ;Selecciona el banco 1
+00F1   30FF           00295            movlw 0xff
+00F2   0086           00296            movwf TRISB       ;Puerta B es entrada
+00F3   1283           00297            bcf STATUS,5      ;Selecciona el banco 0
+00F4   1505           00298            bsf RA,2          ;Activa el LCD (E)
+00F5   0000           00299            nop
+00F6   1B86           00300 L_BUSY     btfsc RB,7        ;Chequea el bit busy
+00F7   28F6           00301            goto L_BUSY
+00F8   1105           00302            bcf RA,2          ;Desactiva el LCD (E)
+00F9   1683           00303            bsf STATUS,5      ;Selecciona el banco 1
+00FA   0186           00304            clrf TRISB        ;Puerta B salida
+00FB   1283           00305            bcf STATUS,5      ;Selecciona el banco 0
+00FC   1085           00306            bcf RA,1          ;Pone el LCD en modo WR
+00FD   0008           00307            return
+                      00308 
+                      00309 ;LCE_E Genera un pulso en la se¤al E de 1 uS de duraci¢n. Esto es posible
+                      00310 ;gracias a la NOP y a que el PIC trabaja a 4MHz. Para velocidades superiores
+                      00311 ;habr  que insertar alguna NOP adicional para no rebasar la duraci¢n m¡nima
+                      00312 ;del LCD
+                      00313 
+00FE   1505           00314 LCD_E      bsf RA,2          ;Activa E
+00FF   0000           00315            nop               ;pausa
+0100   1105           00316            bcf RA,2          ;Desactiva E
+0101   0008           00317            return
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00318 
+                      00319 ;LCD_DATO  Deposita el c¢digo ASCII presente en W, sobre RB. Espera que el
+                      00320 ;LCD ejecute la £ltima operaci¢n y genera el pulso E.
+                      00321 
+0102   1005           00322 LCD_DATOS  bcf RA,0          ;Desactiva RS (modo comando)
+0103   0086           00323            movwf RB          ;Valor ASCII a sacar por RB
+0104   20EF           00324            call LCD_BUSY     ;Espera que se libere el LCD
+0105   1405           00325            bsf RA,0          ;Activa RS (modo dato)
+0106   28FE           00326            goto LCD_E        ;Genera pulso en se¤al E
+                      00327 
+                      00328 ;LCD_REG Deposita el c¢digo del comando presente en W, sobre RB. Espera que
+                      00329 ;el LCD ejecute la £ltima operaci¢n y genera el pulso E.
+                      00330 
+0107   1005           00331 LCD_REG    bcf RA,0          ;Desactiva RS (Modo comando)
+0108   0086           00332            movwf RB          ;C¢digo del comando
+0109   20EF           00333            call LCD_BUSY     ;Espera que se libere el LCD
+010A   28FE           00334            goto LCD_E        ;Genera pulso en se¤al E
+                      00335 
+                      00336 ;LCD_INI Realiza la inicializaci¢n del LCD seg£n los tiempos marcados por el
+                      00337 ;fabricante. Se inicia con un interface de 8 bits, 2 l¡neas de visualizaci¢n,
+                      00338 ;y caracteres de 5 * 7. Se temporiza 15 mS.
+                      00339 
+010B   3038           00340 LCD_INI    movlw b'00111000'
+010C   2107           00341            call LCD_REG
+010D   2115           00342            call DELAY_5MS
+010E   3038           00343            movlw b'00111000'
+010F   2107           00344            call LCD_REG
+0110   2115           00345            call DELAY_5MS
+0111   3038           00346            movlw b'00111000'
+0112   2107           00347            call LCD_REG
+0113   2115           00348            call DELAY_5MS
+0114   0008           00349            return
+                      00350 
+                      00351 ;DELAY_5MS genera una temporizaci¢n de 5mS necesario para la secuencia de
+                      00352 ;inicio del LCD
+                      00353 
+0115   301A           00354 DELAY_5MS  movlw 0x1a       
+0116   008D           00355            movwf DATO_B
+0117   018C           00356            clrf DATO_A
+0118   0B8C           00357 DELAY_1    decfsz DATO_A,1
+0119   2918           00358            goto DELAY_1
+011A   0B8D           00359            decfsz DATO_B,1
+011B   2918           00360            goto DELAY_1
+011C   0008           00361            return
+                      00362 
+                      00363 ;DELAY10 genera, con ayuda del TMR0 y el preescaler, una temporizaci¢n de 
+                      00364 ;10 ms que se repite tantas veces como indique la variable TEMPO1
+                      00365 
+011D   110B           00366 DELAY10    bcf INTCON,2      ;Borra flag del TMR0
+011E   30D8           00367            movlw 0xd8
+011F   0081           00368            movwf TIMER0      ;Carga TMR0 para que cuente 39
+0120   1D0B           00369 DELAY10_1  btfss INTCON,2    ;Espera overflow del TMR0
+0121   2920           00370            goto DELAY10_1
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0122   0B8F           00371            decfsz TEMPO1,1   ;Repite 10 veces
+0123   291D           00372            goto DELAY10
+0124   0008           00373            return
+                      00374 
+                      00375 ;DELAY1S temporiza 1 segundo
+                      00376 
+0125   3064           00377 DELAY1S    movlw 0x64        ;Repite la rutina DELAY10 (de 10 mS) 100
+0126   008F           00378            movwf TEMPO1      ;veces
+0127   211D           00379            call DELAY10
+0128   0008           00380            return
+                      00381 
+                      00382 ;BLINK mantiene el LCD activado durante 2 seg. y a continuaci¢n genera 
+                      00383 ;una intermitencia de 6 veces del encendido y apagado del LCD, de 1/4 segundo 
+                      00384 ;cada una
+                      00385 
+0129   30C8           00386 BLINK      movlw 0xc8
+012A   008F           00387            movwf TEMPO1
+012B   211D           00388            call DELAY10      ;Temporiza 2 segundos con el mensaje
+012C   3006           00389            movlw 6
+012D   0090           00390            movwf TEMPO2      ;6 veces de intermitencia
+012E   3008           00391 BLINK_1    movlw b'00001000'
+012F   2107           00392            call LCD_REG      ;Apaga LCD
+0130   3025           00393            movlw 25
+0131   008F           00394            movwf TEMPO1
+0132   211D           00395            call DELAY10      ;Temporiza 1/2 segundo
+0133   300C           00396            movlw b'00001100'
+0134   2107           00397            call LCD_REG      ;Enciende LCD
+0135   3025           00398            movlw 25
+0136   008F           00399            movwf TEMPO1 
+0137   211D           00400            call DELAY10      ;Temporiza 1/2 segundo
+0138   0B90           00401            decfsz TEMPO2,1
+0139   292E           00402            goto BLINK_1
+013A   0008           00403            return
+                      00404 
+                      00405 
+013B   018E           00406 MENS_1     clrf RESUL
+013C   080E           00407 MENS_1_1   movf RESUL,0      ;Inicia contador de caracteres     
+013D   20D5           00408            call DATO_1       ;Saca caracter
+013E   3800           00409            iorlw 0
+013F   1903           00410            btfsc STATUS,2    ;¨Es el £ltimo?
+0140   0008           00411            return            ;Si
+0141   2102           00412            call LCD_DATOS    ;Visualiza caracter
+0142   0A8E           00413            incf RESUL,1      ;Incrementa contador de caracteres
+0143   3010           00414            movlw 10
+0144   008F           00415            movwf TEMPO1      ;Temporiza 100mS
+0145   211D           00416            call DELAY10
+0146   3018           00417            movlw b'00011000' ;Desplazamiento a la izda.
+0147   2107           00418            call LCD_REG
+0148   293C           00419            goto MENS_1_1
+                      00420 
+0149   018E           00421 MENS_2     clrf RESUL        ;Inicia contador de caracteres
+014A   080E           00422 MENS_2_1   movf RESUL,0           
+014B   20E6           00423            call DATO_2       ;Coge el caracter
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+014C   3800           00424            iorlw 0
+014D   1903           00425            btfsc STATUS,2    ;¨Es el £ltimo?
+014E   0008           00426            return            ;Si
+014F   2102           00427            call LCD_DATOS    ;Visualiza caracter
+0150   0A8E           00428            incf RESUL,1      ;Incrementa contador de caracteres
+0151   3010           00429            movlw 10
+0152   008F           00430            movwf TEMPO1      ;Temporiza 100mS
+0153   211D           00431            call DELAY10
+0154   294A           00432            goto MENS_2_1
+                      00433 
+0155   018E           00434 MENS       clrf RESUL        ;Inicia contador de caracteres
+0156   0811           00435 MENS1      movf OFFSET,0     ;Coge el desplazamiento
+0157   070E           00436            addwf RESUL,0           
+0158   2011           00437            call DATOS        ;Coge el caracter
+0159   3800           00438            iorlw 0
+015A   1903           00439            btfsc STATUS,2    ;¨Es el £ltimo?
+015B   0008           00440            return            ;Si
+015C   2102           00441            call LCD_DATOS    ;Visualiza caracter
+015D   0A8E           00442            incf RESUL,1      ;Incrementa contador de caracteres
+015E   3010           00443            movlw 10
+015F   008F           00444            movwf TEMPO1      ;Temporiza 100mS
+0160   211D           00445            call DELAY10
+0161   2956           00446            goto MENS1
+                      00447 
+                      00448 
+0162   210B           00449 START      call LCD_INI      ;Inicia LCD
+0163   3001           00450 START_1    movlw b'00000001' ;Borrar LCD y Home
+0164   2107           00451            call LCD_REG
+0165   3006           00452            movlw b'00000110' ;
+0166   2107           00453            call LCD_REG
+0167   300C           00454            movlw b'00001100' ;LCD On, cursor Off
+0168   2107           00455            call LCD_REG
+0169   308F           00456            movlw 0x8f        ;Direcci¢n £ltimo caracter 1¦ linea
+016A   2107           00457            call LCD_REG
+016B   213B           00458            call MENS_1       ;Mensaje "MicroSystems"
+016C   30D8           00459            movlw 0xd8        ;Direcci¢n 2¦ l¡nea
+016D   2107           00460            call LCD_REG
+016E   2149           00461            call MENS_2       ;Mensaje "Engenering"
+016F   2129           00462            call BLINK        ;Intermitencia
+0170   3001           00463            movlw b'00000001'
+0171   2107           00464            call LCD_REG      ;Borra LCD y Home
+0172   2125           00465            call DELAY1S      ;Temporiza 1 seg.
+0173   3081           00466            movlw 0x81
+0174   2107           00467            call LCD_REG      ;Posici¢n 1¦ fila
+0175   0191           00468            clrf OFFSET
+0176   2155           00469            call MENS         ;Mensaje "** PRESENTA **"
+0177   2125           00470            call DELAY1S      ;Temporiza 1 seg.
+0178   30C0           00471            movlw 0xc0
+0179   2107           00472            call LCD_REG      ;Posici¢n 2¦ fila
+017A   300F           00473            movlw 0xf
+017B   0091           00474            movwf OFFSET
+017C   2155           00475            call MENS         ;Mensaje "PIC Trainer"
+017D   2125           00476            call DELAY1S      ;Temporiza 1 seg.
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+017E   3001           00477            movlw b'00000001'
+017F   2107           00478            call LCD_REG      ;Borra LCD y Home
+0180   2125           00479            call DELAY1S      ;Temporiza 1 seg.
+0181   3020           00480            movlw 0x20
+0182   0091           00481            movwf OFFSET
+0183   2155           00482            call MENS         ;Mensaje "Entrenador para"
+0184   30C0           00483            movlw 0xc0
+0185   2107           00484            call LCD_REG      ;Posici¢n 2¦ fila
+0186   3031           00485            movlw 0x31
+0187   0091           00486            movwf OFFSET
+0188   2155           00487            call MENS         ;Mensaje "PIC 16c7x/84"
+0189   2125           00488            call DELAY1S      ;Temporiza 1 seg.
+018A   3001           00489            movlw b'00000001'
+018B   2107           00490            call LCD_REG      ;Borra LCD y home
+018C   2125           00491            call DELAY1S      ;Temporiza 1 seg.
+018D   303D           00492            movlw 0x3d
+018E   0091           00493            movwf OFFSET
+018F   3082           00494            movlw 0x82
+0190   2107           00495            call LCD_REG      ;Posici¢n 1¦ linea
+0191   2155           00496            call MENS         ;Mensaje "CONSTA DE:
+0192   2129           00497            call BLINK        ;Parpadeo
+0193   3001           00498            movlw b'00000001'
+0194   2107           00499            call LCD_REG      ;Borra LCD y home
+0195   2125           00500            call DELAY1S      ;temporiza 1 seg.
+0196   304A           00501            movlw 0x4a
+0197   0091           00502            movwf OFFSET
+0198   2155           00503            call MENS         ;Mensaje "F. Alimentacion'
+0199   30C0           00504            movlw 0xc0
+019A   2107           00505            call LCD_REG      ;Posici¢n 2¦ linea
+019B   2125           00506            call DELAY1S      ;Temporiza 1 seg.
+019C   3056           00507            movlw 0x56
+019D   0091           00508            movwf OFFSET
+019E   2155           00509            call MENS         ;Mensaje "Modulo grabador"
+019F   2125           00510            call DELAY1S      ;Delay 1 seg
+01A0   3001           00511            movlw b'00000001'
+01A1   2107           00512            call LCD_REG      ;Borra LCD y Home
+01A2   2125           00513            call DELAY1S      ;Temporiza 1 seg
+01A3   3065           00514            movlw 0x65
+01A4   0091           00515            movwf OFFSET
+01A5   2155           00516            call MENS         ;Mensaje "5 entradas digi-"
+01A6   30C0           00517            movlw 0xc0
+01A7   2107           00518            call LCD_REG      ;Posici¢n 2¦ linea
+01A8   306E           00519            movlw 0x6e
+01A9   0091           00520            movwf OFFSET
+01AA   2155           00521            call MENS         ;Mensaje "tales"
+01AB   2125           00522            call DELAY1S      ;Temporizaci¢n de 1 seg.
+01AC   3001           00523            movlw b'00000001'
+01AD   2107           00524            call LCD_REG      ;Borra LCD y home
+01AE   2125           00525            call DELAY1S      ;Temporiza 1 seg.
+01AF   307A           00526            movlw 0x7a
+01B0   0091           00527            movwf OFFSET
+01B1   2155           00528            call MENS         ;Mensaje "4 Entradas ana-"
+01B2   30C0           00529            movlw 0xc0
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01B3   2107           00530            call LCD_REG      ;Posici¢n 2¦ linea
+01B4   3086           00531            movlw 0x86
+01B5   0091           00532            movwf OFFSET
+01B6   2155           00533            call MENS         ;Mensaje "l¢gicas"
+01B7   2125           00534            call DELAY1S      ;Temporiza 1 seg
+01B8   3001           00535            movlw b'00000001'
+01B9   2107           00536            call LCD_REG      ;Borra LCD y Home
+01BA   2125           00537            call DELAY1S      ;Temporiza 1 seg
+01BB   308E           00538            movlw 0x8e
+01BC   0091           00539            movwf OFFSET
+01BD   2155           00540            call MENS         ;Mensaje "8 Salidas a LED"
+01BE   30C0           00541            movlw 0xc0
+01BF   2107           00542            call LCD_REG      ;Posici¢n 2¦ linea
+01C0   3098           00543            movlw 0x98
+01C1   0091           00544            movwf OFFSET
+01C2   2155           00545            call MENS         ;Mensaje "y a Display"
+01C3   2125           00546            call DELAY1S      ;Temporiza 1 seg.
+                      00547 
+01C4   3001           00548            movlw b'00000001'
+01C5   2107           00549            call LCD_REG      ;Borra LCD y Home
+01C6   2125           00550            call DELAY1S      ;Temporiza 1 seg.
+01C7   3081           00551            movlw 0x81
+01C8   2107           00552            call LCD_REG      ;Posici¢n 1¦ fila
+01C9   30A3           00553            movlw 0xa3
+01CA   0091           00554            movwf OFFSET
+01CB   2155           00555            call MENS         ;Mensaje "** PRESENTA **"
+01CC   2125           00556            call DELAY1S      ;Temporiza 1 seg.
+01CD   30C0           00557            movlw 0xc0
+01CE   2107           00558            call LCD_REG      ;Posici¢n 2¦ fila
+01CF   30B2           00559            movlw 0xb2
+01D0   0091           00560            movwf OFFSET
+01D1   2155           00561            call MENS         ;Mensaje "PIC Trainer"
+01D2   2125           00562            call DELAY1S      ;Temporiza 1 seg.
+                      00563 
+01D3   2129           00564            call BLINK        ;Parpadeo
+01D4   2125           00565            call DELAY1S      ;Temporiza 1 seg.
+01D5   2963           00566            goto START_1
+                      00567            
+                      00568            END
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BLINK                             00000129
+BLINK_1                           0000012E
+DATOS                             00000011
+DATO_1                            000000D5
+DATO_2                            000000E6
+DATO_A                            0000000C
+DATO_B                            0000000D
+DELAY10                           0000011D
+DELAY10_1                         00000120
+DELAY1S                           00000125
+DELAY_1                           00000118
+DELAY_5MS                         00000115
+INICIO                            00000005
+INTCON                            0000000B
+LCD_BUSY                          000000EF
+LCD_DATOS                         00000102
+LCD_E                             000000FE
+LCD_INI                           0000010B
+LCD_REG                           00000107
+L_BUSY                            000000F6
+MENS                              00000155
+MENS1                             00000156
+MENS_1                            0000013B
+MENS_1_1                          0000013C
+MENS_2                            00000149
+MENS_2_1                          0000014A
+OFFSET                            00000011
+OPCION                            00000001
+PCL                               00000002
+PCLATH                            0000000A
+RA                                00000005
+RB                                00000006
+RESUL                             0000000E
+START                             00000162
+START_1                           00000163
+STATUS                            00000003
+TEMPO1                            0000000F
+TEMPO2                            00000010
+TIMER0                            00000001
+TRISA                             00000005
+TRISB                             00000006
+__16F84A                          00000001
+__DEBUG                           1
+MPASM  5.33                      PRESENTA.ASM   11-5-2009  20:57:16         PAGE 13
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+01C0 : XXXXXXXXXXXXXXXX XXXXXX---------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   466
+Program Memory Words Free:   558
+
+
+Errors   :     0
+Warnings :     1 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

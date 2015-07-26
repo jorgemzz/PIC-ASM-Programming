@@ -1,0 +1,63 @@
+,,,
+,,,
+,,,        LIST    P=16F84A
+,,,        INCLUDE "P16F84A.INC"
+,,,
+,,,;---------MAPA DE MEMORIA-------
+,,,
+,,,        CBLOCK  0X0C
+,,,
+,,,        REG1                    ;UTILIZANDO LA DIRECTIVA CBLOCK ASIGNO
+,,,        REG2                    ;LOS NOMBRES A LAS POSICIONES DE MEMORIA
+,,,        REG3                    ;DE DATOOS PARA REALIZAR LOS RETARDOS
+,,,        REG4
+,,,
+,,,        ENDC
+,,,
+,,,;-------CONFIGURACION DE PUERTOS---
+,,,
+00000000,,RESET,RESET   ORG     0X00                    ;INDICA DONDE SE ESCRIBE LA SIGUIENTE INSTRUCCION
+00000000,2805,,                GOTO    INICIO          ;SALTA A INICIO
+00000005,,,                ORG     0X05
+00000005,1683,INICIO,INICIO  BSF             STATUS,RP0      ;SALTO AL BANCO 1
+00000006,3000,,                MOVLW   B'00000000'             ;CARGA W CON 00000000
+00000007,0086,,                MOVWF   TRISB           ;CONFIGURA LOS PINES DE PORT B COMO SALIDA
+00000008,1283,,                BCF             STATUS,RP0      ;REGRESA AL BANCO 0
+00000009,0186,,                CLRF PORTB
+,,,
+,,,;-------AQUI ENCIENDE Y APAGA EL LED-----
+,,,
+0000000A,1406,AHORA,AHORA   BSF             PORTB,0         ;PONE UN UNO EN RB0
+0000000B,200F,,                CALL    RETARDO         ;LLAMA AL RETARDO
+,,,
+0000000C,1006,,                BCF             PORTB,0         ;AL REGRESAR DE RETARDO PONGO 0 A RB0
+0000000D,200F,,                CALL    RETARDO         ;LLAMA A RETARDO
+0000000E,280A,,                GOTO    AHORA           ;LUEGO REPITE TODO DE NUEVO
+,,,
+,,,;-----RUTINA DE RETARDO----------
+,,,
+0000000F,3010,RETARDO,RETARDO MOVLW   10                      ;CARGO CON 10 EN HEADEC A REG 1
+00000010,008C,,                MOVWF   REG1
+,,,
+00000011,3010,TRES,TRES    MOVLW   10
+00000012,008D,,                MOVWF   REG2
+,,,
+00000013,3015,DOS,DOS             MOVLW   15
+00000014,008E,,                MOVWF   REG3
+,,,
+00000015,3020,UNO,UNO             MOVLW   20
+00000016,008F,,                MOVWF   REG4
+,,,
+00000017,0B8F,CERO,CERO    DECFSZ  REG4,1          ;COMIENZA A DECREMENTAR REG4 SI LLEGAA 0 SE SALTA UNA INSTRUCCION
+00000018,2817,,                GOTO    CERO            ;PARA DECREMENTAR REG4 HASTA CERO
+00000019,0B8E,,                DECFSZ  REG3,1          ;Cuando reg4 llegue a 0 decrementaré reg3 en una unidad
+0000001A,2815,,                GOTO    UNO                     ;volveré a cargar reg4y lo decrementaré nuevamente
+0000001B,0B8D,,                DECFSZ  REG2,1          ; para recién restarle otra unidad a reg3
+0000001C,2813,,                GOTO    DOS                     ;así... hasta que reg2 se haga cero.
+0000001D,0B8C,,                DECFSZ  REG1,1          ;todo esto ocurrirá hasta que reg1 se haga igual a cero.
+0000001E,2811,,                GOTO    TRES
+0000001F,3400,,                RETLW   0X0                     ;REGRESO A DONDE  SE HIZO LA LLAMADA CARGANDE W CON 0
+,,,
+,,,;--------------------
+,,,
+,,,        END             ;FIN

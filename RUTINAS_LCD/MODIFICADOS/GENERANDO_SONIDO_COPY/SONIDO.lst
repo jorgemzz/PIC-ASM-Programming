@@ -1,0 +1,492 @@
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002         LIST    P=16F84A
+                      00003         INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00004 
+                      00005 ;Declarando variables
+                      00006 
+                      00007         CBLOCK  0X0C
+  0000000C            00008                 WCYCLE
+  0000000D            00009                 PRESCwait
+  0000000E            00010                 Beep_TEMP1
+  0000000F            00011                 Beep_TEMP2
+  00000010            00012                 Beep_TEMP3
+                      00013         ENDC
+                      00014 
+                      00015 ;Definir el hardware
+                      00016 
+                      00017         #define BEEPport        PORTA,3
+                      00018         #define BEEPtris        TRISA,3
+                      00019 
+                      00020 ;Estructura de la memoria de programa
+                      00021 
+0000                  00022         ORG     0X00
+0000   2828           00023         goto    Main
+0004                  00024         ORG     0X04
+0004   2828           00025         goto    Main
+                      00026 
+                      00027         INCLUDE "bank.inc"      
+                      00001 
+                      00002 BANK0 macro
+                      00003 Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+Warning[205]: Found directive in column 1. (Endm)
+                      00004 Endm
+                      00005 BANK1 macro
+                      00006 Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Warning[205]: Found directive in column 1. (Endm)
+                      00007 Endm
+                      00028         INCLUDE "button.inc"
+                      00001 Button  macro   Hilo,Port,Bit,Delay,Adrress
+                      00002                 Local   Exit
+                      00003                 Local   Loop
+                      00004 
+                      00005                 if      Hilo==0
+                      00006                 btfsc   Port,Bit
+                      00007                 else    
+                      00008                 btfss   Port,Bit
+                      00009                 endif
+                      00010                 goto    Exit
+                      00011                 
+                      00012                 WAIT    Delay
+                      00013         Loop
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00014                 if      Hilo==0
+                      00015                 btfss   Port,Bit
+                      00016                 else
+                      00017                 btfsc   Port,Bit
+                      00018                 endif
+                      00019                 goto    Loop
+                      00020 
+                      00021                 WAIT    Delay
+                      00022                 call    Adrress
+                      00023     Exit
+                      00024                 endm
+                      00025         
+                      00029         INCLUDE "wait.inc"
+                      00001 
+                      00002 ;*******DECLARACION DE CONSTANTES**********
+                      00003 
+  0001                00004                 CONSTANT PRESCstd = b'00000001' ;prescaler estandar para TMR0
+                      00005 
+                      00006 ;********MACROS*******
+                      00007 
+Warning[207]: Found label after column 1. (WAIT)
+                      00008         WAIT    macro   timeconst_1
+                      00009 
+                      00010                 movlw   timeconst_1
+                      00011                 call    WAITstd
+                      00012         endm
+                      00013 
+Warning[207]: Found label after column 1. (WAITX)
+                      00014         WAITX   macro   timeconst_2,PRESCest
+                      00015 
+                      00016                 movlw   timeconst_2
+                      00017                 movwf   WCYCLE          ;definir espacio de tiempo
+                      00018                 movlw   PRESCext                ;definir valor de prescaler
+                      00019                 call    WAIT_x
+                      00020         endm
+                      00021 
+                      00022 ;**********subprogramas********
+                      00023 
+Warning[207]: Found label after column 1. (WAITstd)
+0005                  00024         WAITstd
+                      00025 
+0005   008C           00026                 movwf   WCYCLE          ;definir espacio de tiempo
+0006   3001           00027                 movlw   PRESCstd                ;definir valor de prescaler
+                      00028 
+Warning[207]: Found label after column 1. (WAIT_x)
+0007                  00029         WAIT_x
+0007   0181           00030                 clrf    TMR0
+                      00031                 BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+0008   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0081           00032                 movwf   OPTION_REG              ;atribuir prescaler a TMR0
+                      00033                 BANK0
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (Bcf)
+000A   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+                      00034 
+Warning[207]: Found label after column 1. (WAITa)
+000B                  00035         WAITa
+000B   110B           00036                 BCF             INTCON,2                ;PONE A 0 EL FLAG DE DESBORDE DE TMR0
+Warning[207]: Found label after column 1. (WAITb)
+000C                  00037         WAITb
+000C   1D0B           00038                 btfss   INTCON,2                ;VERIFICA SI EL FAG DE DESBORDE ES 0
+000D   280C           00039                 goto    WAITb                   ;CONTINUAR A ESPERAR
+000E   0B8C           00040                 decfsz  WCYCLE,1                ;REPETIR SI ESTA VARIABLE NO ES 0
+000F   280B           00041                 goto    WAITa
+                      00042         
+0010   0008           00043         RETURN
+                      00044                 
+                      00030         INCLUDE "beep.inc"
+                      00001 ;declarar constantes
+                      00002 
+  0007                00003         CONSTANT        PRESCbeep=b'00000111'
+                      00004 
+                      00005 ;macros
+                      00006 
+Warning[207]: Found label after column 1. (BEEP)
+                      00007         BEEP    macro   freq,duration
+                      00008                 movlw   freq    
+                      00009                 movwf   Beep_TEMP1
+                      00010                 MOVLW   duration
+                      00011                 call    BEEPsub
+                      00012                         endm
+                      00013 
+Warning[207]: Found label after column 1. (BEEPinit)
+                      00014         BEEPinit macro
+                      00015                 bcf             BEEPport
+                      00016                 BANK1
+                      00017                 BCF             BEEPtris
+                      00018                 BANK0
+                      00019                         endm
+                      00020 
+                      00021 ;subrutinas
+                      00022 
+Warning[207]: Found label after column 1. (BEEPsub)
+0011                  00023         BEEPsub
+0011   008F           00024                 movwf   Beep_TEMP2
+0012   0181           00025                 clrf    TMR0
+0013   1185           00026                 bcf             BEEPport
+                      00027                 BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+0014   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+0015   1185           00028                 bcf             BEEPport
+0016   3007           00029                 movlw   PRESCbeep
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0017   0081           00030                 movwf   OPTION_REG
+                      00031                 BANK0
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (Bcf)
+0018   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+                      00032 
+Warning[207]: Found label after column 1. (BEEPa)
+0019                  00033         BEEPa
+0019   110B           00034                 bcf             INTCON,2
+Warning[207]: Found label after column 1. (BEEPb)
+001A                  00035         BEEPb
+001A   1585           00036                 bsf             BEEPport
+001B   2023           00037                 call    B_Wait
+001C   1185           00038                 bcf             BEEPport
+001D   2023           00039                 call    B_Wait
+001E   1D0B           00040                 btfss   INTCON,T0IF
+001F   281A           00041                 goto    BEEPb
+0020   0B8F           00042                 decfsz  Beep_TEMP2,1
+0021   2819           00043                 goto    BEEPa
+0022   0008           00044                 RETURN
+                      00045 
+Warning[207]: Found label after column 1. (B_Wait)
+0023                  00046         B_Wait
+0023   080E           00047                 movfw   Beep_TEMP1
+0024   0090           00048                 movwf   Beep_TEMP3
+Warning[207]: Found label after column 1. (B_Waita)
+0025                  00049         B_Waita
+0025   0B90           00050                 decfsz  Beep_TEMP3,1
+0026   2825           00051                 GOTO    B_Waita
+0027   0008           00052                 RETURN
+                      00053         
+                      00054         
+                      00031 
+0028                  00032 Main
+                      00033         BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+0028   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+0029   3017           00034         movlw   0x17
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002A   0085           00035         movwf   TRISA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002B   0186           00036         clrf    TRISB
+                      00037         BANK0
+Warning[203]: Found opcode in column 1. (Bcf)
+002C   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+                      00038 
+                      00039         BEEPinit
+002D   1185               M                 bcf             BEEPport
+                          M                 BANK1
+Warning[203]: Found opcode in column 1. (Bsf)
+002E   1683               M Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002F   1185               M                 BCF             BEEPtris
+                          M                 BANK0
+Warning[203]: Found opcode in column 1. (Bcf)
+0030   1283               M Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0031   0186           00040         clrf    PORTB
+                      00041 
+0032                  00042 Loop
+                      00043         Button  0,PORTA,0,.100,Play1
+  0000                    M                 Local   Exit
+  0000                    M                 Local   Loop
+                          M 
+                          M                 if      0==0
+0032   1805               M                 btfsc   PORTA,0
+                          M                 else    
+                          M                 btfss   PORTA,0
+                          M                 endif
+0033   283B               M                 goto    Exit
+                          M                 
+                          M                 WAIT    .100
+                          M 
+0034   3064               M                 movlw   .100
+0035   2005               M                 call    WAITstd
+Warning[207]: Found label after column 1. (Loop)
+0036                      M         Loop
+                          M                 if      0==0
+0036   1C05               M                 btfss   PORTA,0
+                          M                 else
+                          M                 btfsc   PORTA,0
+                          M                 endif
+0037   2836               M                 goto    Loop
+                          M 
+                          M                 WAIT    .100
+                          M 
+0038   3064               M                 movlw   .100
+0039   2005               M                 call    WAITstd
+003A   2045               M                 call    Play1
+Warning[207]: Found label after column 1. (Exit)
+003B                      M     Exit
+                      00044         Button  0,PORTA,1,.100,Play2
+  0000                    M                 Local   Exit
+  0000                    M                 Local   Loop
+                          M 
+                          M                 if      0==0
+003B   1885               M                 btfsc   PORTA,1
+                          M                 else    
+                          M                 btfss   PORTA,1
+                          M                 endif
+003C   2844               M                 goto    Exit
+                          M                 
+                          M                 WAIT    .100
+                          M 
+003D   3064               M                 movlw   .100
+003E   2005               M                 call    WAITstd
+Warning[207]: Found label after column 1. (Loop)
+003F                      M         Loop
+                          M                 if      0==0
+003F   1C85               M                 btfss   PORTA,1
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M                 else
+                          M                 btfsc   PORTA,1
+                          M                 endif
+0040   283F               M                 goto    Loop
+                          M 
+                          M                 WAIT    .100
+                          M 
+0041   3064               M                 movlw   .100
+0042   2005               M                 call    WAITstd
+0043   2056               M                 call    Play2
+Warning[207]: Found label after column 1. (Exit)
+0044                      M     Exit
+0044   2832           00045         goto    Loop
+                      00046 
+0045                  00047 Play1
+                      00048         BEEP    0X17,0X3
+0045   3017               M                 movlw   0X17    
+0046   008E               M                 movwf   Beep_TEMP1
+0047   3003               M                 MOVLW   0X3
+0048   2011               M                 call    BEEPsub
+                      00049         BEEP    0X78,0X3
+0049   3078               M                 movlw   0X78    
+004A   008E               M                 movwf   Beep_TEMP1
+004B   3003               M                 MOVLW   0X3
+004C   2011               M                 call    BEEPsub
+                      00050         BEEP    0X1A,0X03
+004D   301A               M                 movlw   0X1A    
+004E   008E               M                 movwf   Beep_TEMP1
+004F   3003               M                 MOVLW   0X03
+0050   2011               M                 call    BEEPsub
+                      00051         BEEP    0X3C,0X03       
+0051   303C               M                 movlw   0X3C    
+0052   008E               M                 movwf   Beep_TEMP1
+0053   3003               M                 MOVLW   0X03
+0054   2011               M                 call    BEEPsub
+0055   0008           00052         RETURN
+                      00053 
+0056                  00054 Play2
+                      00055         BEEP    0XBB,0X02
+0056   30BB               M                 movlw   0XBB    
+0057   008E               M                 movwf   Beep_TEMP1
+0058   3002               M                 MOVLW   0X02
+0059   2011               M                 call    BEEPsub
+                      00056         BEEP    0X87,0X05
+005A   3087               M                 movlw   0X87    
+005B   008E               M                 movwf   Beep_TEMP1
+005C   3005               M                 MOVLW   0X05
+005D   2011               M                 call    BEEPsub
+                      00057         BEEP    0XA2,0X03
+005E   30A2               M                 movlw   0XA2    
+005F   008E               M                 movwf   Beep_TEMP1
+0060   3003               M                 MOVLW   0X03
+0061   2011               M                 call    BEEPsub
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00058         BEEP    0X98,0X03
+0062   3098               M                 movlw   0X98    
+0063   008E               M                 movwf   Beep_TEMP1
+0064   3003               M                 MOVLW   0X03
+0065   2011               M                 call    BEEPsub
+0066   0008           00059         RETURN
+                      00060 
+                      00061         end
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BANK0                             
+BANK1                             
+BEEP                              
+BEEPa                             00000019
+BEEPb                             0000001A
+BEEPinit                          
+BEEPport                          PORTA,3
+BEEPsub                           00000011
+BEEPtris                          TRISA,3
+B_Wait                            00000023
+B_Waita                           00000025
+Beep_TEMP1                        0000000E
+Beep_TEMP2                        0000000F
+Beep_TEMP3                        00000010
+Button                            
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+Loop                              00000032
+Main                              00000028
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PRESCbeep                         00000007
+PRESCstd                          00000001
+PRESCwait                         0000000D
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Play1                             00000045
+Play2                             00000056
+RBIE                              00000003
+RBIF                              00000000
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WAIT                              
+WAITX                             
+WAIT_x                            00000007
+WAITa                             0000000B
+WAITb                             0000000C
+WAITstd                           00000005
+WCYCLE                            0000000C
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXX--------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   100
+Program Memory Words Free:   924
+
+
+MPASM  5.33                        SONIDO.ASM   1-4-1980  1:02:55         PAGE 10
+
+
+
+
+
+Errors   :     0
+Warnings :    27 reported,     0 suppressed
+Messages :     5 reported,     0 suppressed
+
+

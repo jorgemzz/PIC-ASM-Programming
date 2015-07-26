@@ -1,0 +1,4 @@
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\RB0_INT\RB0_INT.ASM 6 : Found label after column 1. (PDel0)
+Warning[207] E:\JORGE\PROG_PIC_NUEVOS\RB0_INT\RB0_INT.ASM 7 : Found label after column 1. (PDel1)
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RB0_INT\RB0_INT.ASM 19 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] E:\JORGE\PROG_PIC_NUEVOS\RB0_INT\RB0_INT.ASM 20 : Register in operand not in bank 0.  Ensure that bank bits are correct.

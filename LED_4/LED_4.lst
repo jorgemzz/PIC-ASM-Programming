@@ -1,0 +1,185 @@
+MPASM  5.03                         LED_4.ASM   1-4-1980  4:39:13         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002         LIST    P=16F84A
+                      00003         INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00004 
+                      00005 ;---------MAPA DE MEMORIA-------
+                      00006 
+                      00007         CBLOCK  0X0C
+                      00008         
+  0000000C            00009         ROTAR
+  0000000D            00010         REG1                    ;UTILIZANDO LA DIRECTIVA CBLOCK ASIGNO 
+  0000000E            00011         REG2                    ;LOS NOMBRES A LAS POSICIONES DE MEMORIA
+  0000000F            00012         REG3                    ;DE DATOOS PARA REALIZAR LOS RETARDOS
+  00000010            00013         REG4
+                      00014 
+                      00015         ENDC
+                      00016 
+                      00017 ;-------CONFIGURACION DE PUERTOS---
+                      00018 
+0000                  00019 RESET   ORG     0X00                    ;INDICA DONDE SE ESCRIBE LA SIGUIENTE INSTRUCCION
+0000   2805           00020                 GOTO    INICIO          ;SALTA A INICIO
+0005                  00021                 ORG     0X05
+0005   1683           00022 INICIO  BSF             STATUS,RP0      ;SALTO AL BANCO 1
+0006   3000           00023                 MOVLW   B'00000000'             ;CARGA W CON 00000000
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0086           00024                 MOVWF   TRISB           ;CONFIGURA LOS PINES DE PORT B COMO SALIDA
+0008   1283           00025                 BCF             STATUS,RP0      ;REGRESA AL BANCO 0
+                      00026 
+                      00027 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00028 
+0009   3001           00029 AHORA   MOVLW   0X01            ;CARGA W CON 00000001
+000A   008C           00030                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00031                 
+000B   080C           00032 ROTANDO MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+000C   0086           00033                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00034 
+000D   2012           00035                 CALL    RETARDO         ;LLAMA A RETARDO
+000E   0D8C           00036                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+000F   1E0C           00037                 BTFSS   ROTAR,4         ;PRUEBA SI SE ACTIVA EL 5to BIT  SI ES ASI SALTA 
+0010   280B           00038                 GOTO    ROTANDO         ;SINO SIGUE ROITANDO
+0011   2809           00039                 GOTO    AHORA           ;REPITE TODO DE NUEVO
+                      00040                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 5to 
+                      00041 
+                      00042 ;-----RUTINA DE RETARDO----------
+                      00043 
+0012   3010           00044 RETARDO MOVLW   10                      ;CARGO CON 10 EN HEADEC A REG 1
+0013   008D           00045                 MOVWF   REG1
+                      00046 
+0014   3010           00047 TRES    MOVLW   10
+0015   008E           00048                 MOVWF   REG2
+                      00049 
+MPASM  5.03                         LED_4.ASM   1-4-1980  4:39:13         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0016   3015           00050 DOS             MOVLW   15
+0017   008F           00051                 MOVWF   REG3
+                      00052 
+0018   3020           00053 UNO             MOVLW   20
+0019   0090           00054                 MOVWF   REG4
+                      00055 
+001A   0B90           00056 CERO    DECFSZ  REG4,1          ;COMIENZA A DECREMENTAR REG4 SI LLEGAA 0 SE SALTA UNA INSTRUCCION
+001B   281A           00057                 GOTO    CERO            ;PARA DECREMENTAR REG4 HASTA CERO
+001C   0B8F           00058                 DECFSZ  REG3,1          ;Cuando reg4 llegue a 0 decrementaré reg3 en una unidad
+001D   2818           00059                 GOTO    UNO                     ;volveré a cargar reg4y lo decrementaré nuevamente
+001E   0B8E           00060                 DECFSZ  REG2,1          ; para recién restarle otra unidad a reg3
+001F   2816           00061                 GOTO    DOS                     ;así... hasta que reg2 se haga cero.
+0020   0B8D           00062                 DECFSZ  REG1,1          ;todo esto ocurrirá hasta que reg1 se haga igual a cero.
+0021   2814           00063                 GOTO    TRES
+0022   3400           00064                 RETLW   0X0                     ;REGRESO A DONDE  SE HIZO LA LLAMADA CARGANDE W CON 0
+                      00065 
+                      00066 ;--------------------
+                      00067 
+                      00068         END             ;FIN
+MPASM  5.03                         LED_4.ASM   1-4-1980  4:39:13         PAGE  3
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+AHORA                             00000009
+C                                 00000000
+CERO                              0000001A
+DC                                00000001
+DOS                               00000016
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+REG1                              0000000D
+REG2                              0000000E
+REG3                              0000000F
+REG4                              00000010
+RESET                             00000000
+RETARDO                           00000012
+ROTANDO                           0000000B
+ROTAR                             0000000C
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRES                              00000014
+MPASM  5.03                         LED_4.ASM   1-4-1980  4:39:13         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISA                             00000085
+TRISB                             00000086
+UNO                               00000018
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXX------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    31
+Program Memory Words Free:   993
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     1 reported,     0 suppressed
+
+

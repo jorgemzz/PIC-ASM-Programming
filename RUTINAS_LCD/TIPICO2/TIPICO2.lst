@@ -1,0 +1,131 @@
+MPASM  5.33                       TIPICO2.ASM   11-5-2009  8:56:16         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;PROYECTO TÖPICO 2
+                      00002 ;"MENSAJE DE BIENVENIDA SOBRE LCD"
+                      00003  
+                      00004  
+                      00005 ;Programa que muestra la palabra "HOLA" en la l¡nea 1 del LCD
+                      00006  
+                      00007  
+                      00008 ;DIRECTIVAS DEL PROGRAMA
+                      00009  
+                      00010  
+                      00011                 LIST    p=16F84         ; Se emplea el PIC 16F84
+                      00012                 RADIX   HEX             ; Sistema de numeraci¢n hexadecimal
+                      00013  
+                      00014  
+                      00015 ;ETIQUETAS DEL PROGRAMA
+                      00016  
+                      00017  
+                      00018                 INCLUDE "PIC16CXX.INC" ; Etiquetas gen‚ricas para los PIC 16CXX
+                      00001         LIST
+                      00002 ; P16CXX.INC Standard Header File, Version 2.05 Microchip Technology, Inc.
+Warning[207]: Found label after column 1. (RESUL)
+Warning[207]: Found label after column 1. (TEMPO1)
+Warning[207]: Found label after column 1. (OFFSET)
+Warning[207]: Found label after column 1. (OPCION)
+Warning[207]: Found label after column 1. (LCD_VAR)
+MPASM  5.33                       TIPICO2.ASM   11-5-2009  8:56:16         PAGE  2
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BORRA_Y_HOME                      00000034
+BUCLE                             00000051
+C                                 00000000
+DATOS                             0000005E
+DC                                00000001
+DISABLE                           bcf PORTA,2
+DISPLAY_ON_CUR_OFF                00000037
+ENABLE                            bsf PORTA,2
+ESCRIBIR                          bcf PORTA,1
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000043
+INICIO_1                          00000049
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+LCD_BUSY                          0000000C
+LCD_DATO                          0000001F
+LCD_DELAY                         0000003A
+LCD_DELAY_1                       0000003E
+LCD_E                             0000001B
+LCD_INI                           0000002A
+LCD_REG                           00000025
+LCD_TEMP_1                        00000010
+LCD_TEMP_2                        0000000F
+LCD_VAR                           0000000F
+LEER                              bsf PORTA,1
+L_BUSY                            00000013
+MENS                              00000052
+MENS_1                            00000053
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OFFSET                            0000000E
+OFF_COMANDO                       bcf PORTA,0
+ON_COMANDO                        bsf PORTA,0
+OPCION                            00000001
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PEIE                              00000006
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+MPASM  5.33                       TIPICO2.ASM   11-5-2009  8:56:16         PAGE  3
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RESUL                             0000000C
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TEMPO1                            0000000D
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+UP_LCD                            00000005
+W                                 00000000
+Z                                 00000002
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXX------------ ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    96
+Program Memory Words Free:   928
+
+
+Errors   :     0
+Warnings :     5 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

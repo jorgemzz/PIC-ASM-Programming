@@ -1,0 +1,32 @@
+MPASM  5.33                          BANK.INC   1-4-1980  0:31:36         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 BANK0 macro
+                      00003 Bcf STATUS, RP0 ;Selecionar o banco 0 da memória
+Warning[205]: Found directive in column 1. (Endm)
+                      00004 Endm
+                      00005 BANK1 macro
+                      00006 Bsf STATUS, RP0 ; Selecionar o banco 1 da memória
+Warning[205]: Found directive in column 1. (Endm)
+                      00007 Endm
+Error[129]  : Expected (END)
+MPASM  5.33                          BANK.INC   1-4-1980  0:31:36         PAGE  2
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BANK0                             
+BANK1                             
+__16F84A                          00000001
+__DEBUG                           1
+
+Errors   :     1
+Warnings :     2 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

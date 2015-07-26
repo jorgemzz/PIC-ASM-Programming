@@ -1,0 +1,6 @@
+Warning[207] D:\JORGE\CQPIC\CQPIC.ASM 8 : Found label after column 1. (LLAVES)
+Warning[207] D:\JORGE\CQPIC\CQPIC.ASM 9 : Found label after column 1. (PDel0)
+Warning[207] D:\JORGE\CQPIC\CQPIC.ASM 10 : Found label after column 1. (PDel1)
+Warning[207] D:\JORGE\CQPIC\CQPIC.ASM 11 : Found label after column 1. (MOVW)
+Message[302] D:\JORGE\CQPIC\CQPIC.ASM 22 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] D:\JORGE\CQPIC\CQPIC.ASM 24 : Register in operand not in bank 0.  Ensure that bank bits are correct.

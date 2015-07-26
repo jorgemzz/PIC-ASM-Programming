@@ -1,0 +1,260 @@
+MPASM  5.01                  INERUPCIONES.ASM   3-10-2009  12:06:22         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002                 LIST    P=16F84A
+                      00003                 INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00004 
+                      00005 ;-------MAPA DE MEMORIA---------        
+  0000000C            00006 REG1    EQU     0X0C
+  0000000D            00007 REG2    EQU     0X0D
+  0000000E            00008 REG3    EQU     0X0E
+  0000000F            00009 PDel0   EQU     0X0F
+  00000010            00010 PDel1   EQU     0X10
+  00000011            00011 SWITCH  EQU     0X11
+                      00012 
+                      00013 
+                      00014 ;---DEFINO ALGUNAS INTRUCIONES--------
+                      00015 
+                      00016 #DEFINE BANK1   BSF             STATUS,5        ;IR AL BANCO 1
+                      00017 #DEFINE BANK0   BCF             STATUS,5        ;IR AL BANCO 0
+                      00018 
+                      00019 ;---------INICIA EL PROGRAMA--------
+                      00020 
+0000                  00021         ORG     000H    ;INDICA AL ENSAMBLADOR LA DIRECICON DE MEMORIA 
+                      00022                         ;DE LA SIGUIENTE INSTRUCCION
+0000   2813           00023         GOTO    INICIO
+                      00024 
+0004                  00025         ORG     004H    ;INDICA AL ENSAMBLADOR LA DIRECCION DE MORIA DE LA SIG
+                      00026                         ;INSTRUCCION(LA INTERRUPCOIN)
+                      00027 
+                      00028 ;-------LA INTERRUPCION-----
+                      00029 
+0004   2026           00030         CALL    PDelay                  ;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms) 
+0005   1405           00031         BSF             PORTA,0                 ;APAGO EL LED CONECTADO A RA0
+0006                  00032 INTERRUPCION                            ;SERIA CONVENIENTE CREAR UN RETARDO AQUI(50 ms)
+0006   1C8B           00033         BTFSS   INTCON,1                ;ES INTERRUPCION 
+0007   0009           00034         RETFIE                                  ;SI NO REGRESA DE INTERRUPCION
+0008   1811           00035         BTFSC   SWITCH,0                ;PROBAR EL ESTADO ACTUAL DEL BIT 0 DEL REGISTRO SWITCH
+0009   280D           00036         GOTO    PONER0                  ;SI ES 1 LO PONE A 0
+                      00037                                                         ;Y SI ES 0 LO PONE A 1
+000A                  00038 PONER1
+000A   3001           00039         MOVLW   B'00000001'
+000B   0091           00040         MOVWF   SWITCH                  ;PONE A UNO EL BIT 0 DE REGISTRO SWITCH
+000C   280E           00041         GOTO    ESPERA
+                      00042         ;CALL   PDelay
+                      00043 
+000D                  00044 PONER0
+000D   0191           00045         CLRF    SWITCH                  ;BORRA EL REGISTRO SWITCH
+                      00046         ;CALL   PDelay
+                      00047 
+000E                  00048 ESPERA
+000E   1C06           00049         BTFSS   PORTB,0                 ;ESPERA A QUE SE SUELTE EL PULSADOR
+000F   280E           00050         GOTO    ESPERA
+MPASM  5.01                  INERUPCIONES.ASM   3-10-2009  12:06:22         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0010   2026           00051         CALL    PDelay                  ;AMORTIGUAR PICOS PRODUCIDOS POR EL PULSASOR    
+0011   108B           00052         BCF             INTCON,1                ;SI SE SOLTO PULSADOR BORRA LA BANDERA INTF
+0012   0009           00053         RETFIE                                          ;(NO SE HA PRODUCIDO LA INTERRUPCION)
+                      00054                                         ;RETORNA DE INTERRUPCION Y GIE=1(PERMISO DE INTERRUPCION)
+                      00055 
+                      00056 ;------PROGRAMA PRINCIPAL-------
+                      00057 
+0013                  00058 INICIO
+                      00059 
+0013   1683           00060         BANK1                           ;SELECCION DEL BANCO 1
+0014   3000           00061         MOVLW   B'00000000'             ;CARGO 00000000 EN W PARA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0015   0085           00062         MOVWF   TRISA           ;SELECCION DE EL PORTA COMO SALIDA
+0016   1283           00063         BANK0                           ;SELECCION DEL BANCO 0
+0017   1405           00064         BSF             PORTA,0         ;APAGO EL LED CONECTADO A RA0
+0018   0191           00065         CLRF    SWITCH          ;PONGO A CERO ON OFF
+                      00066 
+                      00067 ;-------PROGRAMACION DE INTERRUPCION-------
+                      00068 
+0019   160B           00069         BSF             INTCON,4                ;HABILITACION DE INTERRUPCION POR FLANCO EN RB0
+                      00070                                                         ;ACTIVAMOS EL BIT NUMERO 4(INTE=1)
+001A   1683           00071         BANK1                                   ;SELECCION DEL BACO1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001B   1301           00072         BCF             OPTION_REG,6    ; INTERRUPCION POR FLANCO DE BAJADA EN PIN INT
+001C   1283           00073         BANK0
+001D   178B           00074         BSF             INTCON,7                ;HABILITAR INTERRUPCIONES GLOBALES
+001E   281F           00075         GOTO    SWITCH_LED1                     ;QUEDA A ESPERA DE INTERRUPCION 
+                      00076         
+001F                  00077 SWITCH_LED1
+001F   1C11           00078         BTFSS   SWITCH,0        ;SI BIT 0 DE SWITCH ES 1 VA A LED 1 
+0020   281F           00079         GOTO    SWITCH_LED1     ;SI NO SIGUE ESPERANDO
+                      00080 
+                      00081 ;--------PROGRAMA LED 1, AQUI ENCIENDE Y APAGA EL LED--------
+                      00082 
+0021                  00083 LED1
+0021   1005           00084                 BCF             PORTA,0         ;PONE 0 EN RA0(ENCIENDE EL LED)
+0022   2031           00085                 CALL    RETARDO         ;LLAMA A RETARDO
+                      00086 
+0023   1405           00087                 BSF             PORTA,0         ;PONE UN 1 EN RA0(APAGO EL LED)
+0024   2031           00088                 CALL    RETARDO         ;LLAMA A RETARDO
+0025   281F           00089                 GOTO    SWITCH_LED1     ;MIRA SI SE ENCIENDE O NO LED1  
+                      00090 
+                      00091 ;--------AMORTIGUANDO----------
+                      00092 
+0026   3037           00093 PDelay  movlw     .55       ; 1 set number of repetitions (B)
+0027   008F           00094         movwf     PDel0     ; 1 |
+0028   30B5           00095 PLoop1  movlw     .181      ; 1 set number of repetitions (A)
+0029   0090           00096         movwf     PDel1     ; 1 |
+002A   0064           00097 PLoop2  clrwdt              ; 1 clear watchdog
+002B   0064           00098         clrwdt              ; 1 cycle delay
+002C   0B90           00099         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+002D   282A           00100         goto      PLoop2    ; 2 no, loop
+002E   0B8F           00101         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+MPASM  5.01                  INERUPCIONES.ASM   3-10-2009  12:06:22         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+002F   2828           00102         goto      PLoop1    ; 2 no, loop
+0030   0008           00103         return              ; 2+2 Done
+                      00104 
+                      00105 ;------RUTINA DE RETARDO----------------
+                      00106 
+0031   3020           00107 RETARDO MOVLW   20      ;AQUI SE CARGAN LOS REGISTROS
+0032   008C           00108                 MOVWF   REG1    ;REG1 REG2 Y REG3
+                      00109                                                 ;CON LOS VALORES
+                      00110 
+0033   3030           00111 TRES    MOVLW   30              ;10 20 Y 30
+0034   008D           00112                 MOVWF   REG2
+                      00113 
+0035   3030           00114 DOS             MOVLW   30
+0036   008E           00115                 MOVWF   REG3
+                      00116 
+0037   0B8E           00117 UNO             DECFSZ  REG3,1  ;AQUI SE COMIENZA A DECREMENTAR REG3
+0038   2837           00118                 GOTO    UNO             ;CUANDO REG3 LLEGUE A 0
+0039   0B8D           00119                 DECFSZ  REG2,1  ;LE QUITARE 1 A REG2
+003A   2835           00120                 GOTO    DOS             ;CUANDO REG2 LLEGUE A 0
+003B   0B8C           00121                 DECFSZ  REG1,1  ;LE QUITARE 1 A REG1
+003C   2833           00122                 GOTO    TRES    ;CUANDO REG1 LLEGUE A 0 SE SALTA UNA LINEA
+003D   3400           00123                 RETLW   00              ;REGRESO AL LUGAR DE DONDE SE HIZO LA LLAMADA
+                      00124                                                 ;Y CARGO EL VALOR 00 EN W
+                      00125 
+                      00126 ;-----------THE END-------
+                      00127 
+                      00128         END
+MPASM  5.01                  INERUPCIONES.ASM   3-10-2009  12:06:22         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BANK0                             BCF             STATUS,5
+BANK1                             BSF             STATUS,5
+C                                 00000000
+DC                                00000001
+DOS                               00000035
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+ESPERA                            0000000E
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000013
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTERRUPCION                      00000006
+INTF                              00000001
+IRP                               00000007
+LED1                              00000021
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             0000000F
+PDel1                             00000010
+PDelay                            00000026
+PLoop1                            00000028
+PLoop2                            0000002A
+PONER0                            0000000D
+PONER1                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+REG1                              0000000C
+REG2                              0000000D
+REG3                              0000000E
+RETARDO                           00000031
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+MPASM  5.01                  INERUPCIONES.ASM   3-10-2009  12:06:22         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SWITCH                            00000011
+SWITCH_LED1                       0000001F
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRES                              00000033
+TRISA                             00000085
+TRISB                             00000086
+UNO                               00000037
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXX--
+
+All other memory blocks unused.
+
+Program Memory Words Used:    59
+Program Memory Words Free:   965
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

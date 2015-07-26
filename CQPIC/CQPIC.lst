@@ -1,0 +1,1154 @@
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;==================== Encabezado ====================
+                      00002 
+                      00003                 LIST    P=16F84A
+                      00004                 INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00005 
+                      00006 ;================= Mapa de Memoria ===================
+                      00007 
+Warning[207]: Found label after column 1. (LLAVES)
+  0000000C            00008         LLAVES  EQU     0X0C                    ;ALMACENARA EL STATUS DE LAS LLAVES
+Warning[207]: Found label after column 1. (PDel0)
+  0000000D            00009         PDel0   EQU     0X0D
+Warning[207]: Found label after column 1. (PDel1)
+  0000000E            00010         PDel1   EQU     0X0E
+Warning[207]: Found label after column 1. (MOVW)
+  0000000F            00011         MOVW    EQU     0X0F
+                      00012 ;============== Configuración de puertos =================
+                      00013 
+0000                  00014         ORG     0X00
+                      00015 
+0000   2805           00016         GOTO INICIO
+0005                  00017         ORG     0X05
+                      00018 
+0005                  00019 INICIO
+0005   1683           00020         BSF             STATUS,RP0                      ;CAMBIO AL BANCO 1 DEL PIC
+0006   300F           00021         MOVLW   0X0F                            ;0X1F_CAMBIO PARA NO USAR UN TIMER EXTERNO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0085           00022         MOVWF   TRISA                           ;ASIGNA EL PUERTO A COMO ENTRADA,RB4
+0008   3000           00023         MOVLW   0X00
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0086           00024         MOVWF   TRISB                           ;Y PUERTO B COMO SALIDA
+000A   1283           00025         BCF             STATUS,RP0                      ;REGRESO AL BANCO 0
+000B   0185           00026         CLRF    PORTA                           ;LIMPIA EL PUERTO A
+000C   0186           00027         CLRF    PORTB                           ;LIMPIA EL PUERTO B
+                      00028 
+000D                  00029 SWITCH
+000D   0805           00030         MOVF    PORTA,0                 ;CARGA W CON EL PUERTO A
+000E   390F           00031         ANDLW   0X0F                    ;RETIENE LOS CUATRO BITS DE INTERES(LAS LLAVES)
+000F   008C           00032         MOVWF   LLAVES                  ;Y LOS GUARDA EN LLAVES
+0010   3A00           00033         XORLW   0X00                    ;VERIFICA SI ES EL PRIMER EFECTO
+0011   1903           00034         BTFSC   STATUS,Z                ;SI ES ASI
+0012   2050           00035         CALL    EFECT1                  ;LO LLAMA Y LO EJECUTA
+0013   080C           00036         MOVF    LLAVES,0                ;SI NO CARGO LLAVES EN W
+0014   3A01           00037         XORLW   0X01                    ;VERIFICA SI ES EL SEGUNDO EFECTO
+0015   1903           00038         BTFSC   STATUS,Z                ;SI ES ASI 
+0016   2090           00039         CALL    EFECT2                  ;LO LLAMA Y LO EJECUTA
+0017   080C           00040         MOVF    LLAVES,0                ;SI NO CARGA LLAVES EN W
+0018   3A02           00041         XORLW   0X02
+0019   1903           00042         BTFSC   STATUS,Z
+001A   20F6           00043         CALL    EFECT3
+001B   080C           00044         MOVF    LLAVES,0
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001C   3A03           00045         XORLW   0X03
+001D   1903           00046         BTFSC   STATUS,Z
+001E   215D           00047         CALL    EFECT4
+001F   080C           00048         MOVF    LLAVES,0
+0020   3A04           00049         XORLW   0X04
+0021   1903           00050         BTFSC   STATUS,Z
+0022   2190           00051         CALL    EFECT5
+0023   080C           00052         MOVF    LLAVES,0
+0024   3A05           00053         XORLW   0X05
+0025   1903           00054         BTFSC   STATUS,Z
+0026   21BE           00055         CALL    EFECT6
+0027   080C           00056         MOVF    LLAVES,0
+0028   3A06           00057         XORLW   0X06
+0029   1903           00058         BTFSC   STATUS,Z
+002A   21DE           00059         CALL    EFECT7
+002B   080C           00060         MOVF    LLAVES,0
+002C   3A07           00061         XORLW   0X07
+002D   1903           00062         BTFSC   STATUS,Z
+002E   2261           00063         CALL    EFECT8
+002F   080C           00064         MOVF    LLAVES,0
+0030   3A08           00065         XORLW   0X08
+0031   1903           00066         BTFSC   STATUS,Z
+0032   2264           00067         CALL    EFECT9
+0033   080C           00068         MOVF    LLAVES,0
+0034   3A09           00069         XORLW   0X09
+0035   1903           00070         BTFSC   STATUS,Z
+0036   226E           00071         CALL    EFECT10
+0037   080C           00072         MOVF    LLAVES,0
+0038   3A0A           00073         XORLW   0X0A
+0039   1903           00074         BTFSC   STATUS,Z
+003A   227C           00075         CALL    EFECT11
+003B   080C           00076         MOVF    LLAVES,0
+003C   3A0B           00077         XORLW   0X0B
+003D   1903           00078         BTFSC   STATUS,Z
+003E   22A4           00079         CALL    EFECT12
+003F   080C           00080         MOVF    LLAVES,0
+0040   3A0C           00081         XORLW   0X0C
+0041   1903           00082         BTFSC   STATUS,Z
+0042   22D8           00083         CALL    EFECT13
+0043   080C           00084         MOVF    LLAVES,0
+0044   3A0D           00085         XORLW   0X0D
+0045   1903           00086         BTFSC   STATUS,Z
+0046   22DB           00087         CALL    EFECT14                 
+0047   080C           00088         MOVF    LLAVES,0
+0048   3A0E           00089         XORLW   0X0E
+0049   1903           00090         BTFSC   STATUS,Z
+004A   2301           00091         CALL    EFECT15
+004B   080C           00092         MOVF    LLAVES,0
+004C   3A0F           00093         XORLW   0X0F
+004D   1903           00094         BTFSC   STATUS,Z
+004E   231F           00095         CALL    EFECT16
+004F   280D           00096         GOTO    SWITCH                  ;COMIENZA A REVIZAR DE NUEVO
+                      00097 
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00098 ;======================== Efectos =========================
+                      00099 
+0050                  00100 EFECT1   
+0050   0186           00101         CLRF    PORTB                   ; limpia el puerto B
+0051   1786           00102         BSF             PORTB,7                 ; (10000000)
+0052   232F           00103         CALL    clokon
+0053   1706           00104         BSF             PORTB,6                 ; (11000000)
+0054   232F           00105         CALL    clokon
+0055   1686           00106         BSF     PORTB,5                 ; (11100000)
+0056   232F           00107         CALL    clokon
+0057   1606           00108         BSF     PORTB,4                 ; (11110000)
+0058   232F           00109         CALL    clokon
+0059   1586           00110         BSF     PORTB,3                 ; (11111000)
+005A   232F           00111         CALL    clokon
+005B   1506           00112         BSF     PORTB,2                 ; (11111100)
+005C   232F           00113         CALL    clokon
+005D   1486           00114         BSF     PORTB,1                 ; (11111110)
+005E   232F           00115         CALL    clokon
+005F   1406           00116         BSF     PORTB,0                 ; (11111111)
+0060   232F           00117         CALL    clokon
+0061   1386           00118         BCF     PORTB,7                 ; (01111111)
+0062   232F           00119         CALL    clokon
+0063   1306           00120         BCF     PORTB,6                 ; (00111111)
+0064   232F           00121         CALL    clokon
+0065   1286           00122         BCF     PORTB,5                 ; (00011111)
+0066   232F           00123         CALL    clokon
+0067   1206           00124         BCF     PORTB,4                 ; (00001111)
+0068   232F           00125         CALL    clokon
+0069   1186           00126         BCF     PORTB,3                 ; (00000111)
+006A   232F           00127         CALL    clokon
+006B   1106           00128         BCF     PORTB,2                 ; (00000011)
+006C   232F           00129         CALL    clokon
+006D   1086           00130         BCF     PORTB,1                 ; (00000001)
+006E   232F           00131         CALL    clokon
+006F   0186           00132         CLRF    PORTB                   ; (00000000)
+0070   232F           00133         CALL    clokon
+0071                  00134 TRECE                                           ;trece
+0071   1406           00135         BSF     PORTB,0                 ; (00000001)
+0072   232F           00136         CALL    clokon
+0073   1486           00137         BSF     PORTB,1                 ; (00000011)
+0074   232F           00138         CALL    clokon
+0075   1506           00139         BSF     PORTB,2                 ; (00000111)
+0076   232F           00140         CALL    clokon
+0077   1586           00141         BSF     PORTB,3                 ; (00001111)
+0078   232F           00142         CALL    clokon
+0079   1606           00143         BSF     PORTB,4                 ; (00011111)
+007A   232F           00144         CALL    clokon
+007B   1686           00145         BSF     PORTB,5                 ; (00111111)
+007C   232F           00146         CALL    clokon
+007D   1706           00147         BSF     PORTB,6                 ; (01111111)
+007E   232F           00148         CALL    clokon
+007F   1786           00149         BSF     PORTB,7                 ; (11111111)
+0080   232F           00150         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0081   1006           00151         BCF     PORTB,0                 ; (11111110)
+0082   232F           00152         CALL    clokon
+0083   1086           00153         BCF     PORTB,1                 ; (11111100)
+0084   232F           00154         CALL    clokon
+0085   1106           00155         BCF     PORTB,2                 ; (11111000)
+0086   232F           00156         CALL    clokon
+0087   1186           00157         BCF     PORTB,3                 ; (11110000)
+0088   232F           00158         CALL    clokon
+0089   1206           00159         BCF     PORTB,4                 ; (11100000)
+008A   232F           00160         CALL    clokon
+008B   1286           00161         BCF     PORTB,5                 ; (11000000)
+008C   232F           00162         CALL    clokon
+008D   1306           00163         BCF     PORTB,6                 ; (10000000)
+008E   232F           00164         CALL    clokon
+008F   0008           00165         RETURN                                  ; a revisar nuevamente las llaves
+                      00166 
+0090                  00167 EFECT2
+0090   0186           00168         CLRF    PORTB                   ; limpia el puerto B
+0091   1786           00169         BSF     PORTB,7                 ; (10000000) EFECTO ACUMULATIVO EN "0"
+0092   232F           00170         CALL    clokon
+0093   1386           00171         BCF     PORTB,7                 ; (00000000)
+0094   1706           00172         BSF     PORTB,6                 ; (01000000)
+0095   232F           00173         CALL    clokon
+0096   1306           00174         BCF     PORTB,6                 ; (00000000)
+0097   1686           00175         BSF     PORTB,5                 ; (00100000)
+0098   232F           00176         CALL    clokon
+0099   1286           00177         BCF     PORTB,5                 ; (00000000)
+009A   1606           00178         BSF     PORTB,4                 ; (00010000)
+009B   232F           00179         CALL    clokon
+009C   1206           00180         BCF     PORTB,4                 ; (00000000)
+009D   1586           00181         BSF     PORTB,3                 ; (00001000)
+009E   232F           00182         CALL    clokon
+009F   1186           00183         BCF     PORTB,3                 ; (00000000)
+00A0   1506           00184         BSF     PORTB,2                 ; (00000100)
+00A1   232F           00185         CALL    clokon
+00A2   1106           00186         BCF     PORTB,2                 ; (00000000)
+00A3   1486           00187         BSF     PORTB,1                 ; (00000010)
+00A4   232F           00188         CALL    clokon
+00A5   1086           00189         BCF     PORTB,1                 ; (00000000)
+00A6   1406           00190         BSF     PORTB,0                 ; (00000001)
+00A7   232F           00191         CALL    clokon
+00A8   1786           00192         BSF     PORTB,7                 ; (10000001)
+00A9   232F           00193         CALL    clokon
+00AA   1386           00194         BCF     PORTB,7                 ; (00000001)
+00AB   1706           00195         BSF     PORTB,6                 ; (01000001)
+00AC   232F           00196         CALL    clokon
+00AD   1306           00197         BCF     PORTB,6                 ; (00000001)
+00AE   1686           00198         BSF     PORTB,5                 ; (00100001)
+00AF   232F           00199         CALL    clokon
+00B0   1286           00200         BCF     PORTB,5                 ; (00000001)
+00B1   1606           00201         BSF     PORTB,4                 ; (00010001)
+00B2   232F           00202         CALL    clokon
+00B3   1206           00203         BCF     PORTB,4                 ; (00000001)
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B4   1586           00204         BSF     PORTB,3                 ; (00001001)
+00B5   232F           00205         CALL    clokon
+00B6   1186           00206         BCF     PORTB,3                 ; (00000001)
+00B7   1506           00207         BSF     PORTB,2                 ; (00000101)
+00B8   232F           00208         CALL    clokon
+00B9   1106           00209         BCF     PORTB,2                 ; (00000001)
+00BA   1486           00210         BSF     PORTB,1                 ; (00000011)
+00BB   232F           00211         CALL    clokon
+00BC   1786           00212         BSF     PORTB,7                 ; (10000011)
+00BD   232F           00213         CALL    clokon
+00BE   1386           00214         BCF     PORTB,7                 ; (00000011)
+00BF   1706           00215         BSF     PORTB,6                 ; (01000011)
+00C0   232F           00216         CALL    clokon
+00C1   1306           00217         BCF     PORTB,6                 ; (00000011)
+00C2   1686           00218         BSF     PORTB,5                 ; (00100011)
+00C3   232F           00219         CALL    clokon
+00C4   1286           00220         BCF     PORTB,5                 ; (00000011)
+00C5   1606           00221         BSF     PORTB,4                 ; (00010011)
+00C6   232F           00222         CALL    clokon
+00C7   1206           00223         BCF     PORTB,4                 ; (00000011)
+00C8   1586           00224         BSF     PORTB,3                 ; (00001011)
+00C9   232F           00225         CALL    clokon  
+00CA   1186           00226         BCF     PORTB,3                 ; (00000011)
+00CB   1506           00227         BSF     PORTB,2                 ; (00000111)
+00CC   232F           00228         CALL    clokon
+00CD   1786           00229         BSF     PORTB,7                 ; (10000111)
+00CE   232F           00230         CALL    clokon
+00CF   1386           00231         BCF     PORTB,7                 ; (00000111)
+00D0   1706           00232         BSF     PORTB,6                 ; (01000111)
+00D1   232F           00233         CALL    clokon
+00D2   1306           00234         BCF     PORTB,6                 ; (00000111)
+00D3   1686           00235         BSF     PORTB,5                 ; (00100111)
+00D4   232F           00236         CALL    clokon
+00D5   1286           00237         BCF     PORTB,5                 ; (00000111)
+00D6   1606           00238         BSF     PORTB,4                 ; (00010111)
+00D7   232F           00239         CALL    clokon
+00D8   1206           00240         BCF     PORTB,4                 ; (00000111)
+00D9   1586           00241         BSF     PORTB,3                 ; (00001111)
+00DA   232F           00242         CALL    clokon
+00DB   1786           00243         BSF     PORTB,7                 ; (10001111)
+00DC   232F           00244         CALL    clokon
+00DD   1386           00245         BCF     PORTB,7                 ; (00001111)
+00DE   1706           00246         BSF     PORTB,6                 ; (01001111)
+00DF   232F           00247         CALL    clokon
+00E0   1306           00248         BCF     PORTB,6                 ; (00001111)
+00E1   1686           00249         BSF     PORTB,5                 ; (00101111)
+00E2   232F           00250         CALL    clokon
+00E3   1286           00251         BCF     PORTB,5                 ; (00001111)
+00E4   1606           00252         BSF     PORTB,4                 ; (00011111)
+00E5   232F           00253         CALL    clokon
+00E6   1786           00254         BSF     PORTB,7                 ; (10011111)
+00E7   232F           00255         CALL    clokon
+00E8   1386           00256         BCF     PORTB,7                 ; (00011111)
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00E9   1706           00257         BSF     PORTB,6                 ; (01011111)
+00EA   232F           00258         CALL    clokon
+00EB   1306           00259         BCF     PORTB,6                 ; (00011111)
+00EC   1686           00260         BSF     PORTB,5                 ; (00111111)
+00ED   232F           00261         CALL    clokon
+00EE   1786           00262         BSF     PORTB,7                 ; (10111111)
+00EF   232F           00263         CALL    clokon
+00F0   1386           00264         BCF     PORTB,7                 ; (00111111)
+00F1   1706           00265         BSF     PORTB,6                 ; (01111111)
+00F2   232F           00266         CALL    clokon
+00F3   1786           00267         BSF     PORTB,7                 ; (11111111)
+00F4   232F           00268         CALL    clokon
+00F5   0008           00269         RETURN
+00F6                  00270 EFECT3 
+00F6   0186           00271         CLRF    PORTB                   ; limpia el puerto B
+00F7   232F           00272         CALL    clokon
+00F8   1406           00273         BSF     PORTB,0                 ; (00000001)
+00F9   232F           00274         CALL    clokon
+00FA   1006           00275         BCF     PORTB,0                 ; (00000000)
+00FB   1486           00276         BSF     PORTB,1                 ; (00000010)
+00FC   232F           00277         CALL    clokon
+00FD   1086           00278         BCF     PORTB,1                 ; (00000000)
+00FE   1506           00279         BSF     PORTB,2                 ; (00000100)
+00FF   232F           00280         CALL    clokon
+0100   1106           00281         BCF     PORTB,2                 ; (00000000)
+0101   1586           00282         BSF     PORTB,3                 ; (00001000)
+0102   232F           00283         CALL    clokon
+0103   1186           00284         BCF     PORTB,3                 ; (00000000)
+0104   1606           00285         BSF     PORTB,4                 ; (00010000)
+0105   232F           00286         CALL    clokon
+0106   1206           00287         BCF     PORTB,4                 ; (00000000)
+0107   1686           00288         BSF     PORTB,5                 ; (00100000)
+0108   232F           00289         CALL    clokon
+0109   1286           00290         BCF     PORTB,5                 ; (00000000)
+010A   1706           00291         BSF     PORTB,6                 ; (01000000)
+010B   232F           00292         CALL    clokon
+010C   1306           00293         BCF     PORTB,6                 ; (00000000)
+010D   1786           00294         BSF     PORTB,7                 ; (10000000)
+010E   232F           00295         CALL    clokon
+010F   1406           00296         BSF     PORTB,0                 ; (10000001)
+0110   232F           00297         CALL    clokon
+0111   1006           00298         BCF     PORTB,0                 ; (10000000)
+0112   1486           00299         BSF     PORTB,1                 ; (10000010)
+0113   232F           00300         CALL    clokon
+0114   1086           00301         BCF     PORTB,1                 ; (10000000)
+0115   1506           00302         BSF     PORTB,2                 ; (10000100)
+0116   232F           00303         CALL    clokon
+0117   1106           00304         BCF     PORTB,2                 ; (10000000)
+0118   1586           00305         BSF     PORTB,3                 ; (10001000)
+0119   232F           00306         CALL    clokon
+011A   1186           00307         BCF     PORTB,3                 ; (10000000)
+011B   1606           00308         BSF     PORTB,4                 ; (10010000)
+011C   232F           00309         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+011D   1206           00310         BCF     PORTB,4                 ; (10000000)
+011E   1686           00311         BSF     PORTB,5                 ; (10100000)
+011F   232F           00312         CALL    clokon
+0120   1286           00313         BCF     PORTB,5                 ; (10000000)
+0121   1706           00314         BSF     PORTB,6                 ; (11000000)
+0122   232F           00315         CALL    clokon
+0123   1406           00316         BSF     PORTB,0                 ; (11000001)
+0124   232F           00317         CALL    clokon
+0125   1006           00318         BCF     PORTB,0                 ; (11000000)
+0126   1486           00319         BSF     PORTB,1                 ; (11000010)
+0127   232F           00320         CALL    clokon
+0128   1086           00321         BCF     PORTB,1                 ; (11000000)
+0129   1506           00322         BSF     PORTB,2                 ; (11000100)
+012A   232F           00323         CALL    clokon
+012B   1106           00324         BCF     PORTB,2                 ; (11000000)
+012C   1586           00325         BSF     PORTB,3                 ; (11001000)
+012D   232F           00326         CALL    clokon
+012E   1186           00327         BCF     PORTB,3                 ; (11000000)
+012F   1606           00328         BSF     PORTB,4                 ; (11010000)
+0130   232F           00329         CALL    clokon
+0131   1206           00330         BCF     PORTB,4                 ; (11000000)
+0132   1686           00331         BSF     PORTB,5                 ; (11100000)
+0133   232F           00332         CALL    clokon
+0134   1406           00333         BSF     PORTB,0                 ; (11100001)
+0135   232F           00334         CALL    clokon
+0136   1006           00335         BCF     PORTB,0                 ; (11100000)
+0137   1486           00336         BSF     PORTB,1                 ; (11100010)
+0138   232F           00337         CALL    clokon
+0139   1086           00338         BCF     PORTB,1                 ; (11100000)
+013A   1506           00339         BSF     PORTB,2                 ; (11100100)
+013B   232F           00340         CALL    clokon
+013C   1106           00341         BCF     PORTB,2                 ; (11100000)
+013D   1586           00342         BSF     PORTB,3                 ; (11101000)
+013E   232F           00343         CALL    clokon
+013F   1186           00344         BCF     PORTB,3                 ; (11100000)
+0140   1606           00345         BSF     PORTB,4                 ; (11110000)
+0141   232F           00346         CALL    clokon
+0142   1406           00347         BSF     PORTB,0                 ; (11110001)
+0143   232F           00348         CALL    clokon
+0144   1006           00349         BCF     PORTB,0                 ; (11110000)
+0145   1486           00350         BSF     PORTB,1                 ; (11110010)
+0146   232F           00351         CALL    clokon
+0147   1086           00352         BCF     PORTB,1                 ; (11110000)
+0148   1506           00353         BSF     PORTB,2                 ; (11110100)
+0149   232F           00354         CALL    clokon
+014A   1106           00355         BCF     PORTB,2                 ; (11110000)
+014B   1586           00356         BSF     PORTB,3                 ; (11111000)
+014C   232F           00357         CALL    clokon
+014D   1406           00358         BSF     PORTB,0                 ; (11111001)
+014E   232F           00359         CALL    clokon
+014F   1006           00360         BCF     PORTB,0                 ; (11111000)
+0150   1486           00361         BSF     PORTB,1                 ; (11111010)
+0151   232F           00362         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0152   1086           00363         BCF     PORTB,1                 ; (11111000)
+0153   1506           00364         BSF     PORTB,2                 ; (11111100)
+0154   232F           00365         CALL    clokon
+0155   1406           00366         BSF     PORTB,0                 ; (11111101)
+0156   232F           00367         CALL    clokon
+0157   1006           00368         BCF     PORTB,0                 ; (11111100)
+0158   1486           00369         BSF     PORTB,1                 ; (11111110)
+0159   232F           00370         CALL    clokon
+015A   1406           00371         BSF     PORTB,0                 ; (11111111)
+015B   232F           00372         CALL    clokon
+015C   0008           00373         RETURN
+015D                  00374 EFECT4
+015D   0186           00375         CLRF    PORTB           ; limpia el puerto B
+015E   1786           00376         BSF     PORTB,7         ; (10000000)
+015F   1406           00377         BSF     PORTB,0         ; (10000001)
+0160   232F           00378         CALL    clokon
+0161   1706           00379         BSF     PORTB,6         ; (11000001)
+0162   1486           00380         BSF     PORTB,1         ; (11000011)
+0163   232F           00381         CALL    clokon
+0164   1686           00382         BSF     PORTB,5         ; (11100011)
+0165   1506           00383         BSF     PORTB,2         ; (11100111)
+0166   232F           00384         CALL    clokon
+0167   1606           00385         BSF     PORTB,4         ; (11110111)
+0168   1586           00386         BSF     PORTB,3         ; (11111111)
+0169   232F           00387         CALL    clokon
+016A   1386           00388         BCF     PORTB,7         ; (01111111)
+016B   1006           00389         BCF     PORTB,0         ; (01111110)
+016C   232F           00390         CALL    clokon
+016D   1306           00391         BCF     PORTB,6         ; (00111110)
+016E   1086           00392         BCF     PORTB,1         ; (00111100)
+016F   232F           00393         CALL    clokon
+0170   1286           00394         BCF     PORTB,5         ; (00011100)
+0171   1106           00395         BCF     PORTB,2         ; (00011000)
+0172   232F           00396         CALL    clokon
+0173   1206           00397         BCF     PORTB,4         ;(00001000)
+0174   1186           00398         BCF     PORTB,3         ; (00000000)
+0175   232F           00399         CALL    clokon
+0176   232F           00400         CALL    clokon
+0177   1586           00401         BSF     PORTB,3         ; (00001000)
+0178   1606           00402         BSF     PORTB,4         ; (00011000)
+0179   232F           00403         CALL    clokon
+017A   1686           00404         BSF     PORTB,5         ; (00111000)
+017B   1506           00405         BSF     PORTB,2         ; (00111100)
+017C   232F           00406         CALL    clokon
+017D   1706           00407         BSF     PORTB,6         ; (01111100)
+017E   1486           00408         BSF     PORTB,1         ; (01111110)
+017F   232F           00409         CALL    clokon
+0180   1786           00410         BSF     PORTB,7         ; (11111110)
+0181   1406           00411         BSF     PORTB,0         ; (11111111)
+0182   232F           00412         CALL    clokon
+0183   1186           00413         BCF     PORTB,3         ; (11110111)
+0184   1206           00414         BCF     PORTB,4         ; (11100111)
+0185   232F           00415         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0186   1286           00416         BCF     PORTB,5         ; (11000111)
+0187   1106           00417         BCF     PORTB,2         ; (11000011)
+0188   232F           00418         CALL    clokon
+0189   1306           00419         BCF     PORTB,6         ; (10000011)
+018A   1086           00420         BCF     PORTB,1         ; (10000001)
+018B   232F           00421         CALL    clokon
+018C   1386           00422         BCF     PORTB,7         ; (00000001)
+018D   1006           00423         BCF     PORTB,0         ; (00000000)
+018E   232F           00424         CALL    clokon
+018F   0008           00425         RETURN
+0190                  00426 EFECT5          ;PARA ESTE EFECTPO COMO ESTOY USANDO UN RETARDO 
+                      00427                         ;W QUEDA AFECTADO AL REGRESAR DEL RETARDO SE PIERDE EL VALOR
+                      00428                         ;CONTENIDO PARA LA SECUENCIA......ENTONCES ANTES DE LLAMAR AL RETARDO
+                      00429                         ;GUARDO W EN MOVW       Y LUEGO DEL RETARDO LO NUELVO A CARGAR EN W
+                      00430                         ;......EH.....QUE TAL
+0190   0186           00431         CLRF    PORTB           ; limpia el puerto B
+0191   3001           00432         MOVLW   0X01            ; comienza con (00000001)
+0192   008F           00433         MOVWF   MOVW
+0193   0086           00434         MOVWF   PORTB           ; lo envía a la salida
+0194                  00435 cinco
+0194   080F           00436         MOVF    MOVW,0 
+0195   1403           00437         BSF     STATUS,0        ; pone a 1 el bit C de status (carry)
+0196   008F           00438         MOVWF   MOVW
+0197   232F           00439         CALL    clokon
+0198   080F           00440         MOVF    MOVW,0 
+0199   0086           00441         MOVWF   PORTB           ; lo envía a la salida
+019A   0D06           00442         RLF     PORTB,0         ; rota a la izquierda y pasa el valor a W
+019B   0086           00443         MOVWF   PORTB           ; lo envía a la salida
+019C   008F           00444         MOVWF   MOVW
+019D   232F           00445         CALL    clokon
+019E   080F           00446         MOVF    MOVW,0 
+019F   0186           00447         CLRF    PORTB           ; (00000000)
+01A0   008F           00448         MOVWF   MOVW
+01A1   232F           00449         CALL    clokon
+01A2   080F           00450         MOVF    MOVW,0 
+01A3   0086           00451         MOVWF   PORTB           ; repite
+01A4   008F           00452         MOVWF   MOVW
+01A5   232F           00453         CALL    clokon
+01A6   080F           00454         MOVF    MOVW,0 
+01A7   0186           00455         CLRF    PORTB           ; (00000000)
+01A8   008F           00456         MOVWF   MOVW
+01A9   232F           00457         CALL    clokon
+01AA   080F           00458         MOVF    MOVW,0 
+01AB   0086           00459         MOVWF   PORTB           ; lo envía a la salida
+01AC   1F86           00460         BTFSS   PORTB,7         ; ve si terminó de rotar
+01AD   2994           00461         GOTO    cinco
+01AE   232F           00462         CALL    clokon
+01AF   1386           00463         BCF     PORTB,7         ; (01111111)
+01B0   232F           00464         CALL    clokon
+01B1   1306           00465         BCF     PORTB,6         ; (00111111)
+01B2   232F           00466         CALL    clokon
+01B3   1286           00467         BCF     PORTB,5         ; (00011111)
+01B4   232F           00468         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01B5   1206           00469         BCF     PORTB,4         ; (00001111)
+01B6   232F           00470         CALL    clokon
+01B7   1186           00471         BCF     PORTB,3         ; (00000111)
+01B8   232F           00472         CALL    clokon
+01B9   1106           00473         BCF     PORTB,2         ; (00000011)
+01BA   232F           00474         CALL    clokon
+01BB   1086           00475         BCF     PORTB,1         ; (00000001)
+01BC   232F           00476         CALL    clokon
+01BD   0008           00477         RETURN
+01BE                  00478 EFECT6 
+01BE   0186           00479         CLRF    PORTB           ; limpia el puerto B
+01BF   3001           00480         MOVLW   0x01            ; comienza con (00000001)
+01C0   0086           00481         MOVWF   PORTB           ; lo envía a la salida
+01C1                  00482 tres 
+01C1   1003           00483         BCF     STATUS,0        ; pone a 0 el bit C de status (carry)
+01C2   008F           00484         MOVWF   MOVW
+01C3   232F           00485         CALL    clokon
+01C4   080F           00486         MOVF    MOVW,0 
+01C5   0086           00487         MOVWF   PORTB           ; lo envía a la salida
+01C6   0D06           00488         RLF     PORTB,0         ; rota a la derecha y pasa el valor a W
+01C7   0086           00489         MOVWF   PORTB           ; lo envía a la salida
+01C8   008F           00490         MOVWF   MOVW
+01C9   232F           00491         CALL    clokon
+01CA   080F           00492         MOVF    MOVW,0          ;FIN
+01CB   0186           00493         CLRF    PORTB           ; (00000000)
+01CC   008F           00494         MOVWF   MOVW
+01CD   232F           00495         CALL    clokon
+01CE   080F           00496         MOVF    MOVW,0          ;FIN
+01CF   0086           00497         MOVWF   PORTB           ; repite
+01D0   008F           00498         MOVWF   MOVW
+01D1   232F           00499         CALL    clokon
+01D2   080F           00500         MOVF    MOVW,0          ;FIN
+01D3   0186           00501         CLRF    PORTB           ; (00000000)
+01D4   008F           00502         MOVWF   MOVW
+01D5   232F           00503         CALL    clokon
+01D6   080F           00504         MOVF    MOVW,0          ;FIN
+01D7   0086           00505         MOVWF   PORTB           ; lo envía a la salida
+01D8   1F86           00506         BTFSS   PORTB,7         ; ve si terminó de rotar
+01D9   29C1           00507         GOTO    tres
+01DA   008F           00508         MOVWF   MOVW
+01DB   232F           00509         CALL    clokon
+01DC   080F           00510         MOVF    MOVW,0          ;FIN
+01DD   0008           00511         RETURN
+01DE                  00512 EFECT7
+01DE   0186           00513         CLRF    PORTB           ; limpia el puerto B
+01DF   232F           00514         CALL    clokon
+01E0   1406           00515         BSF     PORTB,0         ; (00000001)
+01E1   232F           00516         CALL    clokon
+01E2   1006           00517         BCF     PORTB,0         ; (00000000)
+01E3   1486           00518         BSF     PORTB,1         ; (00000010)
+01E4   232F           00519         CALL    clokon
+01E5   1086           00520         BCF     PORTB,1         ; (00000000)
+01E6   1506           00521         BSF     PORTB,2         ; (00000100)
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01E7   232F           00522         CALL    clokon
+01E8   1106           00523         BCF     PORTB,2         ; (00000000)
+01E9   1586           00524         BSF     PORTB,3         ; (00001000)
+01EA   232F           00525         CALL    clokon
+01EB   1186           00526         BCF     PORTB,3         ; (00000000)
+01EC   1606           00527         BSF     PORTB,4         ; (00010000)
+01ED   232F           00528         CALL    clokon
+01EE   1206           00529         BCF     PORTB,4         ; (00000000)
+01EF   1686           00530         BSF     PORTB,5         ; (00100000)
+01F0   232F           00531         CALL    clokon
+01F1   1286           00532         BCF     PORTB,5         ; (00000000)
+01F2   1706           00533         BSF     PORTB,6         ; (01000000)
+01F3   232F           00534         CALL    clokon
+01F4   1306           00535         BCF     PORTB,6         ; (00000000)
+01F5   1786           00536         BSF     PORTB,7         ; (10000000)
+01F6   232F           00537         CALL    clokon
+01F7   1706           00538         BSF     PORTB,6         ; (11000000)
+01F8   232F           00539         CALL    clokon
+01F9   1306           00540         BCF     PORTB,6         ; (10000000)
+01FA   1686           00541         BSF     PORTB,5         ; (10100000)
+01FB   232F           00542         CALL    clokon
+01FC   1286           00543         BCF     PORTB,5         ; (10000000)
+01FD   1606           00544         BSF     PORTB,4         ; (10010000)
+01FE   232F           00545         CALL    clokon
+01FF   1206           00546         BCF     PORTB,4         ; (10000000)
+0200   1586           00547         BSF     PORTB,3         ; (10001000)
+0201   232F           00548         CALL    clokon
+0202   1186           00549         BCF     PORTB,3         ; (10000000)
+0203   1506           00550         BSF     PORTB,2         ; (10000100)
+0204   232F           00551         CALL    clokon
+0205   1106           00552         BCF     PORTB,2         ; (10000000)
+0206   1486           00553         BSF     PORTB,1         ; (10000010)
+0207   232F           00554         CALL    clokon
+0208   1086           00555         BCF     PORTB,1         ; (10000000)
+0209   1406           00556         BSF     PORTB,0         ; (10000001)
+020A   232F           00557         CALL    clokon
+020B   1486           00558         BSF     PORTB,1         ; (10000011)
+020C   232F           00559         CALL    clokon
+020D   1086           00560         BCF     PORTB,1         ; (10000001)
+020E   1506           00561         BSF     PORTB,2         ; (10000101)
+020F   232F           00562         CALL    clokon
+0210   1106           00563         BCF     PORTB,2         ; (10000001)
+0211   1586           00564         BSF     PORTB,3         ; (10001001)
+0212   232F           00565         CALL    clokon
+0213   1186           00566         BCF     PORTB,3         ; (10000001)
+0214   1606           00567         BSF     PORTB,4         ; (10010001)
+0215   232F           00568         CALL    clokon
+0216   1206           00569         BCF     PORTB,4         ; (10000001)
+0217   1686           00570         BSF     PORTB,5         ; (10100001)
+0218   232F           00571         CALL    clokon
+0219   1286           00572         BCF     PORTB,5         ; (10000001)
+021A   1706           00573         BSF     PORTB,6         ; (11000001)
+021B   232F           00574         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+021C   1686           00575         BSF     PORTB,5         ; (11100001)
+021D   232F           00576         CALL    clokon
+021E   1286           00577         BCF     PORTB,5         ; (11000001)
+021F   1606           00578         BSF     PORTB,4         ; (11010001)
+0220   232F           00579         CALL    clokon
+0221   1206           00580         BCF     PORTB,4         ; (11000001)
+0222   1586           00581         BSF     PORTB,3         ; (11001001)
+0223   232F           00582         CALL    clokon
+0224   1186           00583         BCF     PORTB,3         ; (11000001)
+0225   1506           00584         BSF     PORTB,2         ; (11000101)
+0226   232F           00585         CALL    clokon
+0227   1106           00586         BCF     PORTB,2         ; (11000001)
+0228   1486           00587         BSF     PORTB,1         ; (11000011)
+0229   232F           00588         CALL    clokon
+022A   1506           00589         BSF     PORTB,2         ; (11000111)
+022B   232F           00590         CALL    clokon
+022C   1106           00591         BCF     PORTB,2         ; (11000011)
+022D   1586           00592         BSF     PORTB,3         ; (11001011)
+022E   232F           00593         CALL    clokon
+022F   1186           00594         BCF     PORTB,3         ; (11000011)
+0230   1606           00595         BSF     PORTB,4         ; (11010011)
+0231   232F           00596         CALL    clokon
+0232   1206           00597         BCF     PORTB,4         ; (11000011)
+0233   1686           00598         BSF     PORTB,5         ; (11100011)
+0234   232F           00599         CALL    clokon
+0235   1606           00600         BSF     PORTB,4         ; (11110011)
+0236   232F           00601         CALL    clokon
+0237   1206           00602         BCF     PORTB,4         ; (11100011)
+0238   1586           00603         BSF     PORTB,3         ; (11101011)
+0239   232F           00604         CALL    clokon
+023A   1186           00605         BCF     PORTB,3         ; (11100011)
+023B   1506           00606         BSF     PORTB,2         ; (11100111)
+023C   232F           00607         CALL    clokon
+023D   1586           00608         BSF     PORTB,3         ; (11101111)
+023E   232F           00609         CALL    clokon
+023F   1186           00610         BCF     PORTB,3         ; (11100111)
+0240   1606           00611         BSF     PORTB,4         ; (11110111)
+0241   232F           00612         CALL    clokon
+0242   1586           00613         BSF     PORTB,3         ; (11111111)
+0243   232F           00614         CALL    clokon
+0244   1106           00615         BCF     PORTB,2         ; (11111011)
+0245   232F           00616         CALL    clokon
+0246   1506           00617         BSF     PORTB,2         ; (11111111)
+0247   232F           00618         CALL    clokon
+0248   1086           00619         BCF     PORTB,1         ; (11111101)
+0249   232F           00620         CALL    clokon
+024A   1486           00621         BSF     PORTB,1         ; (11111111)
+024B   232F           00622         CALL    clokon
+024C   1006           00623         BCF     PORTB,0         ; (11111110)
+024D   232F           00624         CALL    clokon
+024E   1406           00625         BSF     PORTB,0         ; (11111111)
+024F   232F           00626         CALL    clokon
+0250   1006           00627         BCF     PORTB,0         ; (11111110)
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0251   232F           00628         CALL    clokon
+0252   1086           00629         BCF     PORTB,1         ; (11111100)
+0253   232F           00630         CALL    clokon
+0254   1106           00631         BCF     PORTB,2         ; (11111000)
+0255   232F           00632         CALL    clokon
+0256   1186           00633         BCF     PORTB,3         ; (11110000)
+0257   232F           00634         CALL    clokon
+0258   1206           00635         BCF     PORTB,4         ; (11100000)
+0259   232F           00636         CALL    clokon
+025A   1286           00637         BCF     PORTB,5         ; (11000000)
+025B   232F           00638         CALL    clokon
+025C   1306           00639         BCF     PORTB,6         ; (10000000)
+025D   232F           00640         CALL    clokon
+025E   1386           00641         BCF     PORTB,7         ; (00000000)
+025F   232F           00642         CALL    clokon
+0260   0008           00643         RETURN
+0261                  00644 EFECT8 
+0261   20F6           00645         CALL    EFECT3          ; combinan el efecto 3
+0262   2090           00646         CALL    EFECT2          ; con el efecto 2
+0263   0008           00647         RETURN
+0264                  00648 EFECT9 
+0264   0186           00649         CLRF    PORTB           ; limpia el puerto B
+0265   30EE           00650         MOVLW   0xEE            ; comienza con (11101110)
+0266   0086           00651         MOVWF   PORTB           ; lo pasa a portb
+0267   1403           00652         BSF     STATUS,0        ; pone el carry a 1
+0268                  00653 rotar
+0268   232F           00654         CALL    clokon
+0269   0D86           00655         RLF     PORTB,1         ; inicia la rotación
+026A   1B86           00656         BTFSC   PORTB,7         ; ve si terminó de rotar
+026B   2A68           00657         GOTO    rotar           ; sino continúa
+026C   232F           00658         CALL    clokon
+026D   0008           00659         RETURN                          ; terminó, ver si cambió efecto
+026E                  00660 EFECT10 
+026E   0186           00661         CLRF    PORTB           ; limpia el puerto B
+026F   30FE           00662         MOVLW   0xFE            ; comienza con (11111110)
+0270   0086           00663         MOVWF   PORTB           ; lo pasa a PORTB
+0271   1403           00664         BSF     STATUS,0        ; pone el carry a 1
+0272                  00665 rotar1
+0272   232F           00666         CALL    clokon
+0273   0D86           00667         RLF     PORTB,1         ; inicia la rotación
+0274   1B86           00668         BTFSC   PORTB,7         ; ve si terminó de rotar
+0275   2A72           00669         GOTO    rotar1          ; sino continúa
+0276                  00670 rotar2 
+0276   232F           00671         CALL    clokon
+0277   0C86           00672         RRF     PORTB,1         ; ahora rota al revés
+0278   1806           00673         BTFSC   PORTB,0         ; ve si terminó de rotar
+0279   2A76           00674         GOTO    rotar2          ; sino continúa
+027A   232F           00675         CALL    clokon
+027B   0008           00676         RETURN                          ; terminó, ver si cambió efecto
+027C                  00677 EFECT11 
+027C   0186           00678         CLRF    PORTB           ; limpia el puerto B
+027D   1406           00679         BSF     PORTB,0         ; (00000001)
+027E   232F           00680         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+027F   1486           00681         BSF     PORTB,1         ; (00000011)
+0280   232F           00682         CALL    clokon
+0281   1506           00683         BSF     PORTB,2         ; (00000111)
+0282   232F           00684         CALL    clokon
+0283   1586           00685         BSF     PORTB,3         ; (00001111)
+0284   232F           00686         CALL    clokon
+0285   1606           00687         BSF     PORTB,4         ; (00011111)
+0286   232F           00688         CALL    clokon
+0287   1686           00689         BSF     PORTB,5         ; (00111111)
+0288   232F           00690         CALL    clokon
+0289   1706           00691         BSF     PORTB,6         ; (01111111)
+028A   232F           00692         CALL    clokon
+028B   1786           00693         BSF     PORTB,7         ; (11111111)
+028C   1003           00694         BCF     STATUS,0        ; pone el carry a 0
+028D                  00695 uno 
+028D   232F           00696         CALL    clokon
+028E   0C86           00697         RRF     PORTB,1         ; rotará uno apagado
+028F   1806           00698         BTFSC   PORTB,0         ; ve si es (11111110)
+0290   2A8D           00699         GOTO    uno             ; sino continúa
+0291   232F           00700         CALL    clokon
+0292   1086           00701         BCF     PORTB,1         ; (11111100)
+0293   232F           00702         CALL    clokon
+0294   1106           00703         BCF     PORTB,2         ; (11111000)
+0295   232F           00704         CALL    clokon
+0296   1186           00705         BCF     PORTB,3         ; (11110000)
+0297   232F           00706         CALL    clokon
+0298   1206           00707         BCF     PORTB,4         ; (11100000)
+0299   232F           00708         CALL    clokon
+029A   1286           00709         BCF     PORTB,5         ; (11000000)
+029B   232F           00710         CALL    clokon
+029C   1306           00711         BCF     PORTB,6         ; (10000000)
+029D   1003           00712         BCF     STATUS,0        ; pone el carry a 0
+029E                  00713 dos 
+029E   232F           00714         CALL    clokon
+029F   0C86           00715         RRF     PORTB,1         ; rotará uno encendido
+02A0   1C06           00716         BTFSS   PORTB,0         ; ve si es (00000001)
+02A1   2A9E           00717         GOTO    dos             ; sino continúa
+02A2   232F           00718         CALL    clokon
+02A3   0008           00719         RETURN                          ; terminó, ver si cambió efecto
+02A4                  00720 EFECT12 
+02A4   0186           00721         CLRF    PORTB           ; limpia el puerto B
+02A5   1406           00722         BSF     PORTB,0         ; (00000001)
+02A6   232F           00723         CALL    clokon
+02A7   1486           00724         BSF     PORTB,1         ; (00000011)
+02A8   232F           00725         CALL    clokon
+02A9   1506           00726         BSF     PORTB,2         ; (00000111)
+02AA   232F           00727         CALL    clokon
+02AB   1586           00728         BSF     PORTB,3         ; (00001111)
+02AC   232F           00729         CALL    clokon
+02AD   1606           00730         BSF     PORTB,4         ; (00011111)
+02AE   232F           00731         CALL    clokon
+02AF   1686           00732         BSF     PORTB,5         ; (00111111)
+02B0   232F           00733         CALL    clokon
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+02B1   1706           00734         BSF     PORTB,6         ; (01111111)
+02B2   232F           00735         CALL    clokon
+02B3   1786           00736         BSF     PORTB,7         ; (11111111)
+02B4   232F           00737         CALL    clokon
+02B5   0186           00738         CLRF    PORTB           ; (00000000)
+02B6   232F           00739         CALL    clokon
+02B7   30FF           00740         MOVLW   0xFF
+02B8   0086           00741         MOVWF   PORTB           ;(11111111) enciendo todo
+02B9   232F           00742         CALL    clokon
+02BA   0186           00743         CLRF    PORTB           ; (00000000)
+02BB   232F           00744         CALL    clokon
+02BC   30FF           00745         MOVLW   0xFF
+02BD   0086           00746         MOVWF   PORTB           ; (11111111) enciendo todo
+02BE   232F           00747         CALL    clokon
+02BF   0186           00748         CLRF    PORTB           ; (00000000)
+02C0   232F           00749         CALL    clokon
+02C1   30FF           00750         MOVLW   0xFF
+02C2   0086           00751         MOVWF   PORTB           ; (11111111) enciendo todo
+02C3   232F           00752         CALL    clokon
+02C4   0186           00753         CLRF    PORTB           ; (00000000)
+02C5   232F           00754         CALL    clokon
+02C6   30FF           00755         MOVLW   0xFF
+02C7   0086           00756         MOVWF   PORTB           ; (11111111) enciendo todo
+02C8   232F           00757         CALL    clokon
+02C9   1386           00758         BCF     PORTB,7         ; (01111111)
+02CA   232F           00759         CALL    clokon
+02CB   1306           00760         BCF     PORTB,6         ; (00111111)
+02CC   232F           00761         CALL    clokon
+02CD   1286           00762         BCF     PORTB,5         ; (00011111)
+02CE   232F           00763         CALL    clokon  
+02CF   1206           00764         BCF     PORTB,4         ; (00001111)
+02D0   232F           00765         CALL    clokon
+02D1   1186           00766         BCF     PORTB,3         ; (00000111)
+02D2   232F           00767         CALL    clokon
+02D3   1106           00768         BCF     PORTB,2         ; (00000011)
+02D4   232F           00769         CALL    clokon
+02D5   1086           00770         BCF     PORTB,1         ; (00000001)
+02D6   232F           00771         CALL    clokon
+02D7   0008           00772         RETURN
+02D8                  00773 EFECT13 
+02D8   0186           00774         CLRF    PORTB           ; limpia el puerto B
+02D9   2071           00775         CALL    TRECE           ; ejecuta parte del efecto 1
+02DA   0008           00776         RETURN
+02DB                  00777 EFECT14 
+02DB   0186           00778         CLRF    PORTB           ; limpia el puerto B
+02DC   1786           00779         BSF     PORTB,7         ; (10000000) EFECTO ENCIENDE DE AFUERA AL CENTRO
+02DD   1406           00780         BSF     PORTB,0         ; (10000001)-----
+02DE   232F           00781         CALL    clokon
+02DF   0186           00782         CLRF    PORTB
+02E0   1706           00783         BSF     PORTB,6         ; (01000000)
+02E1   1486           00784         BSF     PORTB,1         ; (01000010)-----
+02E2   232F           00785         CALL    clokon
+02E3   0186           00786         CLRF    PORTB
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+02E4   1686           00787         BSF     PORTB,5         ; (00100000)
+02E5   1506           00788         BSF     PORTB,2         ; (00100100)-----
+02E6   232F           00789         CALL    clokon
+02E7   0186           00790         CLRF    PORTB
+02E8   1606           00791         BSF     PORTB,4         ; (00010000)
+02E9   1586           00792         BSF     PORTB,3         ; (00011000)-----
+02EA   232F           00793         CALL    clokon
+02EB   1686           00794         BSF     PORTB,5         ; (00111000)
+02EC   1506           00795         BSF     PORTB,2         ; (00111100)
+02ED   232F           00796         CALL    clokon
+02EE   1706           00797         BSF     PORTB,6         ; (01111100)
+02EF   1486           00798         BSF     PORTB,1         ; (01111110)
+02F0   232F           00799         CALL    clokon
+02F1   1786           00800         BSF     PORTB,7         ; (11111110)
+02F2   1406           00801         BSF     PORTB,0         ; (11111111)
+02F3   232F           00802         CALL    clokon
+02F4   1186           00803         BCF     PORTB,3         ; (11110111)
+02F5   1206           00804         BCF     PORTB,4         ; (11100111)
+02F6   232F           00805         CALL    clokon
+02F7   1286           00806         BCF     PORTB,5         ; (11000111)
+02F8   1106           00807         BCF     PORTB,2         ; (11000011)
+02F9   232F           00808         CALL    clokon
+02FA   1306           00809         BCF     PORTB,6         ; (10000011)
+02FB   1086           00810         BCF     PORTB,1         ; (10000001)
+02FC   232F           00811         CALL    clokon
+02FD   1386           00812         BCF     PORTB,7         ; (00000001)
+02FE   1006           00813         BCF     PORTB,0         ; (00000000)
+02FF   232F           00814         CALL    clokon
+0300   0008           00815         RETURN
+0301                  00816 EFECT15 
+0301   0186           00817         CLRF    PORTB           ; limpia el puerto B
+0302   3080           00818         MOVLW   0x80            ; comienza con (10000000)
+0303   0086           00819         MOVWF   PORTB           ; lo envía a la salida
+0304                  00820 cuatro 
+0304   1003           00821         BCF     STATUS,0        ; pone a 0 el bit C de status (carry)
+0305   008F           00822         MOVWF   MOVW
+0306   232F           00823         CALL    clokon
+0307   080F           00824         MOVF    MOVW,0          ;FIN
+0308   0086           00825         MOVWF   PORTB           ; lo envía a la salida
+0309   0C06           00826         RRF     PORTB,0         ; rota a la izquierda y pasa el valor a W
+030A   0086           00827         MOVWF   PORTB           ; lo envía a la salida
+030B   008F           00828         MOVWF   MOVW
+030C   232F           00829         CALL    clokon
+030D   080F           00830         MOVF    MOVW,0          ;FIN
+030E   0186           00831         CLRF    PORTB           ; (00000000)
+030F   008F           00832         MOVWF   MOVW
+0310   232F           00833         CALL    clokon
+0311   080F           00834         MOVF    MOVW,0          ;FIN
+0312   0086           00835         MOVWF   PORTB           ; repite
+0313   008F           00836         MOVWF   MOVW
+0314   232F           00837         CALL    clokon
+0315   080F           00838         MOVF    MOVW,0          ;FIN
+0316   0186           00839         CLRF    PORTB           ; (00000000)
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0317   008F           00840         MOVWF   MOVW
+0318   232F           00841         CALL    clokon
+0319   080F           00842         MOVF    MOVW,0          ;FIN
+031A   0086           00843         MOVWF   PORTB           ; lo envía a la salida
+031B   1C06           00844         BTFSS   PORTB,0         ; ve si terminó de rotar
+031C   2B04           00845         GOTO    cuatro
+031D   232F           00846         CALL    clokon
+031E   0008           00847         RETURN
+031F                  00848 EFECT16 
+031F   0186           00849         CLRF    PORTB           ; limpia el puerto B
+0320   1786           00850         BSF     PORTB,7         ; (10000000)
+0321   1003           00851         BCF     STATUS,0        ; pone a 0 el bit C de status (el 1º bit)
+0322                  00852 seis 
+0322   232F           00853         CALL    clokon
+0323   0C86           00854         RRF     PORTB,1         ; rota a la derecha
+0324   1C06           00855         BTFSS   PORTB,0         ; ve si terminó de rotar
+0325   2B22           00856         GOTO    seis
+0326   0186           00857         CLRF    PORTB           ; (00000000)
+0327   1406           00858         BSF     PORTB,0         ; (00000001)
+0328   1003           00859         BCF     STATUS,0        ; pone el carry a 0
+0329                  00860 siete 
+0329   232F           00861         CALL    clokon
+032A   0D86           00862         RLF     PORTB,1         ; rota a la izquierda
+032B   1F86           00863         BTFSS   PORTB,7         ; ve si terminó de rotar
+032C   2B29           00864         GOTO    siete
+032D   232F           00865         CALL    clokon
+032E   0008           00866         RETURN
+                      00867 
+                      00868 ;============ control de pulsos de clock ==================
+                      00869 
+032F                  00870 clokon 
+032F   30C5           00871 PDelay  movlw     .197      ; 1 set number of repetitions (B)
+0330   008D           00872         movwf     PDel0     ; 1 |
+0331   30FD           00873 PLoop1  movlw     .253      ; 1 set number of repetitions (A)
+0332   008E           00874         movwf     PDel1     ; 1 |
+0333   0064           00875 PLoop2  clrwdt              ; 1 clear watchdog
+0334   0064           00876         clrwdt              ; 1 cycle delay
+0335   0B8E           00877         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+0336   2B33           00878         goto      PLoop2    ; 2 no, loop
+0337   0B8D           00879         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+0338   2B31           00880         goto      PLoop1    ; 2 no, loop
+0339   2B3A           00881 PDelL1  goto PDelL2         ; 2 cycles delay
+033A                  00882 PDelL2 
+033A   0103           00883                 CLRW 
+033B   0008           00884         return              ; 2+2 Done
+                      00885 
+                      00886 ;USO ESTE RETARDO DE 500ms PARA NO USAR SEÑAL DE RELOJ EXTERNO
+                      00887 
+                      00888         ;BTFSS  PORTA,4         ; prueba si es 1
+                      00889         ;GOTO   clokon          ; sino espera
+                      00890 ;clokoff 
+                      00891         ;BTFSC  PORTA,4         ; prueba si termina el pulso
+                      00892         ;GOTO   clokoff         ; sino espera que termine
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00893         ;RETURN                                 ; regresa y continúa
+                      00894 
+                      00895 ;========================= final ==========================
+                      00896 
+                      00897         END
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+EFECT1                            00000050
+EFECT10                           0000026E
+EFECT11                           0000027C
+EFECT12                           000002A4
+EFECT13                           000002D8
+EFECT14                           000002DB
+EFECT15                           00000301
+EFECT16                           0000031F
+EFECT2                            00000090
+EFECT3                            000000F6
+EFECT4                            0000015D
+EFECT5                            00000190
+EFECT6                            000001BE
+EFECT7                            000001DE
+EFECT8                            00000261
+EFECT9                            00000264
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+LLAVES                            0000000C
+MOVW                              0000000F
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             0000000D
+PDel1                             0000000E
+PDelL1                            00000339
+PDelL2                            0000033A
+PDelay                            0000032F
+PLoop1                            00000331
+PLoop2                            00000333
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+SWITCH                            0000000D
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRECE                             00000071
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+cinco                             00000194
+clokon                            0000032F
+cuatro                            00000304
+dos                               0000029E
+rotar                             00000268
+rotar1                            00000272
+rotar2                            00000276
+seis                              00000322
+siete                             00000329
+tres                              000001C1
+uno                               0000028D
+MPASM  5.01                         CQPIC.ASM   3-14-2009  20:40:54         PAGE 21
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+01C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0200 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0240 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0280 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+02C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0300 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXX----
+
+All other memory blocks unused.
+
+Program Memory Words Used:   824
+Program Memory Words Free:   200
+
+
+Errors   :     0
+Warnings :     4 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

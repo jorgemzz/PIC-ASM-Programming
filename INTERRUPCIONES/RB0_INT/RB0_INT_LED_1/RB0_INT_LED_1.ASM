@@ -1,0 +1,122 @@
+
+
+	LIST	P=16F84A
+	INCLUDE	"P16F84A.INC"
+
+;---------MAPA DE MEMORIA-------
+
+	CBLOCK	0X0C
+
+	REG1			;UTILIZANDO LA DIRECTIVA CBLOCK ASIGNO 
+	REG2			;LOS NOMBRES A LAS POSICIONES DE MEMORIA
+	REG3			;DE DATOOS PARA REALIZAR LOS RETARDOS
+	REG4
+	PDel0	
+	PDel1
+	SWITCH	
+
+	ENDC
+
+;------CONFIGURACION DE PUERTOS-------
+
+		ORG	 	0X00			;INDICA DONDE SE ESCRIBE LA SIGUIENTE INSTRUCCION
+		GOTO	INICIO			;SALTA A LA ETIQUETA INICIO
+		ORG		0X04
+		GOTO	ISR				;RUTINA DE SERVICIO DE INTERRUPCION
+		ORG		0X05
+
+INICIO	BSF		STATUS,RP0		;CONFIGUTRACION DE LOS PUERTOS
+		MOVLW	0X01			;CARGA W CON  00000001
+		MOVWF	TRISB			;RB0 INT ES ENTRADA
+		BCF		OPTION_REG,6	;SELECCIONAMOS FLANCO DESCENDENTE
+		BCF		STATUS,RP0
+
+;-----HABILITACION DE INTERRUPCIONES-----
+
+		BSF		INTCON,GIE		;HABILITAMOS TODAS LAS INERRUPCIONES
+		BSF		INTCON,INTE		;QUE SEAN INTERRUPCIONES EXTERNAS
+		CLRF	PORTB			;LIMPIO EL PUERTO B
+		CLRF	SWITCH			;LIMPIO SWITCH
+
+;--------------CONFIG LED_1------------------
+
+SUEÑO	SLEEP
+
+VER		BTFSC	SWITCH,0		;SI SWITCH ES 0 VA A SUEÑO(BAJO CONSUMO)
+		GOTO	SUEÑO			;SINO 
+		GOTO	LED_1			;VA A LED 1
+
+LED_1
+
+;-------AQUI ENCIENDE Y APAGA EL LED-----
+
+AHORA	BSF		PORTB,1		;PONE UN UNO EN RB1
+		CALL 	RETARDO 	;LLAMA AL RETARDO
+
+		BCF		PORTB,1		;AL REGRESAR DE RETARDO PONGO 0 A RB1
+		CALL	RETARDO		;LLAMA A RETARDO
+		GOTO	VER		;LUEGO CERIFICA SI SEGUIRA 
+
+;-----RUTINA DE RETARDO----------
+
+RETARDO	MOVLW	10			;CARGO CON 10 EN HEADEC A REG 1
+		MOVWF	REG1
+
+TRES	MOVLW	10
+		MOVWF	REG2
+
+DOS		MOVLW	15
+		MOVWF	REG3
+
+UNO		MOVLW	20
+		MOVWF	REG4
+
+CERO	DECFSZ	REG4,1		;COMIENZA A DECREMENTAR REG4 SI LLEGAA 0 SE SALTA UNA INSTRUCCION
+		GOTO    CERO		;PARA DECREMENTAR REG4 HASTA CERO
+		DECFSZ	REG3,1		;Cuando reg4 llegue a 0 decrementaré reg3 en una unidad
+		GOTO 	UNO			;volveré a cargar reg4y lo decrementaré nuevamente
+		DECFSZ	REG2,1		; para recién restarle otra unidad a reg3
+		GOTO	DOS			;así... hasta que reg2 se haga cero.
+		DECFSZ	REG1,1		;todo esto ocurrirá hasta que reg1 se haga igual a cero.
+		GOTO	TRES
+		RETLW	0X0			;REGRESO A DONDE  SE HIZO LA LLAMADA CARGANDE W CON 0
+
+;--------------------
+
+;-----RUTINA DE SERVICIO DE INTERRUPCIONES----
+						
+ISR		BTFSS	PORTB,0			;VERIFICAMOS QUE SUELTEN EL PULSADOR
+		GOTO	ISR
+
+		CALL	PDelay			;RETARDO PARA AMOETIGUAR LAS SEÑALES DEL PULSADOR(50ms)	
+
+		BTFSC	SWITCH,0		;SI SWITCH ES 1 
+		GOTO	CLRF_SWITCH		;IRE A CLRF_SWITCH PARA APAGARLO
+		BSF		SWITCH,0			;SINOO PONGO A 1 A SWITCH
+		BCF		INTCON,INTF		;BORRO LA BANDETA DE INTERRUPCION ESTERNA
+		RETFIE
+
+CLRF_SWITCH	BCF		SWITCH,0			;BORRO SWITCH
+			BCF		INTCON,INTF		;BORRO BANDERA DE INTERRUPCION
+			RETFIE
+
+;--------AMORTIGUANDO----------
+
+PDelay  movlw     .55       ; 1 set number of repetitions (B)
+        movwf     PDel0     ; 1 |
+PLoop1  movlw     .181      ; 1 set number of repetitions (A)
+        movwf     PDel1     ; 1 |
+PLoop2  clrwdt              ; 1 clear watchdog
+        clrwdt              ; 1 cycle delay
+        decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+        goto      PLoop2    ; 2 no, loop
+        decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+        goto      PLoop1    ; 2 no, loop
+        return              ; 2+2 Done
+
+;----------------------------------------------
+
+	END
+
+;------------------
+		

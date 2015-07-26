@@ -1,0 +1,641 @@
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;PROYECTO TÖPICO 3
+                      00002 ;"ESCRITURA DE MENSAJES DE TECLADO SOBRE LCD"
+                      00003 ;Se desea realizar un programa que visualice sobre el LCD las teclas
+                      00004 ;que se vayan pulsando. Cada pulsaci¢n ir  acompa¤ada de un "beep" de
+                      00005 ;0,25 segundos sobre el zumbador piezoel‚ctrico conectado a RA3
+                      00006  
+                      00007 ;DIRECTIVAS DEL PROGRAMA
+                      00008  
+                      00009  
+                      00010                 LIST    P=16F84 ; Se emplea el PIC 16F84
+                      00011                 RADIX   HEX     ; Sistema de numeraci¢n hexadecimal 
+                      00012  
+                      00013 ;ETIQUETAS DEL PROGRAMA 
+                      00014  
+                      00015                 INCLUDE  "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+Warning[207]: Found label after column 1. (TEMP_1)
+  0000000C            00016                 TEMP_1   EQU 0x0C 
+Warning[207]: Found label after column 1. (DELAY_1)
+  0000000D            00017                 DELAY_1  EQU 0x0D
+Warning[207]: Found label after column 1. (DELAY_2)
+  0000000E            00018                 DELAY_2  EQU 0x0E
+Warning[207]: Found label after column 1. (DELAY_3)
+  0000000F            00019                 DELAY_3  EQU 0x0F
+Warning[207]: Found label after column 1. (LCD_VAR)
+  00000010            00020                 LCD_VAR  EQU 0x10
+Warning[207]: Found label after column 1. (KEY_VAR)
+  00000012            00021                 KEY_VAR  EQU 0x12
+                      00022          
+                      00023  
+                      00024 ;POSICIONAMIENTO DE LA RUTINA DE INICIO 
+                      00025  
+                      00026  
+0000                  00027                 ORG     0       ; El programa comienza en la direcci¢n 0 y 
+0000   28AD           00028                 goto    INICIO  ; salta a la direcci¢n 5 para sobrepasar el
+0005                  00029                 ORG     5       ; vector de interrupci¢n
+                      00030  
+                      00031 ;RUTINA HEX_ASCII: Rutina que pasa el valor HEXADECIMAL que contiene
+                      00032 ;W a valor ASCII, para ser mostrado por el LCD 
+                      00033  
+                      00034  
+0005   0782           00035 HEX_ASCII       addwf PCL,1
+0006   3430           00036                 retlw '0'
+0007   3431           00037                 retlw '1'
+0008   3432           00038                 retlw '2'
+0009   3433           00039                 retlw '3'
+000A   3434           00040                 retlw '4'
+000B   3435           00041                 retlw '5'
+000C   3436           00042                 retlw '6'
+000D   3437           00043                 retlw '7'
+000E   3438           00044                 retlw '8'
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000F   3439           00045                 retlw '9'
+0010   3441           00046                 retlw 'A'
+0011   3442           00047                 retlw 'B'
+0012   3443           00048                 retlw 'C'
+0013   3444           00049                 retlw 'D'
+0014   3445           00050                 retlw 'E'
+0015   3446           00051                 retlw 'F'
+                      00052         
+                      00053 ;PROGRAMA PRINCIPAL
+                      00054  
+                      00055  
+                      00056         INCLUDE "LCD_CXX.ASM"
+                      00001 ;LCD_CXX.ASM
+                      00002  
+                      00003  
+                      00004 ;El conjunto de rutinas que se presentan a continuaci¢n permiten realizar
+                      00005 ;las tareas b sicas de control del m¢dulo de visualizaci¢n LCD. Se emplean
+                      00006 ;con los PIC 16cxx. En el programa principal se deber  reservar memoria
+                      00007 ;para el bloque de variables que utiliza el LCD del modo:
+                      00008 ;       LCD_VAR EQU dir_inicio_del_bloque
+                      00009 
+                      00010 ;BLOQUE DE ETIQUETAS
+                      00011  
+                      00012  
+                      00013         #define ENABLE          bsf PORTA,2 ;Activa E
+                      00014         #define DISABLE         bcf PORTA,2 ;Desactiva
+                      00015         #define LEER            bsf PORTA,1 ;Pone LCD en Modo RD
+                      00016         #define ESCRIBIR        bcf PORTA,1 ;Pone LCD en Modo WR
+                      00017         #define OFF_COMANDO     bcf PORTA,0 ;Desactiva RS (modo comando)
+                      00018         #define ON_COMANDO      bsf PORTA,0 ;Activa RS (modo datos)
+                      00019         CBLOCK  LCD_VAR
+  00000010            00020                 LCD_TEMP_2      ;Inicio de las variables. Ser  la primera direcci¢n libre
+                      00021                                 ; disponible 
+  00000011            00022                 LCD_TEMP_1      
+                      00023         ENDC            
+                      00024  
+                      00025  
+                      00026 ;RUTINA UP_LCD: Con esta rutina se configura el PIC para que trabaje con el LCD.
+                      00027  
+                      00028  
+0016   1683           00029 UP_LCD          bsf     STATUS,RP0      ;Banco 1
+0017   0186           00030                 clrf    PORTB           ;RB <0-7> salidas digitales
+0018   0185           00031                 clrf    PORTA           ;RA <0-4> salidas digitales
+0019   1283           00032                 bcf     STATUS,RP0      ;Banco 0
+001A   1005           00033                 OFF_COMANDO             ;RS=0
+001B   1105           00034                 DISABLE                 ;E=0
+001C   0008           00035                 return
+                      00036  
+                      00037  
+                      00038 ;RUTINA LCD_BUSY: Con esta rutina se chequea el estado del 
+                      00039 ;flag BUSY del m¢dulo LCD, que indica, cuando est  activado, que el
+                      00040 ;m¢dulo a£n no ha terminado el comando anterior. La rutina espera a
+                      00041 ;que se complete cualquier comando anterior antes de retornar al
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00042 ;programa principal, para poder enviar un nuevo comando.
+                      00043  
+                      00044  
+001D   1485           00045 LCD_BUSY        LEER                    ;Pone el LCD en Modo RD
+001E   1683           00046                 bsf     STATUS,RP0 
+001F   30FF           00047                 movlw   H'FF'
+0020   0086           00048                 movwf   PORTB           ;Puerta B como entrada
+0021   1283           00049                 bcf     STATUS,RP0      ;Selecciona el banco 0
+0022   1505           00050                 ENABLE                  ;Activa el LCD
+0023   0000           00051                 nop
+0024   1B86           00052 L_BUSY          btfsc   PORTB,7         ;Chequea bit de Busy
+0025   2824           00053                 goto    L_BUSY
+0026   1105           00054                 DISABLE                 ;Desactiva LCD
+0027   1683           00055                 bsf     STATUS,RP0 
+0028   0186           00056                 clrf    PORTB           ;Puerta B salida
+0029   1283           00057                 bcf     STATUS,RP0 
+002A   1085           00058                 ESCRIBIR                ;Pone LCD en modo WR(ERROR CORREGIDO ANTES SOLO DECIA ESCRIB)
+002B   0008           00059                 return
+                      00060  
+                      00061  
+                      00062 ;RUTINA LCD_E: Se trata de una peque¤a rutina que se encarga de generar
+                      00063 ;un impulso de 1æ s (para una frecuencia de funcionamiento de 4 Mhz)
+                      00064 ;por la patita de salida de la Puerta A RA2, que se halla conectada
+                      00065 ;a la se¤al E (Enable) del m¢dulo LCD. Con esta rutina se pretende activar
+                      00066 ;al m¢dulo LCD.
+                      00067  
+                      00068  
+002C   1505           00069 LCD_E           ENABLE                  ;Activa E
+002D   0000           00070                 nop
+002E   1105           00071                 DISABLE                 ;Desactiva E
+002F   0008           00072                 return
+                      00073  
+                      00074  
+                      00075 ;RUTINA LCD_DATO: Es una rutina que pasa el contenido cargado en el
+                      00076 ;registro W, el cual contiene un car cter ASCII, a la PUERTA B, para 
+                      00077 ;visualizarlo por el LCD o escribirlo en la CGRAM.
+                      00078  
+                      00079  
+0030   1005           00080 LCD_DATO        OFF_COMANDO             ;Desactiva RS (modo comando)
+0031   0086           00081                 movwf   PORTB           ;Valor ASCII a sacar por PORTB
+0032   201D           00082                 call    LCD_BUSY        ;Espera a que se libere el LCD
+0033   1405           00083                 ON_COMANDO              ;Activa RS (modo dato)
+0034   202C           00084                 call    LCD_E           ;Genera pulso de E
+0035   0008           00085                 return
+                      00086  
+                      00087  
+                      00088 ;RUTINA LCD_REG: Rutina parecida a la anterior, pero el contenido de W
+                      00089 ;ahora es el c¢digo de un comando para el LCD, que es necesario pasar
+                      00090 ;tambi‚n a la PUERTA B para su ejecuci¢n.
+                      00091  
+                      00092  
+0036   1005           00093 LCD_REG         OFF_COMANDO             ;Desactiva RS (modo comando)
+0037   0086           00094                 movwf   PORTB           ;C¢digo de comando
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0038   201D           00095                 call    LCD_BUSY        ;LCD libre?.
+0039   202C           00096                 call    LCD_E           ;S¡. Genera pulso de E.
+003A   0008           00097                 return
+                      00098  
+                      00099  
+                      00100 ;RUTINA LCD_INI: Esta rutina se encarga de realizar la secuencia de 
+                      00101 ;inicializaci¢n del m¢dulo LCD de acuerdo con los tiempos dados por 
+                      00102 ;el fabricante (15 ms). Se especifican los valores de DL, N y F,
+                      00103 ;as¡ como la configuraci¢n de un interfaz de 8 l¡neas con el bus
+                      00104 ;de datos del PIC, y 2 l¡neas de 16 caracteres de 5 x 7 pixels. 
+                      00105  
+                      00106  
+003B   3038           00107 LCD_INI movlw   b'00111000'
+003C   2036           00108                 call    LCD_REG         ;C¢digo de instrucci¢n
+003D   204B           00109                 call    LCD_DELAY       ;Temporiza
+003E   3038           00110                 movlw   b'00111000'
+003F   2036           00111                 call    LCD_REG         ;C¢digo de instrucci¢n
+0040   204B           00112                 call    LCD_DELAY       ;Temporiza
+0041   3038           00113                 movlw   b'00111000'
+0042   2036           00114                 call    LCD_REG         ;C¢digo de instrucci¢n
+0043   204B           00115                 call    LCD_DELAY       ;Temporiza
+0044   0008           00116                 return
+                      00117  
+                      00118  
+                      00119 ;RUTINA BORRA_Y_HOME: Borra el display y retorna el cursor a la posici¢n 0. 
+                      00120  
+                      00121  
+0045   3001           00122 BORRA_Y_HOME    movlw   b'00000001'     ;Borra LCD y Home.
+0046   2036           00123                 call    LCD_REG
+0047   0008           00124                 return
+                      00125  
+                      00126  
+                      00127 ;RUTINA DISPLAY_ON_CUR_OFF: Control del display y cursor.
+                      00128 ;Activa el display y desactiva es cursor
+                      00129  
+0048   300C           00130 DISPLAY_ON_CUR_OFF      movlw b'00001100'       ;LCD on, cursor off.
+0049   2036           00131                         call    LCD_REG
+004A   0008           00132                         return
+                      00133  
+                      00134  
+                      00135 ;RUTINA LCD_DELAY: Se trata de un rutina que implementa un retardo 
+                      00136 ;o temporizaci¢n de 5 ms. Utiliza dos variables llamadas LCD_TEMP_1 
+                      00137 ;y LCD_TEMP_2, que se van decrementando hasta alcanzar dicho tiempo.
+                      00138  
+                      00139  
+004B   0064           00140 LCD_DELAY       clrwdt
+004C   3010           00141                 movlw   10
+004D   0091           00142                 movwf   LCD_TEMP_1
+004E   0190           00143                 clrf    LCD_TEMP_2
+004F   0B90           00144 LCD_DELAY_1     decfsz  LCD_TEMP_2,F
+0050   284F           00145                 goto    LCD_DELAY_1
+0051   0B91           00146                 decfsz  LCD_TEMP_1,F
+0052   284F           00147                 goto    LCD_DELAY_1
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0053   0008           00148                 return
+                      00149         
+                      00057         INCLUDE "TECLADO.ASM"
+0054                  00001 TECLADO.ASM
+                      00002  
+                      00003  
+                      00004 ;Conjunto de rutinas para el manejo del teclado.
+                      00005 ;No es un programa en s¡ mismo. Para utilizarlo hay que 
+                      00006 ;colocar en el programa principal: 
+                      00007 ;KEY_VAR EQU dir_inicio_del_bloque
+                      00008  
+                      00009 ;BLOQUE DE ETIQUETAS
+                      00010  
+                      00011  
+                      00012         CBLOCK   KEY_VAR                ;Inicio de las variables
+  00000012            00013                  TECLA                  ;Retorno del c¢digo de tecla
+  00000013            00014                  KEY_1                  ;N§ de filas a explorar
+  00000014            00015                  KEY_2                  ;Temporal de c¢digo
+  00000015            00016                  KEY_DELAY_1            ;Variable de temporizaci¢n
+  00000016            00017                  KEY_DELAY_2            ;Variable de temporizaci¢n
+                      00018         ENDC                    
+                      00019  
+                      00020  
+                      00021 ;RUTINA KEY_SCAN: Rutina de exploraci¢n del teclado. La variable 
+                      00022 ;"Tecla" retorna con el c¢digo de la tecla pulsada o el c¢digo 0x80
+                      00023 ;si no se pulsa ninguna.
+                      00024  
+                      00025  
+0054   1683           00026 KEY_SCAN        bsf     STATUS,RP0              ;Selecciona p gina 1
+0055   300F           00027                 movlw   b'00001111'
+0056   0086           00028                 movwf   PORTB                   ;RB7-RB4 salidas, RB3-RB0 entradas
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0057   1381           00029                 bcf     OPTION_REG,NOT_RBPU     ;Activa cargas pull-up
+0058   1283           00030                 bcf     STATUS,RP0              ;Selecciona p gina 0
+0059   3004           00031                 movlw   4
+005A   0093           00032                 movwf   KEY_1                   ;N§ de columnas a explorar
+005B   307F           00033                 movlw   b'01111111'
+005C   0092           00034                 movwf   TECLA                   ;Columna a activar
+005D   0812           00035 KEY_SCAN_1      movf    TECLA,W
+005E   0086           00036                 movwf   PORTB                   ;Activa fila
+005F   0000           00037                 nop
+0060   0806           00038                 movf    PORTB,W
+0061   0094           00039                 movwf   KEY_2
+0062   0212           00040                 subwf   TECLA,W                 ;Lee las columnas
+0063   1D03           00041                 btfss   STATUS,Z                ;Hay alguna pulsada ?
+0064   286B           00042                 goto    KEY_SCAN_2              ;Si hay alguna pulsada
+0065   1403           00043                 bsf     STATUS,C                ;No hay ninguna en esa fila
+0066   0C92           00044                 rrf     TECLA,F                 ;Selecciona siguiente fila
+0067   0B93           00045                 decfsz  KEY_1,F                 ;Salta si se han terminado las filas
+0068   285D           00046                 goto    KEY_SCAN_1
+0069   3080           00047                 movlw   0x80
+006A   287B           00048                 goto    VOLVER                  ;Retorna c¢digo 0x80 (no hay pulsaci¢n)
+                      00049                 
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+006B   3064           00050 KEY_SCAN_2      movlw   .100                    ;Bucle de temporizaci¢n de unos 20 ms
+006C   0095           00051                 movwf   KEY_DELAY_1             ;para evitar el rebote de los pulsadores
+006D   0196           00052 KEY_SCAN_3      clrf    KEY_DELAY_2             
+006E   0064           00053                 clrwdt
+006F   0B96           00054 KEY_SCAN_4      decfsz  KEY_DELAY_2,F
+0070   286F           00055                 goto    KEY_SCAN_4
+0071   0B95           00056                 decfsz  KEY_DELAY_1,F
+0072   286D           00057                 goto    KEY_SCAN_3
+0073   0812           00058                 movf    TECLA,W                 ;Tras la temporizaci¢n se lee nuevamente
+0074   0086           00059                 movwf   PORTB                   ;si la tecla es la misma. As¡ se
+0075   0000           00060                 nop                             ;evitan los rebotes.
+0076   0806           00061                 movf    PORTB,W
+0077   0214           00062                 subwf   KEY_2,W
+0078   1D03           00063                 btfss   STATUS,Z                ;Es la misma ??
+0079   285D           00064                 goto    KEY_SCAN_1              ;No, seguir con la exploraci¢n
+007A   0814           00065                 movf    KEY_2,W                 ;S¡, guardar en variable de salida TECLA el valor 
+                      00066                                                 ; recogido
+007B   0092           00067 VOLVER          movwf   TECLA
+007C   0008           00068                 return                          ;Fin de exploraci¢n                                     
+                                                    
+                      00069  
+                      00070 ;RUTINA KEY_HEX:        Convierte el c¢digo de tecla que haya en la variable
+                      00071 ;"Tecla" a Hex. (0-F). El resultado se devuelve en la variable "Tecla". 
+                      00072 ;Usa como rutina auxiliar Key_tabla
+                      00073  
+007D   0813           00074 KEY_TABLA       movf    KEY_1,W
+007E   0782           00075                 addwf   PCL,F           ;Calcula desplazamiento
+007F   347D           00076                 retlw   0x7D            ;0
+0080   34EE           00077                 retlw   0xEE            ;1
+0081   34ED           00078                 retlw   0xED            ;2
+0082   34EB           00079                 retlw   0xEB            ;3
+0083   34DE           00080                 retlw   0xDE            ;4
+0084   34DD           00081                 retlw   0xDD            ;5
+0085   34DB           00082                 retlw   0xDB            ;6
+0086   34BE           00083                 retlw   0xBE            ;7
+0087   34BD           00084                 retlw   0xBD            ;8
+0088   34BB           00085                 retlw   0xBB            ;9
+0089   347E           00086                 retlw   0x7E            ;A
+008A   347B           00087                 retlw   0x7B            ;B
+008B   3477           00088                 retlw   0x77            ;C
+008C   34B7           00089                 retlw   0xB7            ;D
+008D   34D7           00090                 retlw   0xD7            ;E
+008E   34E7           00091                 retlw   0xE7            ;F
+                      00092 
+008F   0812           00093 KEY_HEX         movf    TECLA,W
+0090   0094           00094                 movwf   KEY_2           ;Almacena el c¢digo temporalmente
+0091   0193           00095                 clrf    KEY_1           ;Contador HEX a 0
+0092   207D           00096 KEY_HEX_2       call    KEY_TABLA       ;Busca c¢digo en la tabla
+0093   0214           00097                 subwf   KEY_2,W         ;Compara con el de la tecla
+0094   1903           00098                 btfsc   STATUS,Z        ;Coincide ?
+0095   2898           00099                 goto    KEY_HEX_1       ;S¡
+0096   0A93           00100                 incf    KEY_1,F         ;No, incrementa contador HEX
+0097   2892           00101                 goto    KEY_HEX_2
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0098   0813           00102 KEY_HEX_1       movf    KEY_1,W
+0099   0092           00103                 movwf   TECLA           ;Carga contador HEX en la variable de salida
+009A   0008           00104                 return
+                      00105  
+                      00106  
+                      00107  
+                      00108  
+                      00109 ;RUTINA HEX_7SEG:       Rutina de conversi¢n de HEX (0-F) a 7 segmentos. 
+                      00110 ;El acumulador W contiene, durante la llamada, el c¢digo HEX y, al retornar,
+                      00111 ;el correspondiente a 7 segmentos
+                      00112  
+                      00113  
+009B   390F           00114 HEX_7SEG        andlw    b'00001111'
+009C   0782           00115                 addwf    PCL,F          ;Desplazamiento sobre la tabla
+009D   343F           00116                 retlw    b'00111111'    ;0
+009E   3406           00117                 retlw    b'00000110'    ;1
+009F   345B           00118                 retlw    b'01011011'    ;2
+00A0   344F           00119                 retlw    b'01001111'    ;3
+00A1   3466           00120                 retlw    b'01100110'    ;4
+00A2   346D           00121                 retlw    b'01101101'    ;5
+00A3   347D           00122                 retlw    b'01111101'    ;6
+00A4   3407           00123                 retlw    b'00000111'    ;7
+00A5   347F           00124                 retlw    b'01111111'    ;8
+00A6   3467           00125                 retlw    b'01100111'    ;9
+00A7   3477           00126                 retlw    b'01110111'    ;A
+00A8   347C           00127                 retlw    b'01111100'    ;B
+00A9   3439           00128                 retlw    b'00111001'    ;C
+00AA   345E           00129                 retlw    b'01011110'    ;D
+00AB   3479           00130                 retlw    b'01111001'    ;E
+00AC   3471           00131                 retlw    b'01110001'    ;F
+00AD   2016           00058 INICIO  call    UP_LCD
+00AE   203B           00059         call    LCD_INI
+00AF   2048           00060         call    DISPLAY_ON_CUR_OFF 
+00B0   1683           00061         bsf     STATUS,RP0              ; Selecci¢n del banco 1
+00B1   0185           00062         clrf    PORTA                   ; Puerta A como salida
+00B2   3087           00063         movlw   b'10000111' 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00B3   0081           00064         movwf   OPTION_REG
+00B4   1283           00065         bcf     STATUS,RP0 
+00B5   1585           00066         bsf     PORTA,3                 ; Desactivaci¢n del zumbador 
+00B6   2054           00067 NO_HAY  call    KEY_SCAN                ; Se hace un chequeo del teclado
+00B7   3080           00068         movlw   0x80
+00B8   0212           00069         subwf   TECLA,W                 ; Sobre TECLA quedar  la tecla pulsada o 0x80 
+00B9   1903           00070         btfsc   STATUS,Z
+00BA   28B6           00071         goto    NO_HAY                  ; No se ha pulsado ninguna tecla
+00BB   20D8           00072         call    KEY_OFF                 ; S¡ se ha pulsado. Se espera a que se suelte
+00BC   1185           00073         bcf     PORTA,3                 ; Se genera un "beep"
+00BD   3019           00074         movlw   d'25'
+00BE   008C           00075         movwf   TEMP_1
+00BF   20CC           00076         call    DELAY10                 ; Se crea una temporizaci¢n de 25 ms
+00C0   1585           00077         bsf     PORTA,3                 ; Se desactiva zumbador
+00C1   208F           00078         call    KEY_HEX                 ; Se pasa a valor hexadecimal
+00C2   2005           00079         call    HEX_ASCII               ; Se pasa el valor hexadecimal a c¢digo ASCII
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00C3   0092           00080         movwf   TECLA                   ; Se guarda temporalmente en TECLA 
+00C4   2016           00081         call    UP_LCD 
+00C5   2045           00082         call    BORRA_Y_HOME
+00C6   2048           00083         call    DISPLAY_ON_CUR_OFF 
+00C7   3081           00084         movlw   0x81                    ; Primer car cter de primera l¡nea
+00C8   2036           00085         call    LCD_REG
+00C9   0812           00086         movf    TECLA,W 
+00CA   2030           00087         call    LCD_DATO                ; Se saca por el LCD
+00CB   28B6           00088         goto    NO_HAY                  ; Se vuelve a empezar
+                      00089                 
+                      00090  
+                      00091 ;RUTINA DE DELAY DE 10 MS: Esta rutina utiliza el TMR0. 
+                      00092 ;Es una temporizaci¢n de 10 ms que se repite tantas veces 
+                      00093 ;como indique la variable TEMPO1
+                      00094  
+                      00095  
+00CC   110B           00096 DELAY10         bcf     INTCON,2        ; Borra flag del TMR0
+00CD   30D8           00097                 movlw   0xD8
+00CE   0081           00098                 movwf   TMR0            ; Carga el TMR0 con valor 39
+00CF   1D0B           00099 DELAY10_1       btfss   INTCON,2        ; Espera rebosamiento del TMR0 
+00D0   28CF           00100                 goto    DELAY10_1
+00D1   0B8C           00101                 decfsz  TEMP_1,F
+00D2   28CC           00102                 goto    DELAY10
+00D3   0008           00103                 return
+                      00104  
+                      00105  
+                      00106 ;RUTINA DE DELAY DE 1 SEGUNDO: Se basa en la rutina de 10ms, repiti‚ndola 100 veces
+                      00107  
+                      00108  
+00D4   3064           00109 DELAY1S         movlw   0x64
+00D5   008C           00110                 movwf   TEMP_1
+00D6   20CC           00111                 call    DELAY10
+00D7   0008           00112                 return
+                      00113  
+                      00114  
+                      00115 ;RUTINA KEY_OFF: Esta rutina espera que la tecla reci‚n pulsada sea soltada.
+                      00116 ;Debe usarse justo despu‚s de llamar a la rutina KEY_SCAN 
+                      00117  
+                      00118  
+00D8   0812           00119 KEY_OFF         movf    TECLA,W 
+00D9   008C           00120                 movwf   TEMP_1          ; Guarda temporalmente la tecla
+00DA   2054           00121 KEY_OFF_NO      call    KEY_SCAN        ; Mira si se ha soltado
+00DB   3080           00122                 movlw   0x80
+00DC   0212           00123                 subwf   TECLA,W
+00DD   1D03           00124                 btfss   STATUS,Z
+00DE   28DA           00125                 goto    KEY_OFF_NO      ; Bucle mientras no se suelte
+00DF   080C           00126                 movf    TEMP_1,W        ; Ya se ha soltado
+00E0   0092           00127                 movwf   TECLA           ; Se repone la tecla
+00E1   0008           00128                 return
+                      00129  
+                      00130  
+                      00131 ;RUTINA DE DELAY VARIABLE: Esta rutina realiza una temporizaci¢n que
+                      00132 ;depende del valor del acumulador en el momento en que se le llama
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00133  
+00E2   008D           00134 DELAY_V         movwf   DELAY_1
+00E3   018F           00135                 clrf    DELAY_3
+00E4   018E           00136                 clrf    DELAY_2
+00E5   0B8F           00137 DELAY_LOOP      decfsz  DELAY_3,F
+00E6   28E5           00138                 goto    DELAY_LOOP
+00E7   0B8E           00139                 decfsz  DELAY_2,F
+00E8   28E5           00140                 goto    DELAY_LOOP
+00E9   0B8D           00141                 decfsz  DELAY_1,F
+00EA   28E5           00142                 goto    DELAY_LOOP
+00EB   0008           00143                 return
+                      00144  
+                      00145  
+                      00146                 END
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BORRA_Y_HOME                      00000045
+C                                 00000000
+DC                                00000001
+DELAY10                           000000CC
+DELAY10_1                         000000CF
+DELAY1S                           000000D4
+DELAY_1                           0000000D
+DELAY_2                           0000000E
+DELAY_3                           0000000F
+DELAY_LOOP                        000000E5
+DELAY_V                           000000E2
+DISABLE                           bcf PORTA,2
+DISPLAY_ON_CUR_OFF                00000048
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+ENABLE                            bsf PORTA,2
+ESCRIBIR                          bcf PORTA,1
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+HEX_7SEG                          0000009B
+HEX_ASCII                         00000005
+INDF                              00000000
+INICIO                            000000AD
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+KEY_1                             00000013
+KEY_2                             00000014
+KEY_DELAY_1                       00000015
+KEY_DELAY_2                       00000016
+KEY_HEX                           0000008F
+KEY_HEX_1                         00000098
+KEY_HEX_2                         00000092
+KEY_OFF                           000000D8
+KEY_OFF_NO                        000000DA
+KEY_SCAN                          00000054
+KEY_SCAN_1                        0000005D
+KEY_SCAN_2                        0000006B
+KEY_SCAN_3                        0000006D
+KEY_SCAN_4                        0000006F
+KEY_TABLA                         0000007D
+KEY_VAR                           00000012
+LCD_BUSY                          0000001D
+LCD_DATO                          00000030
+LCD_DELAY                         0000004B
+LCD_DELAY_1                       0000004F
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+LCD_E                             0000002C
+LCD_INI                           0000003B
+LCD_REG                           00000036
+LCD_TEMP_1                        00000011
+LCD_TEMP_2                        00000010
+LCD_VAR                           00000010
+LEER                              bsf PORTA,1
+L_BUSY                            00000024
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+NO_HAY                            000000B6
+OFF_COMANDO                       bcf PORTA,0
+ON_COMANDO                        bsf PORTA,0
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TECLA                             00000012
+TECLADO.ASM                       00000054
+TEMP_1                            0000000C
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+UP_LCD                            00000016
+VOLVER                            0000007B
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+MPASM  5.33                WR_TECLADO_LCD.ASM   1-4-1980  0:52:25         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXX---- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   232
+Program Memory Words Free:   792
+
+
+Errors   :     0
+Warnings :     6 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

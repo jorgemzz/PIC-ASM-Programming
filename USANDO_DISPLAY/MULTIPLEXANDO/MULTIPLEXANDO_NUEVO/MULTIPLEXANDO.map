@@ -1,0 +1,60 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Sun Nov 01 22:56:41 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000005    program   0x00008e
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000005    0x00004b      
+            72 out of 1093 program addresses used, program memory utilization is 6%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               APAGO_TODO   0x000047    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   CONT_1   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   CONT_2   0x00002e    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                  DISPLAY   0x00001d    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                      DOS   0x000034    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                      INI   0x000019    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                    RESET   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                  RETARDO   0x000032    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   SEGUIR   0x000031    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                    SIGUE   0x00004a    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                 SOLO_UNO   0x000049    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                    TABLA   0x000041    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                      UNO   0x000036    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    RESET   0x000000    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   INICIO   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                      INI   0x000019    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                  DISPLAY   0x00001d    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   CONT_1   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   CONT_2   0x00002e    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                   SEGUIR   0x000031    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                  RETARDO   0x000032    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                      DOS   0x000034    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                      UNO   0x000036    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                    TABLA   0x000041    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+               APAGO_TODO   0x000047    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                 SOLO_UNO   0x000049    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+                    SIGUE   0x00004a    program     static E:\Jorge\PROG_PIC_NUEVOS\MULTIPLEXANDO_copy\MULTIPLEXANDO.ASM
+
+

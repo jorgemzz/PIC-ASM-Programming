@@ -1,0 +1,471 @@
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;*******************************************************************************
+                      00002 ;   CODIGO A NIVEL DE PIXEL con cristal a 4Mhz 
+                      00003 ;   CON 5 X 7 DOTS (se pueden crear hasta 8 caracteres solamente)
+                      00004 ;   EN ESTE EJEMPLO SE PRUEBA COMO GRABAR NUEVOS CARACTERES
+                      00005 ;   EN LA CG-RAM-DATA DIRECCIONANDO CADA LINEA CON EL CG-RAM-ADDRESS
+                      00006 ;*******************************************************************************
+                      00007         List    p=16F84a        ;Tipo de procesador
+                      00008         include "P16F84a.inc"   ;Definiciones de registros internos
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00009 ;************************************************************************
+2007   3FF1           00010         __CONFIG   _CP_OFF & _PWRTE_ON & _WDT_OFF & _XT_OSC
+                      00011 ;************************************************************************
+                      00012         cblock  0x0c
+  0000000C            00013         Lcd_var
+  0000000D            00014         contador
+                      00015         endc
+                      00016 ;************************************************************************
+0000                  00017         org     0x00             ;Vector de Reset
+0000   28CA           00018         goto     inicio
+                      00019 ;************************************************************************
+0005                  00020          org     0x05
+0005                  00021 caracter0_direccion:    
+0005   0782           00022         addwf PCL, F
+0006   3440 3441 3442 00023         dt 0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47;0x40 ME DIRECCIONA A LA POSICION 0 DE LA CG RAM
+       3443 3444 3445 
+       3446 3447 
+000E                  00024 caracter0_datos:    
+000E   0782           00025         addwf PCL, F
+000F   3415 340A 3415 00026         dt b'10101',b'01010',b'10101',b'01010',b'10101',b'01010',b'10101',b'01010'
+       340A 3415 340A 
+       3415 340A 
+0017                  00027 caracter1_direccion:    
+0017   0782           00028         addwf PCL, F
+0018   3448 3449 344A 00029         dt 0x48,0x49,0x4a,0x4b,0x4c,0x4d,0x4e,0x4f
+       344B 344C 344D 
+       344E 344F 
+0020                  00030 caracter1_datos:    
+0020   0782           00031         addwf PCL, F
+0021   341F 3415 341B 00032         dt b'11111',b'10101',b'11011',b'11011',b'11011',b'11011',b'10101',b'11111'
+       341B 341B 341B 
+       3415 341F 
+                      00033 
+0029                  00034 caracter2_direccion:    
+0029   0782           00035         addwf PCL, F
+002A   3450 3451 3452 00036         dt 0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57
+       3453 3454 3455 
+       3456 3457 
+0032                  00037 caracter2_datos:    
+0032   0782           00038         addwf PCL, F
+0033   341B 341B 3411 00039         dt b'11011',b'11011',b'10001',b'00000',b'00000',b'11011',b'10101',b'11111'
+       3400 3400 341B 
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+       3415 341F 
+003B                  00040 caracter3_direccion:    
+003B   0782           00041         addwf PCL, F
+003C   3458 3459 345A 00042         dt 0x58,0x59,0x5a,0x5b,0x5c,0x5d,0x5e,0x5f
+       345B 345C 345D 
+       345E 345F 
+0044                  00043 caracter3_datos:    
+0044   0782           00044         addwf PCL, F
+0045   341F 3415 341B 00045         dt b'11111',b'10101',b'11011',b'10101',b'01110',b'10101',b'11011',b'11111'
+       3415 340E 3415 
+       341B 341F 
+004D                  00046 caracter4_direccion:    
+004D   0782           00047         addwf PCL, F
+004E   3460 3461 3462 00048         dt 0x60,0x61,0x62,0x63,0x64,0x65,0x66,0x67
+       3463 3464 3465 
+       3466 3467 
+0056                  00049 caracter4_datos:    
+0056   0782           00050         addwf PCL, F
+0057   341F 341F 3404 00051         dt b'11111',b'11111',b'00100',b'00100',b'10101',b'01010',b'00100',b'00100'
+       3404 3415 340A 
+       3404 3404 
+005F                  00052 caracter5_direccion:    
+005F   0782           00053         addwf PCL, F
+0060   3468 3469 346A 00054         dt 0x68,0x69,0x6a,0x6b,0x6c,0x6d,0x6e,0x6f
+       346B 346C 346D 
+       346E 346F 
+0068                  00055 caracter5_datos:    
+0068   0782           00056         addwf PCL, F
+0069   341F 341F 3404 00057         dt b'11111',b'11111',b'00100',b'00100',b'10101',b'01010',b'00100',b'0'
+       3404 3415 340A 
+       3404 3400 
+0071                  00058 caracter6_direccion:    
+0071   0782           00059         addwf PCL, F
+0072   3470 3471 3472 00060         dt 0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77
+       3473 3474 3475 
+       3476 3477 
+007A                  00061 caracter6_datos:    
+007A   0782           00062         addwf PCL, F
+007B   3400 3404 3402 00063         dt b'00000',b'00100',b'00010',b'11111',b'11111',b'00010',b'00100',b'0'
+       341F 341F 3402 
+       3404 3400 
+0083                  00064 caracter7_direccion:    
+0083   0782           00065         addwf PCL, F
+0084   3478 3479 347A 00066         dt 0x78,0x79,0x7a,0x7b,0x7c,0x7d,0x7e,0x7f
+       347B 347C 347D 
+       347E 347F 
+008C                  00067 caracter7_datos:    
+008C   0782           00068         addwf PCL, F
+008D   341B 341B 3400 00069         dt b'11011',b'11011',b'00000',b'11011',b'11011',b'00000',b'11011',b'11011'
+       341B 341B 3400 
+       341B 341B 
+                      00070 
+                      00071 
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00072 ;************************************************************************
+                      00073             #include "Lcd_cxx.inc"    ; Rutinas de control LCD.
+                      00001 #define ENABLE       bsf PORTA,2        ;Activa E
+                      00002 #define DISABLE      bcf PORTA,2        ;Desactiva
+                      00003 #define LEER         bsf PORTA,1        ;Pone LCD en Modo RD
+                      00004 #define ESCRIBIR     bcf PORTA,1        ;Pone LCD en Modo WR
+                      00005 #define OFF_COMANDO  bcf PORTA,0        ;Desactiva RS (modo comando)
+                      00006 #define ON_COMANDO   bsf PORTA,0        ;Activa RS
+                      00007 
+                      00008         CBLOCK  Lcd_var ;Inicio de las variables. Será la primera                                       
+                                    
+  0000000C            00009                         Lcd_Temp_1      ;dirección libre disponible
+  0000000D            00010                         Lcd_Temp_2
+                      00011         ENDC                                                                                    
+                      00012 
+                      00013 ;********************************************************************** 
+                      00014 ; Rutina de configuración del PIC para el LCD.
+                      00015 
+0095   1683           00016 UP_LCD          bsf     STATUS,RP0      ;Banco 1
+0096   0186           00017                 clrf    PORTB           ;RB <0-7> salidas digitales
+0097   0185           00018                 clrf    PORTA           ;RA <0-7> salidas digitales
+0098   1283           00019                 bcf     STATUS,RP0      ;Banco 0
+0099   1005           00020                 OFF_COMANDO             ;RS=0
+009A   1105           00021                 DISABLE                 ;E=0
+009B   0008           00022                 Return
+                      00023 
+                      00024 ;********************************************************************** 
+                      00025  ;Rutina para lectura del Flag Busy y la dirección.
+                      00026 
+009C   1485           00027 LCD_BUSY        LEER                    ;Pone el LCD en Modo RD
+009D   1683           00028                 bsf     STATUS,RP0           
+009E   30FF           00029                 movlw   H'FF'
+009F   0086           00030                 movwf   PORTB           ;Puerta B como entrada
+00A0   1283           00031                 bcf     STATUS,RP0      ;Selecciona el banco 0
+00A1   1505           00032                 ENABLE                  ;Activa el LCD
+00A2   0000           00033                 nop
+00A3   1B86           00034                 btfsc   PORTB,7         ;Chequea bit de Busy
+00A4   28A3           00035                 goto    $-1
+00A5   1105           00036                 DISABLE                 ;Desactiva LCD
+00A6   1683           00037                 bsf     STATUS,RP0                               
+00A7   0186           00038                 clrf    PORTB           ;Puerta B salida
+00A8   1283           00039                 bcf     STATUS,RP0                              
+00A9   1085           00040                 ESCRIBIR                ;Pone LCD en modo WR
+00AA   0008           00041                 return
+                      00042 
+                      00043 ;**********************************************************************
+                      00044  ;Esta rutina efectúa un pulso de Enable
+                      00045 
+00AB   1505           00046 LCD_E           ENABLE                  ;Activa E
+00AC   0000           00047                 nop
+00AD   1105           00048                 DISABLE                 ;Desactiva E
+00AE   0008           00049                 return
+                      00050 
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00051 ;Rutina para escritura de datos en DDRAM o CGRAM.El dato es tomado de W
+                      00052 
+00AF   1005           00053 LCD_DATO        OFF_COMANDO             ;Desactiva RS (modo comando)
+00B0   0086           00054                 movwf   PORTB           ;Valor ASCII a sacar por portb
+00B1   209C           00055                 call    LCD_BUSY        ;Espera a que se libere el LCD
+00B2   1405           00056                 ON_COMANDO              ;Activa RS (modo dato).
+00B3   28AB           00057                 goto    LCD_E           ;Genera pulso de E
+                      00058 
+                      00059 ;********************************************************************** 
+                      00060  ;Esta rutina efectúa la escritura de un comando en el LCD. El código del comando es toma de W.
+                      00061 
+00B4   1005           00062 LCD_REG         OFF_COMANDO             ;Desactiva RS (modo comando)
+00B5   0086           00063                 movwf   PORTB           ;Código de comando.
+00B6   209C           00064                 call    LCD_BUSY        ;LCD libre?.
+00B7   28AB           00065                 goto    LCD_E           ;SI. Genera pulso de E.
+                      00066 
+                      00067 ;**********************************************************************
+                      00068  ;Rutina para la inicialización del LCD 
+                      00069 
+00B8   3038           00070 LCD_INI                 movlw   b'00111000'
+00B9   20B4           00071                                 call    LCD_REG         ;Código de instrucción
+00BA   20C1           00072                                 call    LCD_DELAY               ;Temporiza
+00BB   3038           00073                                 movlw   b'00111000'
+00BC   20B4           00074                                 call    LCD_REG         ;Código de instrucción
+00BD   20C1           00075                                 call    LCD_DELAY               ;Temporiza
+00BE   3038           00076                                 movlw   b'00111000'
+00BF   20B4           00077                                 call    LCD_REG         ;Código de instrucción
+00C0   20C1           00078                                 call    LCD_DELAY               ;Temporiza
+                      00079 
+                      00080 ;**********************************************************************
+                      00081  ;Rutina de temporización de unos 5mS
+                      00082 
+00C1   0064           00083 LCD_DELAY:              clrwdt
+00C2   300A           00084                 movlw   .10
+00C3   008C           00085                 movwf   Lcd_Temp_1
+00C4   018D           00086                 clrf    Lcd_Temp_2
+00C5   0B8D           00087 LCD_DELAY_1:    decfsz  Lcd_Temp_2,F
+00C6   28C5           00088                         goto    LCD_DELAY_1
+00C7   0B8C           00089                         decfsz  Lcd_Temp_1,F
+00C8   28C5           00090                   goto  LCD_DELAY_1
+00C9   0008           00091                         return
+                      00074 ;*************************************************************************
+00CA                  00075 inicio:
+00CA   1683           00076         bsf     STATUS,RP0        ;Banco 1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00CB   0186           00077         clrf    TRISB             ;Puerta B salida
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00CC   0185           00078         clrf    TRISA             ;Puerta A salida
+00CD   1283           00079         bcf     STATUS,RP0        ;Banco 0
+00CE   018B           00080         clrf    INTCON            ;Desactivar interrupciones.
+00CF   1005           00081         bcf     PORTA,0           ;RS=0
+00D0   1105           00082         bcf     PORTA,2           ;E=0 Desactiva LCD
+                      00083 
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00D1   20B8           00084         call    LCD_INI           ;Inicia el modulo LCD
+00D2   300C           00085         movlw   b'00001100'
+00D3   20B4           00086         call    LCD_REG           ;LCD On y Cursor Off
+                      00087 
+00D4   3001           00088         movlw    b'00000001'
+00D5   20B4           00089         call    LCD_REG           ;Borra display
+00D6   018D           00090         clrf    contador
+                      00091 ;************************************************************************
+                      00092 ;   RUTINA PARA GRABAR LOS n NUEVOS CARACTERES EN LA CG RAM DATA
+                      00093 ;************************************************************************
+00D7                  00094 ciclo:
+00D7   080D           00095         movf contador, W
+00D8   2005           00096         Call caracter0_direccion
+00D9   20B4           00097         Call LCD_REG
+00DA   080D           00098         movf contador, W
+00DB   200E           00099         Call caracter0_datos
+00DC   20AF           00100         Call LCD_DATO
+                      00101 
+00DD   080D           00102         movf contador, W
+00DE   2017           00103         Call caracter1_direccion
+00DF   20B4           00104         Call LCD_REG
+00E0   080D           00105         movf contador, W
+00E1   2020           00106         Call caracter1_datos
+00E2   20AF           00107         Call LCD_DATO
+                      00108 
+00E3   080D           00109         movf contador, W
+00E4   2029           00110         Call caracter2_direccion
+00E5   20B4           00111         Call LCD_REG
+00E6   080D           00112         movf contador, W
+00E7   2032           00113         Call caracter2_datos
+00E8   20AF           00114         Call LCD_DATO
+                      00115 
+00E9   080D           00116         movf contador, W
+00EA   203B           00117         Call caracter3_direccion
+00EB   20B4           00118         Call LCD_REG
+00EC   080D           00119         movf contador, W
+00ED   2044           00120         Call caracter3_datos
+00EE   20AF           00121         Call LCD_DATO
+                      00122 
+00EF   080D           00123         movf contador, W
+00F0   204D           00124         Call caracter4_direccion
+00F1   20B4           00125         Call LCD_REG
+00F2   080D           00126         movf contador, W
+00F3   2056           00127         Call caracter4_datos
+00F4   20AF           00128         Call LCD_DATO
+                      00129 
+00F5   080D           00130         movf contador, W
+00F6   205F           00131         Call caracter5_direccion
+00F7   20B4           00132         Call LCD_REG
+00F8   080D           00133         movf contador, W
+00F9   2068           00134         Call caracter5_datos
+00FA   20AF           00135         Call LCD_DATO
+                      00136 
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00FB   080D           00137         movf contador, W
+00FC   2071           00138         Call caracter6_direccion
+00FD   20B4           00139         Call LCD_REG
+00FE   080D           00140         movf contador, W
+00FF   207A           00141         Call caracter6_datos
+0100   20AF           00142         Call LCD_DATO
+                      00143 
+0101   080D           00144         movf contador, W
+0102   2083           00145         Call caracter7_direccion
+0103   20B4           00146         Call LCD_REG
+0104   080D           00147         movf contador, W
+0105   208C           00148         Call caracter7_datos
+0106   20AF           00149         Call LCD_DATO
+                      00150 
+                      00151 
+0107   0A8D           00152         incf contador, 1
+0108   3008           00153         movlw   0x8
+0109   060D           00154         xorwf contador, W
+010A   1D03           00155         btfss   STATUS,Z    ;Comprueba si es el último
+010B   28D7           00156         goto    ciclo       ; NO ha llegado al final
+                      00157 ;************************************************************************
+                      00158 ;   RUTINA PARA MOSTRAR LOS n NUEVOS CARACTERES DE LA CG RAM DATA
+                      00159 ;************************************************************************
+                      00160 
+010C   30C4           00161         movlw   0xC4         ; 1 linea ; MODIFICADO PARA LA SEGUNDA LINEA
+010D   20B4           00162         Call LCD_REG
+010E   018D           00163         clrf contador
+010F                  00164 cic:
+010F   080D           00165         movf contador, W
+0110   20AF           00166         Call LCD_DATO
+0111   0A8D           00167         incf contador, 1
+0112   3008           00168         movlw   0x8
+0113   060D           00169         xorwf contador, W
+0114   1D03           00170         btfss   STATUS,Z    ; Comprueba si es el último
+0115   290F           00171         goto    cic         ; NO ha llegado al final
+0116   2916           00172         goto    $
+                      00173 ;************************************************************************
+                      00174         end                    ; Fin de programa.
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+DC                                00000001
+DISABLE                           bcf PORTA,2
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+ENABLE                            bsf PORTA,2
+ESCRIBIR                          bcf PORTA,1
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+LCD_BUSY                          0000009C
+LCD_DATO                          000000AF
+LCD_DELAY                         000000C1
+LCD_DELAY_1                       000000C5
+LCD_E                             000000AB
+LCD_INI                           000000B8
+LCD_REG                           000000B4
+LEER                              bsf PORTA,1
+Lcd_Temp_1                        0000000C
+Lcd_Temp_2                        0000000D
+Lcd_var                           0000000C
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OFF_COMANDO                       bcf PORTA,0
+ON_COMANDO                        bsf PORTA,0
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+UP_LCD                            00000095
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+caracter0_datos                   0000000E
+caracter0_direccion               00000005
+caracter1_datos                   00000020
+caracter1_direccion               00000017
+caracter2_datos                   00000032
+caracter2_direccion               00000029
+caracter3_datos                   00000044
+caracter3_direccion               0000003B
+caracter4_datos                   00000056
+caracter4_direccion               0000004D
+caracter5_datos                   00000068
+caracter5_direccion               0000005F
+caracter6_datos                   0000007A
+caracter6_direccion               00000071
+caracter7_datos                   0000008C
+caracter7_direccion               00000083
+cic                               0000010F
+ciclo                             000000D7
+contador                          0000000D
+inicio                            000000CA
+MPASM  5.33                         CGRAM.ASM   11-5-2009  15:13:05         PAGE  9
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXX--------- ---------------- ----------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   275
+Program Memory Words Free:   749
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

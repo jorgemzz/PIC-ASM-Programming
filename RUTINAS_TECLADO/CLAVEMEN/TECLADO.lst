@@ -1,0 +1,317 @@
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;CLAVEMEN.ASM programa que debe leer clave ingresada desde un teclado
+                      00002 ;de 4 por 4, y debe visualizar en leds el codigo binario del numero pulsado
+                      00003 ;y prender RA4 de no pulsar ninguno. El teclado es el encontrado en el libro
+                      00004 
+Warning[215]: Processor superseded by command line.  Verify processor symbol.
+                      00005         LIST    P=16C84         ;Comando que indica el PIC usado
+                      00006         RADIX   HEX             ;Los valores se representar n en hexadecimal
+                      00007 
+                      00008 ;----------------------------------------------------------------------------
+                      00009         
+Warning[207]: Found label after column 1. (PUERTAA)
+  00000005            00010         PUERTAA EQU     0X05    ;Etiqueta "PUERTAA" 
+Warning[207]: Found label after column 1. (PUERTAB)
+  00000006            00011         PUERTAB EQU     0X06    ;Etiqueta PUERTAB
+Warning[207]: Found label after column 1. (ESTADO)
+  00000003            00012         ESTADO  EQU     0X03    ;Estado corresponde con el valor 0x03.
+Warning[207]: Found label after column 1. (RBOUT)
+  0000000C            00013         RBOUT   EQU     0X0C
+Warning[207]: Found label after column 1. (RBIN)
+  0000000D            00014         RBIN    EQU     0X0D
+Warning[207]: Found label after column 1. (INTCON)
+  0000000B            00015         INTCON  EQU     0X0B
+Warning[207]: Found label after column 1. (TMR_OPT)
+  00000001            00016         TMR_OPT EQU     0X01
+Warning[207]: Found label after column 1. (INDF)
+  00000000            00017         INDF    EQU     0X00
+                      00018 ;----------------------------------------------------------------------------
+0000                  00019         ORG     0               
+0000   1683           00020         bsf     ESTADO,5        ;Banco 1
+0001   3000           00021         movlw   0x00            ;W <-- 00(Hex)
+0002   0085           00022         movwf   PUERTAA         ;W --> TRISA      PUERTAA salidas
+0003   30F0           00023         movlw   b'11110000'     ;W <-- b'11110000'
+0004   0086           00024         movwf   PUERTAB         ;W --> TRISB  RB 0-3 salidas
+                      00025                                 ;             RB 4-7 entradas
+0005   1283           00026         bcf     ESTADO,5        ;Banco 0                                
+0006   018D           00027         clrf    RBIN
+0007   018C           00028         clrf    RBOUT
+0008   0186           00029         clrf    PUERTAB
+0009   0986           00030         comf    PUERTAB,1
+000A   0185           00031         clrf    PUERTAA
+                      00032 
+000B                  00033 cifra
+                      00034 
+000B                  00035 paso1
+000B   300E           00036         movlw   b'00001110'
+000C   0486           00037         iorwf   PUERTAB,1         
+000D   1006           00038         bcf     PUERTAB,0        ;Envio el valor b'1110' por RB 0-3
+000E   0806           00039         movf    PUERTAB,0          
+000F   008D           00040         movwf   RBIN
+0010   30F0           00041         movlw   b'11110000'
+0011   058D           00042         andwf   RBIN,1           ;Recupero los bits RB 4-7 en RBIN
+0012   020D           00043         subwf   RBIN,0
+0013   1903           00044         btfsc   ESTADO,2
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0014   2816           00045         goto    paso2
+0015   2837           00046         goto    halle1           ;Encontre un codigo binario de una tecla
+                      00047 
+0016                  00048 paso2
+0016   300D           00049         movlw   b'00001101'
+0017   0486           00050         iorwf   PUERTAB,1         
+0018   1086           00051         bcf     PUERTAB,1        ;Envio el valor b'1101' por RB 0-3
+0019   0806           00052         movf    PUERTAB,0          
+001A   008D           00053         movwf   RBIN
+001B   30F0           00054         movlw   b'11110000'
+001C   058D           00055         andwf   RBIN,1           ;Recupero los bits RB 4-7 en RBIN
+001D   020D           00056         subwf   RBIN,0
+001E   1903           00057         btfsc   ESTADO,2
+001F   2821           00058         goto    paso3
+0020   2844           00059         goto    halle2           ;Encontre un codigo binario de una tecla
+                      00060 
+0021                  00061 paso3
+0021   300B           00062         movlw   b'00001011'
+0022   0486           00063         iorwf   PUERTAB,1         
+0023   1106           00064         bcf     PUERTAB,2        ;Envio el valor b'1011' por RB 0-3
+0024   0806           00065         movf    PUERTAB,0          
+0025   008D           00066         movwf   RBIN
+0026   30F0           00067         movlw   b'11110000'
+0027   058D           00068         andwf   RBIN,1           ;Recupero los bits RB 4-7 en RBIN
+0028   020D           00069         subwf   RBIN,0
+0029   1903           00070         btfsc   ESTADO,2
+002A   282C           00071         goto    paso4
+002B   2851           00072         goto    halle3           ;Encontre un codigo binario de una tecla
+002C                  00073 paso4
+002C   3007           00074         movlw   b'00000111'
+002D   0486           00075         iorwf   PUERTAB,1         
+002E   1186           00076         bcf     PUERTAB,3        ;Envio el valor b'0111' por RB 0-3
+002F   0806           00077         movf    PUERTAB,0          
+0030   008D           00078         movwf   RBIN
+0031   30F0           00079         movlw   b'11110000'
+0032   058D           00080         andwf   RBIN,1           ;Recupero los bits RB 4-7 en RBIN
+0033   020D           00081         subwf   RBIN,0
+0034   1903           00082         btfsc   ESTADO,2
+0035   289B           00083         goto    nopulso
+0036   285E           00084         goto    halle4           ;Encontre un codigo binario de una tecla
+                      00085 
+0037                  00086 halle1
+0037   30E0           00087         movlw   b'11100000'                                                 
+0038   020D           00088         subwf   RBIN,0
+0039   1903           00089         btfsc   ESTADO,2
+003A   286B           00090         goto    tengoC
+003B   30D0           00091         movlw   b'11010000'                                                 
+003C   020D           00092         subwf   RBIN,0
+003D   1903           00093         btfsc   ESTADO,2
+003E   286E           00094         goto    tengoB
+003F   30B0           00095         movlw   b'10110000'                                                 
+0040   020D           00096         subwf   RBIN,0
+0041   1903           00097         btfsc   ESTADO,2
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0042   2871           00098         goto    tengo0
+0043   2874           00099         goto    tengoA
+0044                  00100 halle2
+0044   30E0           00101         movlw   b'11100000'                                                 
+0045   020D           00102         subwf   RBIN,0
+0046   1903           00103         btfsc   ESTADO,2
+0047   2877           00104         goto    tengoD
+0048   30D0           00105         movlw   b'11010000'                                                 
+0049   020D           00106         subwf   RBIN,0
+004A   1903           00107         btfsc   ESTADO,2
+004B   287A           00108         goto    tengo9
+004C   30B0           00109         movlw   b'10110000'                                                 
+004D   020D           00110         subwf   RBIN,0
+004E   1903           00111         btfsc   ESTADO,2
+004F   287D           00112         goto    tengo8
+0050   2880           00113         goto    tengo7
+0051                  00114 halle3
+0051   30E0           00115         movlw   b'11100000'                                                 
+0052   020D           00116         subwf   RBIN,0
+0053   1903           00117         btfsc   ESTADO,2
+0054   2883           00118         goto    tengoE
+0055   30D0           00119         movlw   b'11010000'                                                 
+0056   020D           00120         subwf   RBIN,0
+0057   1903           00121         btfsc   ESTADO,2
+0058   2886           00122         goto    tengo6
+0059   30B0           00123         movlw   b'10110000'                                                 
+005A   020D           00124         subwf   RBIN,0
+005B   1903           00125         btfsc   ESTADO,2
+005C   2889           00126         goto    tengo5
+005D   288C           00127         goto    tengo4
+005E                  00128 halle4
+005E   30E0           00129         movlw   b'11100000'                                                 
+005F   020D           00130         subwf   RBIN,0
+0060   1903           00131         btfsc   ESTADO,2
+0061   288F           00132         goto    tengoF
+0062   30D0           00133         movlw   b'11010000'                                                 
+0063   020D           00134         subwf   RBIN,0
+0064   1903           00135         btfsc   ESTADO,2
+0065   2892           00136         goto    tengo3
+0066   30B0           00137         movlw   b'10110000'                                                 
+0067   020D           00138         subwf   RBIN,0
+0068   1903           00139         btfsc   ESTADO,2
+0069   2895           00140         goto    tengo2
+006A   2898           00141         goto    tengo1
+006B                  00142 tengoC
+006B   300C           00143         movlw   0x0C
+006C   0085           00144         movwf   PUERTAA
+006D   280B           00145         goto    cifra
+006E                  00146 tengoB
+006E   300B           00147         movlw   0x0B
+006F   0085           00148         movwf   PUERTAA
+0070   280B           00149         goto    cifra
+0071                  00150 tengo0
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0071   3000           00151         movlw   0x00
+0072   0085           00152         movwf   PUERTAA
+0073   280B           00153         goto    cifra
+0074                  00154 tengoA
+0074   300A           00155         movlw   0x0A
+0075   0085           00156         movwf   PUERTAA
+0076   280B           00157         goto    cifra
+0077                  00158 tengoD
+0077   300D           00159         movlw   0x0D
+0078   0085           00160         movwf   PUERTAA
+0079   280B           00161         goto    cifra
+007A                  00162 tengo9
+007A   3009           00163         movlw   0x09
+007B   0085           00164         movwf   PUERTAA
+007C   280B           00165         goto    cifra
+007D                  00166 tengo8
+007D   3008           00167         movlw   0x08
+007E   0085           00168         movwf   PUERTAA
+007F   280B           00169         goto    cifra
+0080                  00170 tengo7
+0080   3007           00171         movlw   0x07
+0081   0085           00172         movwf   PUERTAA
+0082   280B           00173         goto    cifra
+0083                  00174 tengoE
+0083   300E           00175         movlw   0x0E
+0084   0085           00176         movwf   PUERTAA
+0085   280B           00177         goto    cifra
+0086                  00178 tengo6
+0086   3006           00179         movlw   0x06
+0087   0085           00180         movwf   PUERTAA
+0088   280B           00181         goto    cifra
+0089                  00182 tengo5
+0089   3005           00183         movlw   0x05
+008A   0085           00184         movwf   PUERTAA
+008B   280B           00185         goto    cifra
+008C                  00186 tengo4
+008C   3004           00187         movlw   0x04
+008D   0085           00188         movwf   PUERTAA
+008E   280B           00189         goto    cifra
+008F                  00190 tengoF
+008F   300F           00191         movlw   0x0F
+0090   0085           00192         movwf   PUERTAA
+0091   280B           00193         goto    cifra
+0092                  00194 tengo3
+0092   3003           00195         movlw   0x03
+0093   0085           00196         movwf   PUERTAA
+0094   280B           00197         goto    cifra
+0095                  00198 tengo2
+0095   3002           00199         movlw   0x02
+0096   0085           00200         movwf   PUERTAA
+0097   280B           00201         goto    cifra
+0098                  00202 tengo1
+0098   3001           00203         movlw   0x01
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0099   0085           00204         movwf   PUERTAA
+009A   280B           00205         goto    cifra
+009B                  00206 nopulso
+009B   3010           00207         movlw   b'00010000'
+009C   0085           00208         movwf   PUERTAA
+009D   280B           00209         goto    cifra
+                      00210 
+                      00211    END
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ESTADO                            00000003
+INDF                              00000000
+INTCON                            0000000B
+PUERTAA                           00000005
+PUERTAB                           00000006
+RBIN                              0000000D
+RBOUT                             0000000C
+TMR_OPT                           00000001
+__16F84A                          00000001
+__DEBUG                           1
+cifra                             0000000B
+halle1                            00000037
+halle2                            00000044
+halle3                            00000051
+halle4                            0000005E
+nopulso                           0000009B
+paso1                             0000000B
+paso2                             00000016
+paso3                             00000021
+paso4                             0000002C
+tengo0                            00000071
+tengo1                            00000098
+tengo2                            00000095
+tengo3                            00000092
+tengo4                            0000008C
+tengo5                            00000089
+tengo6                            00000086
+tengo7                            00000080
+tengo8                            0000007D
+tengo9                            0000007A
+tengoA                            00000074
+tengoB                            0000006E
+tengoC                            0000006B
+tengoD                            00000077
+tengoE                            00000083
+tengoF                            0000008F
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXX-- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   158
+Program Memory Words Free:   866
+
+
+MPASM  5.33                       TECLADO.ASM   1-4-1980  0:02:30         PAGE  7
+
+
+
+
+
+Errors   :     0
+Warnings :     9 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

@@ -1,0 +1,476 @@
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;**************************************************************************
+                      00002 ;
+                      00003 ; CLOCK.ASM
+                      00004 ;
+                      00005 ; Displays time on a single 7-segment display.  The timing source
+                      00006 ; can be an NTSC colour burst crystal (3.579454 MHz) or a 4 MHz
+                      00007 ; crystal.
+                      00008 ;
+                      00009 ; A common anode 7-segment LED display is attached as follows:
+                      00010 ;
+                      00011 ;    RA0 segment a
+                      00012 ;    RA1 segment b
+                      00013 ;    RA2 segment c
+                      00014 ;    RA3 segment d
+                      00015 ;    RA4 segment e
+                      00016 ;    RB4 segment f
+                      00017 ;    RB5 segment g
+                      00018 ;
+                      00019 ; Each segment is connected via a 470 ohm resistor.  The common anode
+                      00020 ; is connected directly to VDD.  The strange allocation of port bits
+                      00021 ; to segments allows RB6 and RB7 to be dedicated to in-circuit serial 
+                      00022 ; programming.
+                      00023 ;
+                      00024 ; The time is displayed digit by digit over a four second period
+                      00025 ; every 15 seconds and the display is blank otherwise.  Four LEDs are 
+                      00026 ; connected from RB3-RB0 to GND via 470 ohm resistors; these are used
+                      00027 ; to indicate the significance of the displayed digit: 10s of hours - 
+                      00028 ; hours - 10s of minutes - minutes.
+                      00029 ;
+                      00030 ; A normally open switch is connected from RB7 to GND via a 470 ohm 
+                      00031 ; resistor; no pull-up resistor is needed as an internal weak pull-up 
+                      00032 ; is enabled by the program.  To set the clock press the switch when
+                      00033 ; the appropriate digit is displayed; the digit can then be incremented 
+                      00034 ; by pressing the switch repeatedly.  If the switch is open for about 
+                      00035 ; 2 seconds the clock display is restarted allowing another digit to be 
+                      00036 ; changed.  It is up to the user to put in sensible times as no checking 
+                      00037 ; is done by the program.
+                      00038 ;
+                      00039 ; To permit the PIC to be programmed in-circuit the /MCLR pin is
+                      00040 ; connected to VDD via a 1k resistor in series with a signal diode 
+                      00041 ; (e.g. 1N4148) with anode connected to VDD.  
+                      00042 ;
+                      00043 ;
+                      00044 ; Copyright (C) 1998 David Tait (david.tait@man.ac.uk)
+                      00045 ;
+                      00046 ;**************************************************************************
+                      00047 
+                      00048 
+                      00049         LIST            P=16F84 ; no need to change this for the 16C84
+                      00050         ERRORLEVEL      -302    ; suppress bank selection messages
+2007   3FF9           00051         __CONFIG        3FF9H   ; XT oscillator (and PWRTE if 16C84)
+                      00052 
+                      00053 ;#DEFINE _3_58MHZ                ; choose clock speed
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00054 #DEFINE _4_00MHZ
+                      00055 
+  00000002            00056 PCL     EQU     2               ; registers are defined here to make this
+  00000003            00057 STATUS  EQU     3               ; program self contained.
+  00000005            00058 PORTA   EQU     5
+  00000006            00059 PORTB   EQU     6
+  0000000B            00060 INTCON  EQU     0BH
+  00000085            00061 TRISA   EQU     85H
+  00000086            00062 TRISB   EQU     86H
+  00000081            00063 OPTREG  EQU     81H
+                      00064 
+  00000000            00065 C       EQU     0               ; bits in STATUS
+  00000002            00066 Z       EQU     2
+  00000005            00067 RP0     EQU     5
+                      00068 
+  00000002            00069 T0IF    EQU     2               ; bit in INTCON
+                      00070 
+                      00071 
+                      00072 ;#IFDEF  _3_58MHZ                ; number of ticks per second for 3.58 MHz:
+                      00073 ;TCK0    EQU     .109            ; nominal
+                      00074 ;TCK1    EQU     .111            ; every 10 secs
+                      00075 ;TCK2    EQU     .113            ; every min
+                      00076 ;TCK3    EQU     .115            ; every 10 mins
+                      00077 ;TCK4    EQU     .114            ; every hour
+                      00078 ;TCK5    EQU     .110            ; every 10 hours
+                      00079 ;TCK6    EQU     .111            ; every 24 hours
+                      00080 ;#ENDIF
+                      00081 
+                      00082 #IFDEF  _4_00MHZ                ; as above but for 4 MHz
+  0000007A            00083 TCK0    EQU     .122
+  0000007B            00084 TCK1    EQU     .123
+  00000079            00085 TCK2    EQU     .121
+  0000007B            00086 TCK3    EQU     .123
+  0000007C            00087 TCK4    EQU     .124
+  0000007D            00088 TCK5    EQU     .125
+  0000007D            00089 TCK6    EQU     .125
+                      00090 #ENDIF
+                      00091 
+                      00092         CBLOCK  0CH             ; define variables required
+                      00093 
+  0000000C            00094         TICKS                   ; decremented every tick (9.15 ms or 8.19 ms)
+  0000000D            00095         SEGS                    ; one bit per segment: "-gfedcba"
+  0000000E            00096         SEC
+  0000000F            00097         SEC10
+  00000010            00098         MIN
+  00000011            00099         MIN10
+  00000012            00100         HOUR
+  00000013            00101         HOUR10
+  00000014            00102         FRAME                   ; used to decide when to display time
+  00000015            00103         HHMM                    ; one bit per digit displayed
+  00000016            00104         COUNT                   ; scratch register
+  00000017            00105         DIGIT                   ; last digit displayed
+                      00106 
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00107         ENDC
+                      00108 
+                      00109 
+                      00110         ;*********************************;
+                      00111         ;         Initialisation          ;
+                      00112         ;*********************************;
+                      00113 
+0000                  00114         ORG     0
+                      00115 
+0000   018E           00116 INIT    CLRF    SEC
+0001   018F           00117         CLRF    SEC10
+0002   0190           00118         CLRF    MIN
+0003   0191           00119         CLRF    MIN10
+0004   0192           00120         CLRF    HOUR
+0005   0193           00121         CLRF    HOUR10
+0006   0194           00122         CLRF    FRAME
+0007   0185           00123         CLRF    PORTA
+0008   0186           00124         CLRF    PORTB
+0009   1683           00125         BSF     STATUS,RP0      ; select register bank 1
+000A   0185           00126         CLRF    TRISA
+000B   3080           00127         MOVLW   80H
+000C   0086           00128         MOVWF   TRISB           ; only RB7 is an input
+000D   3004           00129         MOVLW   4
+000E   0081           00130         MOVWF   OPTREG          ; assign prescaler (1:32) to TMR0
+000F   1283           00131         BCF     STATUS,RP0      ; reselect bank 0
+                      00132 
+                      00133 
+                      00134         ;*********************************;
+                      00135         ;          Main Program           ;
+                      00136         ;*********************************;
+                      00137 
+0010   202B           00138 MAIN    CALL    CLOCK           ; real-time clock algo called every second
+0011   2065           00139         CALL    SHOW            ; display the time
+0012   1D0B           00140 WAIT    BTFSS   INTCON,T0IF     ; wait for TMR0 to roll over
+0013   2812           00141          GOTO    WAIT
+0014   018B           00142         CLRF    INTCON
+0015   2092           00143         CALL    CHKSW           ; check for button press
+0016   0B8C           00144         DECFSZ  TICKS,F
+0017   2812           00145          GOTO    WAIT
+0018   2810           00146         GOTO    MAIN            ; get here every second
+                      00147 
+                      00148 
+                      00149         ;*********************************;
+                      00150         ;  Convert digit to segment form  ;
+                      00151         ;*********************************;
+                      00152 
+0019   390F           00153 SEGTAB  ANDLW   0FH 
+001A   0782           00154         ADDWF   PCL,F
+001B   3440 3479 3424 00155         DT      40,79,24,30,19,12,02,78,00,10
+       3430 3419 3412 
+       3402 3478 3400 
+       3410 
+0025   347F 347F 347F 00156         DT      7F,7F,7F,7F,7F,7F
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+       347F 347F 347F 
+                      00157 
+                      00158 
+                      00159         ;*********************************;
+                      00160         ;  Real-time clock algorithm      ;
+                      00161         ;*********************************;
+                      00162 
+002B   307A           00163 CLOCK   MOVLW   TCK0            ; increment digits as appropriate
+002C   008C           00164         MOVWF   TICKS           ; and define number of ticks per
+002D   0A8E           00165         INCF    SEC,F           ; second for next second
+002E   080E           00166         MOVF    SEC,W
+002F   3C09           00167         SUBLW   9
+0030   1803           00168         BTFSC   STATUS,C
+0031   0008           00169          RETURN
+                      00170 
+0032   307B           00171         MOVLW   TCK1
+0033   008C           00172         MOVWF   TICKS
+0034   018E           00173         CLRF    SEC
+0035   0A8F           00174         INCF    SEC10,F
+0036   080F           00175         MOVF    SEC10,W
+0037   3C05           00176         SUBLW   5
+0038   1803           00177         BTFSC   STATUS,C
+0039   0008           00178          RETURN
+                      00179 
+003A   3079           00180         MOVLW   TCK2
+003B   008C           00181         MOVWF   TICKS
+003C   018F           00182         CLRF    SEC10
+003D   0A90           00183         INCF    MIN,F
+003E   0810           00184         MOVF    MIN,W
+003F   3C09           00185         SUBLW   9
+0040   1803           00186         BTFSC   STATUS,C
+0041   0008           00187          RETURN
+                      00188 
+0042   307B           00189         MOVLW   TCK3
+0043   008C           00190         MOVWF   TICKS
+0044   0190           00191         CLRF    MIN
+0045   0A91           00192         INCF    MIN10,F
+0046   0811           00193         MOVF    MIN10,W
+0047   3C05           00194         SUBLW   5
+0048   1803           00195         BTFSC   STATUS,C
+0049   0008           00196          RETURN
+                      00197 
+004A   307C           00198         MOVLW   TCK4
+004B   008C           00199         MOVWF   TICKS
+004C   0191           00200         CLRF    MIN10
+004D   0813           00201         MOVF    HOUR10,W
+004E   3C01           00202         SUBLW   1
+004F   1803           00203         BTFSC   STATUS,C
+0050   285B           00204          GOTO   INCHR
+0051   0A92           00205         INCF    HOUR,F
+0052   0812           00206         MOVF    HOUR,W
+0053   3C03           00207         SUBLW   3
+0054   1803           00208         BTFSC   STATUS,C
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0055   0008           00209           RETURN
+                      00210 
+0056   307D           00211         MOVLW   TCK6
+0057   008C           00212         MOVWF   TICKS
+0058   0192           00213         CLRF    HOUR
+0059   0193           00214         CLRF    HOUR10
+005A   0008           00215         RETURN
+                      00216 
+005B   0A92           00217 INCHR   INCF    HOUR,F
+005C   0812           00218         MOVF    HOUR,W
+005D   3C09           00219         SUBLW   9
+005E   1803           00220         BTFSC   STATUS,C
+005F   0008           00221          RETURN
+                      00222 
+0060   307D           00223         MOVLW   TCK5
+0061   008C           00224         MOVWF   TICKS
+0062   0192           00225         CLRF    HOUR
+0063   0A93           00226         INCF    HOUR10,F
+0064   0008           00227         RETURN
+                      00228 
+                      00229 
+                      00230         ;*********************************;
+                      00231         ; Displays the time digit by digit;
+                      00232         ;*********************************;
+                      00233 
+0065   0195           00234 SHOW    CLRF    HHMM            
+0066   0A94           00235         INCF    FRAME,F         ; increment place in frame
+0067   0814           00236         MOVF    FRAME,W
+0068   3C0E           00237         SUBLW   D'14'
+0069   1C03           00238         BTFSS   STATUS,C
+006A   0194           00239          CLRF    FRAME
+006B   0814           00240         MOVF    FRAME,W
+006C   3A01           00241         XORLW   1               
+006D   1903           00242         BTFSC   STATUS,Z
+006E   287D           00243          GOTO    DHOUR10        ; display 10s of hours when frame is 1
+006F   3A03           00244         XORLW   1^2
+0070   1903           00245         BTFSC   STATUS,Z
+0071   2880           00246          GOTO    DHOUR          ; display hour when frame is 2
+0072   3A01           00247         XORLW   2^3
+0073   1903           00248         BTFSC   STATUS,Z
+0074   2883           00249          GOTO    DMIN10         ; display 10s of mins when frame is 3
+0075   3A07           00250         XORLW   3^4
+0076   1903           00251         BTFSC   STATUS,Z
+0077   2886           00252          GOTO    DMIN           ; display mins when frame is 4 
+0078   3030           00253         MOVLW   30              ; otherwise blank display
+0079   0086           00254         MOVWF   PORTB
+007A   301F           00255         MOVLW   1F
+007B   0085           00256         MOVWF   PORTA
+007C   0008           00257         RETURN
+                      00258 
+007D   1595           00259 DHOUR10 BSF     HHMM,3
+007E   0813           00260         MOVF    HOUR10,W
+007F   2888           00261         GOTO    DISPLAY        
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00262 
+0080   1515           00263 DHOUR   BSF     HHMM,2
+0081   0812           00264         MOVF    HOUR,W
+0082   2888           00265         GOTO    DISPLAY
+                      00266 
+0083   1495           00267 DMIN10  BSF     HHMM,1
+0084   0811           00268         MOVF    MIN10,W
+0085   2888           00269         GOTO    DISPLAY
+                      00270 
+0086   1415           00271 DMIN    BSF     HHMM,0
+0087   0810           00272         MOVF    MIN,W           ; falls through to DISPLAY
+                      00273 
+                      00274         
+                      00275         ;*********************************;
+                      00276         ;       Displays digit in W       ;
+                      00277         ;*********************************;
+                      00278 
+0088   0097           00279 DISPLAY MOVWF   DIGIT           ; save number to be displayed in DIGIT
+0089   2019           00280         CALL    SEGTAB          ; convert to segment form
+008A   008D           00281         MOVWF   SEGS            ; and store
+008B   391F           00282         ANDLW   1FH             ; extract PORTA segments
+008C   0085           00283         MOVWF   PORTA           ; and display
+008D   0C0D           00284         RRF     SEGS,W
+008E   3930           00285         ANDLW   30H             ; extract PORTB segments
+008F   0415           00286         IORWF   HHMM,W
+0090   0086           00287         MOVWF   PORTB           ; and display
+0091   0008           00288         RETURN
+                      00289 
+                      00290 
+                      00291         ;*********************************;
+                      00292         ; Checks for a switch press and   ;
+                      00293         ; updates digit if displayed      ;
+                      00294         ;*********************************;
+                      00295 
+0092   1B86           00296 CHKSW   BTFSC   PORTB,7         ; switch closed?
+0093   0008           00297          RETURN                 ; no
+0094   0895           00298         MOVF    HHMM,F
+0095   1903           00299         BTFSC   STATUS,Z        ; digit displayed?
+0096   0008           00300          RETURN                 ; no
+                      00301 
+0097   0A97           00302 INCDIG  INCF    DIGIT,F         ; DIGIT is the currently displayed number
+0098   0817           00303         MOVF    DIGIT,W
+0099   3C09           00304         SUBLW   9
+009A   1C03           00305         BTFSS   STATUS,C
+009B   0197           00306          CLRF    DIGIT
+009C   0817           00307         MOVF    DIGIT,W
+009D   2088           00308         CALL    DISPLAY
+009E   20B8           00309         CALL    DELAY           ; wait for switch to settle
+009F   1F86           00310 CHKSW0  BTFSS   PORTB,7         ; switch open?
+00A0   289F           00311          GOTO    CHKSW0         ; no
+00A1   20B8           00312         CALL    DELAY
+00A2   1F86           00313         BTFSS   PORTB,7         ; still open?
+00A3   289F           00314          GOTO    CHKSW0         ; no
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00A4   3014           00315         MOVLW   D'20'
+00A5   0096           00316         MOVWF   COUNT
+00A6   1F86           00317 CHKSW1  BTFSS   PORTB,7         ; switch open?
+00A7   2897           00318          GOTO    INCDIG         ; no
+00A8   20B8           00319         CALL    DELAY
+00A9   0B96           00320         DECFSZ  COUNT,F
+00AA   28A6           00321          GOTO    CHKSW1
+00AB   0817           00322         MOVF    DIGIT,W         ; switch was open for around 2 secs
+00AC   0194           00323         CLRF    FRAME  
+00AD   018F           00324         CLRF    SEC10
+00AE   018E           00325         CLRF    SEC
+00AF   1995           00326         BTFSC   HHMM,3          ; update correct digit
+00B0   0093           00327          MOVWF  HOUR10
+00B1   1915           00328         BTFSC   HHMM,2
+00B2   0092           00329          MOVWF  HOUR
+00B3   1895           00330         BTFSC   HHMM,1
+00B4   0091           00331          MOVWF  MIN10
+00B5   1815           00332         BTFSC   HHMM,0
+00B6   0090           00333          MOVWF   MIN
+00B7   2810           00334         GOTO    MAIN            ; restart the program
+                      00335 
+                      00336 
+                      00337         ;*********************************;
+                      00338         ; Delay used by switch routine    ;
+                      00339         ;*********************************;
+                      00340 
+00B8   300C           00341 DELAY   MOVLW   D'12'           ; roughly 100ms delay
+00B9   008C           00342         MOVWF   TICKS
+00BA   1D0B           00343 DEL1    BTFSS   INTCON,T0IF     ; wait for TMR0 to roll over
+00BB   28BA           00344          GOTO    DEL1
+00BC   018B           00345         CLRF    INTCON
+00BD   0B8C           00346         DECFSZ  TICKS,F
+00BE   28BA           00347          GOTO    DEL1
+00BF   0008           00348         RETURN
+                      00349 
+                      00350         END
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+CHKSW                             00000092
+CHKSW0                            0000009F
+CHKSW1                            000000A6
+CLOCK                             0000002B
+COUNT                             00000016
+DEL1                              000000BA
+DELAY                             000000B8
+DHOUR                             00000080
+DHOUR10                           0000007D
+DIGIT                             00000017
+DISPLAY                           00000088
+DMIN                              00000086
+DMIN10                            00000083
+FRAME                             00000014
+HHMM                              00000015
+HOUR                              00000012
+HOUR10                            00000013
+INCDIG                            00000097
+INCHR                             0000005B
+INIT                              00000000
+INTCON                            0000000B
+MAIN                              00000010
+MIN                               00000010
+MIN10                             00000011
+OPTREG                            00000081
+PCL                               00000002
+PORTA                             00000005
+PORTB                             00000006
+RP0                               00000005
+SEC                               0000000E
+SEC10                             0000000F
+SEGS                              0000000D
+SEGTAB                            00000019
+SHOW                              00000065
+STATUS                            00000003
+T0IF                              00000002
+TCK0                              0000007A
+TCK1                              0000007B
+TCK2                              00000079
+TCK3                              0000007B
+TCK4                              0000007C
+TCK5                              0000007D
+TCK6                              0000007D
+TICKS                             0000000C
+TRISA                             00000085
+TRISB                             00000086
+WAIT                              00000012
+Z                                 00000002
+_4_00MHZ                          
+__16F84A                          00000001
+__DEBUG                           1
+MPASM  5.33                         CLOCK.ASM   10-17-2009  17:25:35         PAGE  9
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   192
+Program Memory Words Free:   832
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     3 suppressed
+
+

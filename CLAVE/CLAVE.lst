@@ -1,0 +1,1067 @@
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;-------------------------------------------------------------------------
+                      00002 ; CLAVE.ASM
+                      00003 ; Autor: Mikel Etxebarria
+                      00004 ;       (c) Microsystems Engineering
+                      00005 ;-------------------------------------------------------------------------
+                      00006 ;
+                      00007 ;El programa de car cter did ctico que se presenta a continuaci¢n pretende
+                      00008 ;emular un sistema de contol de acceso.
+                      00009 ;
+                      00010 ;Mediante un teclado matricial de 16 teclas conectado a la puerta B, el usua-
+                      00011 ;rio pulsa la tecla A de apertura, e introduce una clave de 4 d¡gitos. Si es
+                      00012 ;correcta se activa un rel‚ conectado a la l¡nea RA4 durante un segundo, si-
+                      00013 ;mulando la apertura de una puerta. Se dan tres oportunidades para introducir
+                      00014 ;la clave correcta. Cada pulsaci¢n va precedida de un beep generado por el
+                      00015 ;piezoel‚ctrico conectado en RA3.
+                      00016 ;
+                      00017 ;La tecla C permite realizar el cambio de clave pidiendo una nueva y la
+                      00018 ;correspondiente confirmaci¢n.
+                      00019 ;
+                      00020 ;La pantalla LCD conectada tambi‚n a la puerta B ir  presentando los oportu-
+                      00021 ;nos mensajes.
+                      00022 ;
+                      00023 ;En la memoria EEPROM de datos disponible en los dispositivos 16C84 quedar 
+                      00024 ;registrada, de forma permanente, la clave actual.
+                      00025 ;
+                      00026 ;
+Warning[215]: Processor superseded by command line.  Verify processor symbol.
+                      00027                 list    p=16c84         ;Tipo de procesador
+                      00028 
+                      00029                 cblock  0x11
+                      00030 
+  00000011            00031                         digito_1
+  00000012            00032                         digito_2
+  00000013            00033                         digito_3
+  00000014            00034                         digito_4        ;Variables para los d¡gitos clave
+  00000015            00035                         di_tem_1
+  00000016            00036                         di_tem_2
+  00000017            00037                         di_tem_3
+  00000018            00038                         di_tem_4        ;Temporales para los d¡gitos
+                      00039 
+  00000019            00040                         cont_err        ;Contador de fallos
+  0000001A            00041                         cont_tecla      ;Contador de teclas pulsadas
+  0000001B            00042                         temp_1
+  0000001C            00043                         temp_2          ;Variables temporales
+  0000001D            00044                         Delay_1
+  0000001E            00045                         Delay_2
+  0000001F            00046                         Delay_3         ;Variables para la temporizaci¢n de 1 s
+                      00047 
+                      00048                 endc                                
+                      00049 
+                      00050                 include "16cxx.h"
+                      00001 ;************************************************************************
+                      00002 ;                            16CXX.H
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00003 ;
+                      00004 ;Fichero de cabecera con las definiciones de registros de los microcontro-
+                      00005 ;ladores PIC 16CXX.
+                      00006 ;
+                      00007 ;                    Autor: Mikel Etxebarria
+                      00008 ;                  (c) Microsystems Engineering
+                      00009 ;************************************************************************
+                      00010 
+  00000000            00011 w                       equ 0           ;Referencia al acumulador
+  00000001            00012 f                       equ 1           ;Referencia al registro fuente
+  00000000            00013 indf                    equ 0x00        ;Direccionado indirecto
+  00000001            00014 tmr0                    equ 0x01        ;Registro del timer 0
+  00000001            00015 opcion                  equ 0x01        ;Registro de opciones
+  00000002            00016 pcl                     equ 0x02        ;8 bits de menos peso del PC
+  00000003            00017 status                  equ 0x03        ;Registro de estado
+  00000004            00018 fsr                     equ 0x04        ;Registro de indirecci¢n
+  00000005            00019 trisa                   equ 0x05        ;Regitsro de direccionado de la puerta A
+  00000006            00020 trisb                   equ 0x06        ;Registro de direccionado de la puerta B
+  00000005            00021 porta                   equ 0x05        ;Registro de la puerta A
+  00000006            00022 portb                   equ 0x06        ;Registro de la puerta B
+  00000008            00023 eedato                  equ 0x08        ;Regsitro  de datos EEPROM
+  00000008            00024 eecon1                  equ 0x08        ;Registro 1 de control EEPROM
+  00000009            00025 eeadr                   equ 0x09        ;Registro de direcciones EEPROM
+  00000009            00026 eecon2                  equ 0x09        ;Registro 2 de control EEPROM
+  0000000A            00027 pclath                  equ 0x0a        ;Parte alta del PC
+  0000000B            00028 intcon                  equ 0x0b        ;Registro de control de interrupci¢n
+                      00029 
+                      00030 ;***************************************************************************
+                      00031 ;El registro de opciones del microcontrolador "option"
+                      00032 ;***************************************************************************
+                      00033 
+                      00034 #define _ps0            opcion,0        ;Bit 0 de selecci¢n del preescaler
+                      00035 #define _ps1            opcion,1        ;Bit 1 de selecci¢n del preescaler
+                      00036 #define _ps2            opcion,2        ;Bit 2 de selecci¢n del preescaler
+                      00037 #define _psa            opcion,3        ;Asignaci¢n del preescaler a TMR0 o WDT
+                      00038 #define _t0se           opcion,4        ;Selecci¢n de tipo de flanco para TMR0
+                      00039 #define _t0cs           opcion,5        ;Selecci¢n de tipo de reloj para el TMR0
+                      00040 #define _intedg         opcion,6        ;Selecci¢n de flanco de la interrupci¢n INT
+                      00041 #define _rbpu           opcion,7        ;Actibaci¢n de cargas pull-up para puerta B
+                      00042 
+                      00043 ;***************************************************************************
+                      00044 ;Registro de control de interrupciones del microcontrolador "intcon"
+                      00045 ;***************************************************************************
+                      00046 
+                      00047 #define _rbif           intcon,0        ;Flag de interrupci¢n de la puerta B
+                      00048 #define _intf           intcon,1        ;Flag de interrupci¢n externa INT
+                      00049 #define _t0if           intcon,2        ;Flag de interrupci¢n del TMR0
+                      00050 #define _rbie           intcon,3        ;Habilitaci¢n de interrupci¢n de la puerta B
+                      00051 #define _inte           intcon,4        ;Habilitaci¢n de la interrupci¢n externa INT
+                      00052 #define _t0ie           intcon,5        ;Habilitaci¢n de interrupci¢n del TMR0
+                      00053 #define _eeie           intcon,6        ;Habilitaci¢n de interrupci¢n de la EEPROM
+                      00054 #define _gie            intcon,7        ;Habilitaci¢n global de interrupciones
+                      00055 
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00056 ;***************************************************************************
+                      00057 ;El registro de estado del microcontrolador "status"
+                      00058 ;***************************************************************************
+                      00059 
+                      00060 #define _c              status,0        ;Flag de acarreo
+                      00061 #define _dc             status,1        ;Flag de acarreo decimal
+                      00062 #define _z              status,2        ;Flag Z (a "1" si resultado=0)
+                      00063 #define _pd             status,3        ;Flag de "power down"
+                      00064 #define _to             status,4        ;Flag de "WDT Timer Out"
+                      00065 #define _rp0            status,5        ;Bit 0 selector de p gina 
+                      00066 #define _rp1            status,6        ;Bit 1 selector de p gina
+                      00067 #define _irp            status,7        ;Selecci¢n de bancos (direcionado indirecto)
+                      00068 
+                      00069 ;***************************************************************************
+                      00070 ;El registro de control de la memoria EEPROM de datos "eecon1"
+                      00071 ;***************************************************************************
+                      00072 
+                      00073 #define _rd             eecon1,0        ;Orden de lectura
+                      00074 #define _wr             eecon1,1        ;Orden de escritura
+                      00075 #define _wren           eecon1,2        ;Permiso de escritura
+                      00076 #define _wrerr          eecon1,3        ;Flag de error de escritura
+                      00077 #define _eeif           eecon1,4        ;Flad de fin de escritura
+                      00078 
+                      00079 
+                      00051 
+0000                  00052                 org     0               ;Vector de inicio
+0000   294F           00053                 goto    Inicio
+                      00054 
+0005                  00055                 org     5
+                      00056 
+0005   0082           00057 tabla           movwf   pcl             ;Desplazamiento sobre la tabla
+  00000006            00058 Mens_1          equ     $
+0006   3428           00059                 retlw   '('
+0007   3441           00060                 retlw   'A'
+0008   3429           00061                 retlw   ')'
+0009   3420           00062                 retlw   ' '
+000A   3441           00063                 retlw   'A'
+000B   3470           00064                 retlw   'p'
+000C   3465           00065                 retlw   'e'
+000D   3472           00066                 retlw   'r'
+000E   3474           00067                 retlw   't'
+000F   3475           00068                 retlw   'u'
+0010   3472           00069                 retlw   'r'
+0011   3461           00070                 retlw   'a'
+0012   3400           00071                 retlw   0x00
+                      00072 
+  00000013            00073 Mens_1_1        equ     $
+0013   3428           00074                 retlw   '('
+0014   3443           00075                 retlw   'C'
+0015   3429           00076                 retlw   ')'
+0016   3420           00077                 retlw   ' '
+0017   3443           00078                 retlw   'C'
+0018   3461           00079                 retlw   'a'
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0019   346D           00080                 retlw   'm'
+001A   3462           00081                 retlw   'b'
+001B   3469           00082                 retlw   'i'
+001C   346F           00083                 retlw   'o'
+001D   3420           00084                 retlw   ' '
+001E   3443           00085                 retlw   'C'
+001F   346C           00086                 retlw   'l'
+0020   3461           00087                 retlw   'a'
+0021   3476           00088                 retlw   'v'
+0022   3465           00089                 retlw   'e'
+0023   3400           00090                 retlw   0x00
+                      00091 
+  00000024            00092 Mens_2          equ     $
+0024   3443           00093                 retlw   'C'
+0025   346C           00094                 retlw   'l'
+0026   3461           00095                 retlw   'a'
+0027   3476           00096                 retlw   'v'
+0028   3465           00097                 retlw   'e'
+0029   3420           00098                 retlw   ' '
+002A   343F           00099                 retlw   '?'
+002B   3420           00100                 retlw   ' '
+002C   3400           00101                 retlw   0x00
+                      00102 
+  0000002D            00103 Mens_2_1        equ     $
+002D   3428           00104                 retlw   '('
+002E   3443           00105                 retlw   'C'
+002F   3429           00106                 retlw   ')'
+0030   3420           00107                 retlw   ' '
+0031   3443           00108                 retlw   'C'
+0032   3461           00109                 retlw   'a'
+0033   346E           00110                 retlw   'n'
+0034   3463           00111                 retlw   'c'
+0035   3465           00112                 retlw   'e'
+0036   346C           00113                 retlw   'l'
+0037   3461           00114                 retlw   'a'
+0038   3472           00115                 retlw   'r'
+0039   3400           00116                 retlw   0x00
+                      00117 
+  0000003A            00118 Mens_3          equ     $
+003A   344E           00119                 retlw   'N'
+003B   3475           00120                 retlw   'u'
+003C   3465           00121                 retlw   'e'
+003D   3476           00122                 retlw   'v'
+003E   3461           00123                 retlw   'a'
+003F   3420           00124                 retlw   ' '
+0040   3443           00125                 retlw   'C'
+0041   346C           00126                 retlw   'l'
+0042   3461           00127                 retlw   'a'
+0043   3476           00128                 retlw   'v'
+0044   3465           00129                 retlw   'e'
+0045   3420           00130                 retlw   ' '
+0046   3400           00131                 retlw   0x00
+                      00132 
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+  00000047            00133 Mens_4          equ     $
+0047   3443           00134                 retlw   'C'
+0048   346F           00135                 retlw   'o'
+0049   346E           00136                 retlw   'n'
+004A   3466           00137                 retlw   'f'
+004B   3469           00138                 retlw   'i'
+004C   3472           00139                 retlw   'r'
+004D   346D           00140                 retlw   'm'
+004E   3461           00141                 retlw   'a'
+004F   3472           00142                 retlw   'r'
+0050   3420           00143                 retlw   ' '
+0051   3400           00144                 retlw   0x00
+                      00145 
+  00000052            00146 Mens_5          equ     $
+0052   3450           00147                 retlw   'P'
+0053   3475           00148                 retlw   'u'
+0054   3465           00149                 retlw   'e'
+0055   3464           00150                 retlw   'd'
+0056   3465           00151                 retlw   'e'
+0057   3420           00152                 retlw   ' '
+0058   3450           00153                 retlw   'P'
+0059   3461           00154                 retlw   'a'
+005A   3473           00155                 retlw   's'
+005B   3461           00156                 retlw   'a'
+005C   3472           00157                 retlw   'r'
+005D   3400           00158                 retlw   0x00
+                      00159 
+  0000005E            00160 Mens_6          equ     $
+005E   3441           00161                 retlw   'A'
+005F   3443           00162                 retlw   'C'
+0060   3443           00163                 retlw   'C'
+0061   3445           00164                 retlw   'E'
+0062   3453           00165                 retlw   'S'
+0063   344F           00166                 retlw   'O'
+0064   3420           00167                 retlw   ' '
+0065   3444           00168                 retlw   'D'
+0066   3445           00169                 retlw   'E'
+0067   344E           00170                 retlw   'N'
+0068   3445           00171                 retlw   'E'
+0069   3447           00172                 retlw   'G'
+006A   3441           00173                 retlw   'A'
+006B   3444           00174                 retlw   'D'
+006C   344F           00175                 retlw   'O'
+006D   3400           00176                 retlw   0x00
+                      00177 
+                      00178                 include "teclado.h"
+                      00001 ;**************************************************************************
+                      00002 ;                               TECLADO.H
+                      00003 ;
+                      00004 ;                       Autor: Jorge Ra£l Mu¤oz
+                      00005 ;                     (c) Microsystems Engineering
+                      00006 ;
+                      00007 ;Esta rutina realiza una exploraci¢n del teclado matricial de 16 teclas
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00008 ;conectado a la puerta B y devuelve el c¢digo BCD de la tecla pulsada. Si 
+                      00009 ;no se pulsa ninguna se devuelve el c¢digo 0x80. Sea el c¢digo que sea
+                      00010 ;este retorna en la variable Num_tecla.
+                      00011 ;
+                      00012        cblock 0x0C
+  0000000C            00013               CONT1                 ; Contador
+  0000000D            00014               CONT2                 ; Contador
+  0000000E            00015               Num_tecla             ; Reg. de tecla pulsada
+  0000000F            00016               Temp_Tecla            ; Reg. de lectura Temporal
+  00000010            00017               Static                ; Reg. de Flags 
+                      00018        endc
+                      00019 ;
+                      00020 ;************************************************************************
+                      00021 ; Configuraci¢n del PIC para esta rutina de escaneo del teclado.
+                      00022 ;
+006E   1683           00023 TECLADO      bsf _rp0                ; Pagina 1
+006F   30F0           00024              movlw b'11110000'       ; RB<0-3> Salidas a Columnas
+0070   0086           00025              movwf trisb             ; RB<4-7> Entradas a Filas
+0071   1381           00026              bcf _rbpu               ; activa pull_up
+0072   1283           00027              bcf _rp0                ; Pagina 0
+                      00028 ;
+0073   0190           00029              clrf Static             ; Flag de proceso
+0074   018E           00030 Test         clrf Num_tecla          ; Contador teclas a 0.
+0075   300E           00031              movlw 0x0E              ; 0000 1110 <==
+0076   0086           00032              movwf portb             ; al portb
+0077   0000           00033              nop                     ; espera para asegurar la se¤al
+                      00034 
+0078   1E06           00035 Que_tecla    btfss portb,4           ; Salta la sig. si RB<4>=1
+0079   288E           00036              goto CRONOS             ; A temporizar
+007A   0A8E           00037              incf Num_tecla,f        ; 
+                      00038 
+007B   1E86           00039              btfss portb,5
+007C   288E           00040              goto CRONOS
+007D   0A8E           00041              incf Num_tecla,f
+                      00042 
+007E   1F06           00043              btfss portb,6
+007F   288E           00044              goto CRONOS
+0080   0A8E           00045              incf Num_tecla,f
+                      00046 
+0081   1F86           00047              btfss portb,7
+0082   288E           00048              goto CRONOS
+0083   0A8E           00049              incf Num_tecla,f
+                      00050 
+0084   3010           00051              movlw 0x10              ; Valor limite de Num_tecla.
+0085   020E           00052              subwf Num_tecla,w
+0086   1903           00053              btfsc _z                ; Si _z=0 el resultado no fu‚ 0.
+0087   288B           00054              goto No_Tecla           ; Si _z=1 lleg¢ a m ximo de Num_tecla.
+0088   1403           00055              bsf _c                  ; Carry a 1
+0089   0D86           00056              rlf portb,f             ; xxxx 
+008A   2878           00057              goto Que_tecla
+                      00058 
+008B   3080           00059 No_Tecla     movlw 0x80              ; 0x080 c¢digo de que no hay tecla
+008C   008E           00060              movwf Num_tecla         ; pulsada
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+008D   0008           00061 Fuera        return                  ; Retorno
+                      00062 ;
+                      00063 ;
+                      00064 ;*************************************************************************
+008E   1B90           00065 CRONOS       btfsc Static,7          ; Flag.Si bit 7=0 es 2§ pasada.Si bit 7=1..
+008F   2894           00066              goto CRONOS_1           ; salta esta instruccion.
+0090   1790           00067              bsf Static,7            ; Flag de proceso
+0091   080E           00068              movf Num_tecla,w        ; 1§ pasada
+0092   008F           00069              movwf Temp_Tecla        ; guarda valor de Num_tecla en temporal..
+0093   289D           00070              goto CRONOS_2           ; y va a temporizar.
+                      00071 
+0094   1390           00072 CRONOS_1     bcf Static,7            ; Es la 2§ pasada.Baja Flag de aviso..
+0095   080E           00073              movf Num_tecla,w        ; Num_tecla==>w
+0096   020F           00074              subwf Temp_Tecla,w      ; RESTA.
+0097   1D03           00075              btfss _z                ; Si _z=1 ==>Num_tecla=Temp_Tecla, va $+1
+0098   288B           00076              goto No_Tecla           ; Si _z=0 resultado <> 0.
+0099   080E           00077              movf Num_tecla,w        ; Num_tecla=desplazamiento en tabla
+009A   20A5           00078              call Tabla              ; localizaci¢n del valor de la tecla
+009B   008E           00079              movwf Num_tecla         ; w retorna con el valor. 
+009C   288D           00080              goto Fuera              ; Num_tecla ya contiene el c¢digo de tecla.
+                      00081 ;
+                      00082 ;
+                      00083 ;*************************************************************************
+                      00084 ;Temporizaci¢n para eliminar el efecto de los rebotes
+                      00085 ;*************************************************************************
+                      00086 ;
+                      00087 ;Temporizaci¢n total 20,736 ms con una frecuencia de trabajo de 4MHz
+                      00088 ;
+                      00089 ;
+009D   3005           00090 CRONOS_2     movlw 0x05              ; Carga del bucle externo. 
+009E   008C           00091              movwf CONT1
+                      00092 
+009F   018D           00093 CRONOS_3     clrf CONT2              ; 00 y decrementa pasando a FFh
+00A0   0B8D           00094              decfsz CONT2,f          ; En este bucle anidado...
+00A1   28A0           00095              goto $ - 1              ; se cuentan 0,000768æs.
+                      00096 
+00A2   0B8C           00097              decfsz CONT1,f          ; En este bucle externo..
+00A3   289F           00098              goto CRONOS_3           ; se cuenta 9 veces el bucle interno.
+00A4   2874           00099              goto Test               ; va a realizar  2§ escaneo.
+                      00100 ;
+00A5   0782           00101 Tabla       addwf 0x02,f             ; pcl + w(desplazamiento en Tabla)
+00A6   3401           00102             retlw 1
+00A7   3404           00103             retlw 4
+00A8   3407           00104             retlw 7
+00A9   340A           00105             retlw 0x0A
+00AA   3402           00106             retlw 2
+00AB   3405           00107             retlw 5
+00AC   3408           00108             retlw 8
+00AD   3400           00109             retlw 0
+00AE   3403           00110             retlw 3
+00AF   3406           00111             retlw 6
+00B0   3409           00112             retlw 9
+00B1   340B           00113             retlw 0x0B
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B2   340F           00114             retlw 0x0F
+00B3   340E           00115             retlw 0x0E
+00B4   340D           00116             retlw 0x0D
+00B5   340C           00117             retlw 0x0C
+                      00118 
+                      00119 
+                      00179                 include "lcd.h"
+                      00001 ; -------------------------------------------------------------------------
+                      00002 ; Programa: LCH.H
+                      00003 ; Autor: Jorge Ra£l Mu¤oz
+                      00004 ;       (c) Microsystems Engineering
+                      00005 ;
+                      00006 ; El conjunto de rutinas que se presentan a continuaci¢n permiten realizar
+                      00007 ; las tareas b sicas de control del m¢dulo de visualizaci¢n LCD
+                      00008 ; -------------------------------------------------------------------------
+                      00009                                         
+                      00010 #define ENABLE       bsf porta,2        ;Activa E
+                      00011 #define DISABLE      bcf porta,2        ;Desactiva
+                      00012 #define LEER         bsf porta,1        ;Pone LCD en Modo RD
+                      00013 #define ESCRIBIR     bcf porta,1        ;Pone LCD en Modo WR
+                      00014 #define OFF_COMANDO  bcf porta,0        ;Desactiva RS (modo comando)
+                      00015 #define ON_COMANDO   bsf porta,0        ;Activa RS
+                      00016 ;
+                      00017 ;-------------------------------------------------------------------------
+                      00018 ;UP_LCD: Configuraci¢n PIC para el LCD.
+                      00019 ;
+00B6   1683           00020 UP_LCD          bsf     _rp0            ;Banco 1
+00B7   0186           00021                 clrf    trisb           ;RB <0-7> salidas digitales
+00B8   3000           00022                 movlw   B'00000000'     ;RA0=RS||RA1=R/W||RA2=E
+00B9   0085           00023                 movwf   trisa           ;RA<0,1,2> Sd.  RA<3,4> Ed.
+00BA   3087           00024                 movlw   B'10000111'     ;Preescaler asignado al
+00BB   0081           00025                 movwf   opcion          ;timer 0 Div 1:128
+00BC   1283           00026                 bcf     _rp0            ;Banco 0
+00BD   3000           00027                 movlw   0
+00BE   008B           00028                 movwf   intcon          ;Desactivar interrupciones.
+00BF   1005           00029                 OFF_COMANDO             ;RS=0
+00C0   1105           00030                 DISABLE                 ;E=0
+00C1   0008           00031                 return
+                      00032 ;
+                      00033 ;--------------------------------------------------------------------------
+                      00034 ;LCD_BUSY: Lectura del Flag Busy y la direcci¢n.
+                      00035 ;
+00C2   1485           00036 LCD_BUSY        LEER                    ;Pone el LCD en Modo RD
+00C3   1683           00037                 bsf     _rp0            
+00C4   30FF           00038                 movlw   H'FF'
+00C5   0086           00039                 movwf   trisb           ;Puerta B como entrada
+00C6   1283           00040                 bcf     _rp0            ;Selecciona el banco 0
+00C7   1505           00041                 ENABLE                  ;Activa el LCD
+00C8   0000           00042                 nop
+00C9   1B86           00043                 btfsc   portb,7         ;Chequea bit de Busy
+00CA   28C9           00044                 goto    $-1
+00CB   1105           00045                 DISABLE                 ;Desactiva LCD
+00CC   1683           00046                 bsf     _rp0                               
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00CD   0186           00047                 clrf    trisb           ;Puerta B salida
+00CE   1283           00048                 bcf     _rp0                              
+00CF   1085           00049                 ESCRIBIR                ;Pone LCD en modo WR
+00D0   0008           00050                 return
+                      00051 ;
+                      00052 ;--------------------------------------------------------------------------
+                      00053 ;LCD_E: Pulso de Enable
+                      00054 ;
+00D1   1505           00055 LCD_E           ENABLE                  ;Activa E
+00D2   0000           00056                 nop
+00D3   1105           00057                 DISABLE                 ;Desactiva E
+00D4   0008           00058                 return
+                      00059 ;
+                      00060 ;--------------------------------------------------------------------------
+                      00061 ;LCD_DATO: Escritura de datos en DDRAM o CGRAM
+                      00062 ;
+00D5   1005           00063 LCD_DATO        OFF_COMANDO             ;Desactiva RS (modo comando)
+00D6   0086           00064                 movwf   portb           ;Valor ASCII a sacar por portb
+00D7   20C2           00065                 call    LCD_BUSY        ;Espera a que se libere el LCD
+00D8   1405           00066                 ON_COMANDO              ;Activa RS (modo dato).
+00D9   28D1           00067                 goto    LCD_E           ;Genera pulso de E
+                      00068 
+                      00069 ;--------------------------------------------------------------------------
+                      00070 ;LCD_REG: Escritura de comandos del LCD
+                      00071 ;W=C¢digo de comando para el LCD
+                      00072 ;W ==> portb
+                      00073 ;
+00DA   1005           00074 LCD_REG         OFF_COMANDO             ;Desactiva RS (modo comando)
+00DB   0086           00075                 movwf   portb           ;C¢digo de comando.
+00DC   20C2           00076                 call    LCD_BUSY        ;LCD libre?.
+00DD   28D1           00077                 goto    LCD_E           ;SI.Genera pulso de E.
+                      00078 ;
+                      00079 ;---------------------------------------------------------------------------
+                      00080 ;LCD_INI: icializaci¢n del LCD 
+                      00081 ;
+00DE   3003           00082 LCD_INI         movlw   D'3'            ;Contador de inicializaci¢n
+00DF   008C           00083                 movwf   CONT1           ;interface de 8 bits,2 l¡neas de
+00E0   0064           00084                 clrwdt               
+00E1   3038           00085                 movlw   b'00111000'     ;caracteres 5-7,datos de 8 bits.(#)
+00E2   20DA           00086                 call    LCD_REG         ;Comando.
+00E3   30D6           00087                 movlw   H'D6'           ;5ms.(Especificaci¢n de Fabricante)
+00E4   0081           00088                 movwf   tmr0           
+00E5   1D0B           00089                 btfss   intcon,2        ;Rebos¢ el timer 0?
+00E6   28E5           00090                 goto    $-1             ;NO.
+00E7   110B           00091                 bcf     intcon,2        ;SI.Borrar flag TOIF.
+00E8   0B8C           00092                 decfsz  CONT1,1         ;Decrementar contador
+00E9   28E0           00093                 goto    $-9
+00EA   0008           00094                 return
+                      00095 ;
+                      00096 ;-------------------------------------------------------------------------
+                      00097 ;BORRA_Y_HOME: Borra el display y retorna el cursor a la posici¢n 0 
+                      00098 ;
+00EB   3001           00099 BORRA_Y_HOME    movlw   b'00000001'     ;Borra LCD y Home.
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00EC   20DA           00100                 call    LCD_REG
+00ED   0008           00101                 return
+                      00102 ;
+                      00103 ;-------------------------------------------------------------------------
+                      00104 ;DISPLAY_ON_CUR_OFF: Control ON/OFF del display y cursor.
+                      00105 ;Activa Display desactiva cursor.
+                      00106 
+00EE                  00107 DISPLAY_ON_CUR_OFF
+00EE   300C           00108                 movlw   b'00001100'     ;LCD on,cursor off.
+00EF   20DA           00109                 call    LCD_REG
+00F0   0008           00110                 return
+                      00111 
+                      00180 
+                      00181 ;-------------------------------------------------------------------------
+                      00182 ;Key_Off: Esta rutina genera un Beep y espera que la tecla reci‚n pulsada
+                      00183 ;se suelte. Debe usarse justo despu‚s de llamar a la rutina TECLADO
+                      00184 ;
+00F1   080E           00185 Key_Off         movf    Num_tecla,w
+00F2   009B           00186                 movwf   temp_1          ;Guarda temporalmente la tecla
+00F3   1185           00187                 bcf     porta,3         ;Activa zumbador beep
+00F4   3001           00188                 movlw   1
+00F5   20FF           00189                 call    Delay           ;Temporiza
+00F6   1585           00190                 bsf     porta,3         ;Beep OFF
+00F7   206E           00191 Key_Off_No      call    TECLADO
+00F8   3080           00192                 movlw   0x80
+00F9   020E           00193                 subwf   Num_tecla,w
+00FA   1D03           00194                 btfss   _z              ;Se ha soltado la tecla ?
+00FB   28F7           00195                 goto    Key_Off_No      ;Todavia no
+00FC   081B           00196                 movf    temp_1,w        ;Ahora si
+00FD   008E           00197                 movwf   Num_tecla       ;Repone la tecla pulsada
+00FE   0008           00198                 return
+                      00199 
+                      00200 
+                      00201 ;-------------------------------------------------------------------------
+                      00202 ;Delay: Esta rutina realiza una temporizaci¢n que depende del valor del
+                      00203 ;acumulador en el momento en que se le llama.
+                      00204 ;
+00FF   009D           00205 Delay           movwf   Delay_1
+0100   0B9F           00206 Delay_loop      decfsz  Delay_3,f
+0101   2900           00207                 goto    Delay_loop
+0102   0B9E           00208                 decfsz  Delay_2,f
+0103   2900           00209                 goto    Delay_loop
+0104   0B9D           00210                 decfsz  Delay_1,f
+0105   2900           00211                 goto    Delay_loop
+0106   0008           00212                 return
+                      00213 
+                      00214 ;-------------------------------------------------------------------------
+                      00215 ;Mensaje: Esta rutina saca al LCD el mensaje cuyo inicio est  indicado en
+                      00216 ;el acumulador
+                      00217 
+0107   009B           00218 Mensaje         movwf   temp_1          ;Salva posici¢n de la tabla
+0108   081B           00219 Mensaje_1       movf    temp_1,w        ;Recupera posici¢n de la tabla
+0109   2005           00220                 call    tabla           ;Busca caracter de salida
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+010A   009C           00221                 movwf   temp_2          ;Guarda el caracter
+010B   089C           00222                 movf    temp_2,f
+010C   1D03           00223                 btfss   _z              ;Mira si es el £ltimo
+010D   290F           00224                 goto    No_es_ultimo
+010E   0008           00225                 return
+010F   20D5           00226 No_es_ultimo    call    LCD_DATO        ;Visualiza en el LCD
+0110   0A9B           00227                 incf    temp_1,f        ;Siguiente caracter
+0111   2908           00228                 goto    Mensaje_1       ;Repite con siguiente caracter
+                      00229 
+                      00230 ;-------------------------------------------------------------------------
+                      00231 ;Control: Espera que se tecleen los cuatro d¡gitos de la clave, los alma-
+                      00232 ;cena en digito_1 .. digito_4 y visualiza ---- en LCD. La tecla C permite
+                      00233 ;cancelar
+                      00234 
+                      00235 
+0112   3004           00236 Control         movlw   4
+0113   009A           00237                 movwf   cont_tecla      ;Inicia contador de pulsaciones
+0114   3011           00238                 movlw   digito_1
+0115   0084           00239                 movwf   fsr             ;Apunta al inicio del buffer de tecla
+0116   206E           00240 N_tecla         call    TECLADO         ;Explora el teclado
+0117   3080           00241                 movlw   0x80
+0118   020E           00242                 subwf   Num_tecla,w
+0119   1903           00243                 btfsc   _z              ;Hay alguna pulsada ?
+011A   2916           00244                 goto    N_tecla         ;NO
+011B   20B6           00245                 call    UP_LCD          ;Reconfigura el LCD
+011C   302D           00246                 movlw   '-'
+011D   20D5           00247                 call    LCD_DATO        ;Visualiza el -
+011E   20F1           00248                 call    Key_Off         ;Genera Beep y espera se libere
+011F   300C           00249                 movlw   0x0c
+0120   020E           00250                 subwf   Num_tecla,w
+0121   1903           00251                 btfsc   _z              ;Mira si es tecla C (Cancelar)
+0122   2924           00252                 goto    Es_Can
+0123   2926           00253                 goto    No_es_Can
+0124   149B           00254 Es_Can          bsf     temp_1,1        ;Activa Flag de cancelaci¢n
+0125   0008           00255                 return
+                      00256 
+0126   109B           00257 No_es_Can       bcf     temp_1,1        ;Desactiva Flag de cancelaci¢n
+0127   080E           00258                 movf    Num_tecla,w
+0128   0080           00259                 movwf   indf            ;Almacena la tecla en el buffer
+0129   0A84           00260                 incf    fsr,f           ;Siguiente posici¢n del buffer
+012A   0B9A           00261                 decfsz  cont_tecla,f    ;Actualiza contador de tecla
+012B   2916           00262                 goto    N_tecla         ;Repite el proceso
+012C   0008           00263                 return
+                      00264 
+                      00265 ;-------------------------------------------------------------------------
+                      00266 ;Okey: Comprueba si la clave introducida en el buffer coincide con la de
+                      00267 ;la EEPROM. En caso afirmativo el flag carry se pone a "0", de lo contra-
+                      00268 ;rio a "1".
+                      00269 ;
+012D   101B           00270 Okey            bcf     temp_1,0        ;Borra flag de error
+012E   3004           00271                 movlw   4
+012F   009A           00272                 movwf   cont_tecla      ;N£mero de bytes a comprobar
+0130   3011           00273                 movlw   digito_1
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0131   0084           00274                 movwf   fsr             ;Primer d¡gito
+0132   0189           00275                 clrf    eeadr           ;Primera posici¢n de la EEPROM
+0133   213E           00276 Okey_1          call    EE_Read         ;Lee byte de la EEPROM
+0134   0808           00277                 movf    eedato,w        
+0135   390F           00278                 andlw   0x0f            
+0136   0200           00279                 subwf   indf,w          ;Lo compara con el del buffer
+0137   1D03           00280                 btfss   _z              ;Mira si es igual
+0138   141B           00281                 bsf     temp_1,0        ;NO, activa flag de error
+0139   0A89           00282                 incf    eeadr,f         ;Siguiente posici¢n de la EEPROM
+013A   0A84           00283                 incf    fsr,f           ;Siguiente d¡gito
+013B   0B9A           00284                 decfsz  cont_tecla,f    ;Repite la comprobaci¢n
+013C   2933           00285                 goto    Okey_1
+013D   0008           00286                 return                                                                        
+                      00287                 
+                      00288 
+                      00289 ;-------------------------------------------------------------------------
+                      00290 ;EE_Read: Lee un byte de la EEPROM
+                      00291 ;
+013E   1683           00292 EE_Read         bsf     _rp0            ;Selecciona banco 1
+013F   1408           00293                 bsf     _rd             ;Orden de lectura
+0140   1283           00294                 bcf     _rp0            ;Selecci¢n banco 0
+0141   0008           00295                 return
+                      00296 
+                      00297 ;-------------------------------------------------------------------------
+                      00298 ;EE_Write: Graba un byte en la EEPROM
+                      00299 ;
+0142   1683           00300 EE_Write        bsf     _rp0            ;Selecciona banco 1
+0143   1508           00301                 bsf     _wren           ;Permiso de escritura
+0144   3055           00302                 movlw   0x55
+0145   0089           00303                 movwf   eecon2
+0146   30AA           00304                 movlw   0xaa
+0147   0089           00305                 movwf   eecon2          ;Secuencia seg£n Microchip
+0148   1488           00306                 bsf     _wr             ;Orden de escritura
+0149   1108           00307                 bcf     _wren           ;Evita posteriores escrituras
+014A   1E08           00308 Wait            btfss   _eeif           ;Testear final de byte grabado
+014B   294A           00309                 goto    Wait
+014C   1208           00310                 bcf     _eeif           ;Reponer flag de final
+014D   1283           00311                 bcf     _rp0            ;Selecci¢n banco 0
+014E   0008           00312                 return
+                      00313 
+014F   20B6           00314 Inicio          call    UP_LCD
+0150   20DE           00315                 call    LCD_INI         ;Inicializa LCD
+0151   20EE           00316                 call    DISPLAY_ON_CUR_OFF
+                      00317 
+0152   3018           00318                 movlw   b'00011000'
+0153   0085           00319                 movwf   porta           ;Desconecta rel‚ y zumbador
+                      00320 
+0154   0189           00321                 clrf    eeadr           ;Posici¢n EEPROM de la firma
+0155   213E           00322                 call    EE_Read         ;Lee byte de EEPROM
+0156   30FF           00323                 movlw   0xff
+0157   0208           00324                 subwf   eedato,w
+0158   1D03           00325                 btfss   _z              ;Mira si est  usada
+0159   2962           00326                 goto    Si_usada
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00327 
+                      00328 ;Carga en la EEPROM la clave 1234 por defecto
+                      00329 
+015A   0188           00330 No_usada        clrf    eedato
+015B   3004           00331                 movlw   4               ;N£mero de bytes a guardar
+015C   009B           00332                 movwf   temp_1
+015D   0A88           00333 No_usada_1      incf    eedato,f        ;Clave a guardar
+015E   2142           00334                 call    EE_Write        ;Graba dato
+015F   0A89           00335                 incf    eeadr,f
+0160   0B9B           00336                 decfsz  temp_1,f
+0161   295D           00337                 goto    No_usada_1
+                      00338 
+0162   20EB           00339 Si_usada        call    BORRA_Y_HOME    ;Actualiza LCD
+0163   3006           00340                 movlw   Mens_1          ;Offset del mensaje 1
+0164   2107           00341                 call    Mensaje         ;Visualiza "Apertura (A)"
+0165   30C0           00342                 movlw   0xc0
+0166   20DA           00343                 call    LCD_REG         ;Ajusta posici¢n del mensaje
+0167   3013           00344                 movlw   Mens_1_1        ;Offset del mensaje 1.1
+0168   2107           00345                 call    Mensaje         ;Visualiza "Cambio Clave (C)"
+0169   206E           00346 No_hay          call    TECLADO         ;Explora el teclado
+016A   3080           00347                 movlw   0x80
+016B   020E           00348                 subwf   Num_tecla,w
+016C   1903           00349                 btfsc   _z              ;Hay tecla
+016D   2969           00350                 goto    No_hay
+016E   20F1           00351                 call    Key_Off         ;Genera beep y espera se libere
+016F   300A           00352                 movlw   0x0A
+0170   020E           00353                 subwf   Num_tecla,w
+0171   1903           00354                 btfsc   _z              ;Es la tecla A (Apertura) ?
+0172   29C0           00355                 goto    Si_es_A
+0173   300C           00356 No_es_A         movlw   0x0C
+0174   020E           00357                 subwf   Num_tecla,w
+0175   1D03           00358                 btfss   _z              ;Es la tecla C (Cambio clave) ?
+0176   2969           00359                 goto    No_hay
+                      00360 
+0177   20B6           00361 Si_es_C         call    UP_LCD          ;Reconfigura LCD
+0178   20EB           00362                 call    BORRA_Y_HOME    ;Actualiza
+0179   302D           00363                 movlw   Mens_2_1        ;Offset del mensaje 2.1
+017A   2107           00364                 call    Mensaje         ;Visualiza "Cancelar (C)"
+017B   30C0           00365                 movlw   0xc0
+017C   20DA           00366                 call    LCD_REG         ;Reposiciona cursor del LCD
+017D   3024           00367                 movlw   Mens_2          ;Offset del mensaje 2
+017E   2107           00368                 call    Mensaje         ;Visualiza "Clave ?"
+017F   2112           00369                 call    Control         ;Espera se introduza clave actual
+                      00370 
+0180   189B           00371                 btfsc   temp_1,1        ;Hubo cancelaci¢n ??
+0181   2962           00372                 goto    Si_usada        ;Si.
+                      00373 
+0182   212D           00374                 call    Okey            ;Comprueba si es correcta
+0183   181B           00375                 btfsc   temp_1,0        ;Es v lida ?
+0184   2962           00376                 goto    Si_usada        ;No, vuelta al principio 
+0185   20B6           00377                 call    UP_LCD          ;Si. Reconfigura LCD
+0186   20EB           00378                 call    BORRA_Y_HOME    ;Borra e inicia el LCD
+0187   302D           00379                 movlw   Mens_2_1        ;Offset del mensaje 2.1
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0188   2107           00380                 call    Mensaje         ;Visualiza "(C) Cancelar"
+0189   30C0           00381                 movlw   0xc0            ;Reposiciona el LCD
+018A   20DA           00382                 call    LCD_REG
+018B   303A           00383                 movlw   Mens_3          ;Offset del mensaje 3
+018C   2107           00384                 call    Mensaje         ;Visualiza "Nueva clave"
+018D   2112           00385                 call    Control         ;Espera que se pulse la nueva clave
+                      00386 
+018E   189B           00387                 btfsc   temp_1,1        ;Hubo cancelaci¢n ??
+018F   2962           00388                 goto    Si_usada        ;Si.
+                      00389 
+0190   20B6           00390                 call    UP_LCD          ;Reconfigura LCD
+0191   20EB           00391                 call    BORRA_Y_HOME    ;Borra e inicia LCD
+0192   302D           00392                 movlw   Mens_2_1        ;Offset del mensaje 2.1
+0193   2107           00393                 call    Mensaje         ;Visualiza "(C) Cancelar"
+0194   30C0           00394                 movlw   0xc0            ;Reposicionar LCD
+0195   20DA           00395                 call    LCD_REG
+0196   3047           00396                 movlw   Mens_4          ;Offset del mensaje 4
+0197   2107           00397                 call    Mensaje         ;Visualiza "Confirmar"
+0198   0811           00398                 movf    digito_1,w
+0199   0095           00399                 movwf   di_tem_1
+019A   0812           00400                 movf    digito_2,w
+019B   0096           00401                 movwf   di_tem_2
+019C   0813           00402                 movf    digito_3,w
+019D   0097           00403                 movwf   di_tem_3
+019E   0814           00404                 movf    digito_4,w
+019F   0098           00405                 movwf   di_tem_4        ;Salva temporalmente 1¦ clave
+                      00406 
+01A0   2112           00407                 call    Control         ;Lee la segunda clave
+                      00408 
+01A1   189B           00409                 btfsc   temp_1,1        ;Hubo cancelaci¢n ??
+01A2   2962           00410                 goto    Si_usada        ;Si.
+                      00411 
+01A3   0811           00412                 movf    digito_1,w
+01A4   0215           00413                 subwf   di_tem_1,w      ;Compara 1er.d¡gito
+01A5   1D03           00414                 btfss   _z              ;Igual ?
+01A6   2962           00415                 goto    Si_usada        ;No
+                      00416 
+01A7   0812           00417                 movf    digito_2,w
+01A8   0216           00418                 subwf   di_tem_2,w      ;Compara 2§ d¡gito
+01A9   1D03           00419                 btfss   _z              ;Igual ?
+01AA   2962           00420                 goto    Si_usada        ;No
+                      00421 
+01AB   0813           00422                 movf    digito_3,w
+01AC   0217           00423                 subwf   di_tem_3,w      ;Compara 3er.d¡gito
+01AD   1D03           00424                 btfss   _z              ;Igual ?
+01AE   2962           00425                 goto    Si_usada        ;No
+                      00426 
+01AF   0814           00427                 movf    digito_4,w
+01B0   0218           00428                 subwf   di_tem_4,w      ;Compara 4§ d¡gito
+01B1   1D03           00429                 btfss   _z              ;Igual ?
+01B2   2962           00430                 goto    Si_usada        ;No
+                      00431 
+                      00432 ;Graba en la EEPROM la nueva clave
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00433 
+01B3   3004           00434                 movlw   4
+01B4   009A           00435                 movwf   cont_tecla      ;N§ de octetos a grabar
+01B5   3011           00436                 movlw   digito_1
+01B6   0084           00437                 movwf   fsr             ;Indice de d¡gitos
+01B7   0189           00438                 clrf    eeadr           ;Primera direci¢n de EEPROM
+01B8   0800           00439 Otro_digito     movf    indf,w          ;Carga digito
+01B9   0088           00440                 movwf   eedato
+01BA   2142           00441                 call    EE_Write        ;Graba en EEPROM
+01BB   0A84           00442                 incf    fsr,f           ;Siguiente d¡gito
+01BC   0A89           00443                 incf    eeadr,f         ;Siguiente posici¢n EEPROM
+01BD   0B9A           00444                 decfsz  cont_tecla,f
+01BE   29B8           00445                 goto    Otro_digito
+01BF   2962           00446                 goto    Si_usada
+                      00447 
+                      00448 
+01C0   3003           00449 Si_es_A         movlw   3
+01C1   0099           00450                 movwf   cont_err        ;Establece n£mero de intentos
+01C2   20B6           00451 Otro_mas        call    UP_LCD          ;Reconfigura LCD
+01C3   20EB           00452                 call    BORRA_Y_HOME    ;Actualiza
+01C4   302D           00453                 movlw   Mens_2_1        ;Offset del mensaje 2.1
+01C5   2107           00454                 call    Mensaje         ;Visualiza "Cancelar (C)"
+01C6   30C0           00455                 movlw   0xc0
+01C7   20DA           00456                 call    LCD_REG         ;Reposicionar cursor del LCD
+01C8   3024           00457                 movlw   Mens_2          ;Offset del mensaje 2
+01C9   2107           00458                 call    Mensaje         ;Visualiza "Clave ?"
+01CA   2112           00459                 call    Control         ;Espera que se introduzca la clave
+                      00460 
+01CB   189B           00461                 btfsc   temp_1,1        ;Hubo cancelaci¢n ??
+01CC   2962           00462                 goto    Si_usada        ;Si.
+                      00463 
+01CD   212D           00464                 call    Okey            ;Comprueba si es correcta
+01CE   181B           00465                 btfsc   temp_1,0        ;Es v lida ?
+01CF   29DC           00466                 goto    No_Ok           ;No
+01D0   20B6           00467                 call    UP_LCD          ;Reconfigura LCD
+01D1   20EB           00468                 call    BORRA_Y_HOME    ;Borra e inicia LCD
+01D2   3052           00469                 movlw   Mens_5          ;Offset del mensaje 5
+01D3   2107           00470                 call    Mensaje         ;Visualiza "Puede Pasar"
+01D4   1205           00471                 bcf     porta,4         ;Si, activa rel‚
+01D5   1185           00472                 bcf     porta,3         ;Activa beep
+01D6   300A           00473                 movlw   0x0a
+01D7   20FF           00474                 call    Delay           ;Temporiza 2 seg.
+01D8   1605           00475                 bsf     porta,4         ;Desactiva rel‚
+01D9   1585           00476                 bsf     porta,3         ;Desactiva beep
+01DA   0199           00477                 clrf    cont_err        ;Pone a 0 contador de intentos
+01DB   2962           00478                 goto    Si_usada        ;Repite el proceso
+                      00479 
+01DC   0B99           00480 No_Ok           decfsz  cont_err,f      ;Intento fallido
+01DD   29C2           00481                 goto    Otro_mas        ;Repite otro intento
+01DE   20B6           00482                 call    UP_LCD          ;Reconfigura LCD
+01DF   20EB           00483                 call    BORRA_Y_HOME    ;Borra e inicia LCD
+01E0   305E           00484                 movlw   Mens_6          ;Offset del mensaje 6
+01E1   2107           00485                 call    Mensaje         ;Visualiza "ACCESO DENEGADO"
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01E2   3010           00486                 movlw   0x10
+01E3   20FF           00487                 call    Delay           ;Temporiza
+01E4   2962           00488                 goto    Si_usada        ;Repite el proceso
+                      00489 
+                      00490                 end
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BORRA_Y_HOME                      000000EB
+CONT1                             0000000C
+CONT2                             0000000D
+CRONOS                            0000008E
+CRONOS_1                          00000094
+CRONOS_2                          0000009D
+CRONOS_3                          0000009F
+Control                           00000112
+DISABLE                           bcf porta,2
+DISPLAY_ON_CUR_OFF                000000EE
+Delay                             000000FF
+Delay_1                           0000001D
+Delay_2                           0000001E
+Delay_3                           0000001F
+Delay_loop                        00000100
+EE_Read                           0000013E
+EE_Write                          00000142
+ENABLE                            bsf porta,2
+ESCRIBIR                          bcf porta,1
+Es_Can                            00000124
+Fuera                             0000008D
+Inicio                            0000014F
+Key_Off                           000000F1
+Key_Off_No                        000000F7
+LCD_BUSY                          000000C2
+LCD_DATO                          000000D5
+LCD_E                             000000D1
+LCD_INI                           000000DE
+LCD_REG                           000000DA
+LEER                              bsf porta,1
+Mens_1                            00000006
+Mens_1_1                          00000013
+Mens_2                            00000024
+Mens_2_1                          0000002D
+Mens_3                            0000003A
+Mens_4                            00000047
+Mens_5                            00000052
+Mens_6                            0000005E
+Mensaje                           00000107
+Mensaje_1                         00000108
+N_tecla                           00000116
+No_Ok                             000001DC
+No_Tecla                          0000008B
+No_es_A                           00000173
+No_es_Can                         00000126
+No_es_ultimo                      0000010F
+No_hay                            00000169
+No_usada                          0000015A
+No_usada_1                        0000015D
+Num_tecla                         0000000E
+OFF_COMANDO                       bcf porta,0
+ON_COMANDO                        bsf porta,0
+Okey                              0000012D
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Okey_1                            00000133
+Otro_digito                       000001B8
+Otro_mas                          000001C2
+Que_tecla                         00000078
+Si_es_A                           000001C0
+Si_es_C                           00000177
+Si_usada                          00000162
+Static                            00000010
+TECLADO                           0000006E
+Tabla                             000000A5
+Temp_Tecla                        0000000F
+Test                              00000074
+UP_LCD                            000000B6
+Wait                              0000014A
+__16F84A                          00000001
+__DEBUG                           1
+_c                                status,0
+_dc                               status,1
+_eeie                             intcon,6
+_eeif                             eecon1,4
+_gie                              intcon,7
+_inte                             intcon,4
+_intedg                           opcion,6
+_intf                             intcon,1
+_irp                              status,7
+_pd                               status,3
+_ps0                              opcion,0
+_ps1                              opcion,1
+_ps2                              opcion,2
+_psa                              opcion,3
+_rbie                             intcon,3
+_rbif                             intcon,0
+_rbpu                             opcion,7
+_rd                               eecon1,0
+_rp0                              status,5
+_rp1                              status,6
+_t0cs                             opcion,5
+_t0ie                             intcon,5
+_t0if                             intcon,2
+_t0se                             opcion,4
+_to                               status,4
+_wr                               eecon1,1
+_wren                             eecon1,2
+_wrerr                            eecon1,3
+_z                                status,2
+cont_err                          00000019
+cont_tecla                        0000001A
+di_tem_1                          00000015
+di_tem_2                          00000016
+di_tem_3                          00000017
+di_tem_4                          00000018
+digito_1                          00000011
+digito_2                          00000012
+MPASM  5.33                         CLAVE.ASM   1-4-1980  0:05:31         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+digito_3                          00000013
+digito_4                          00000014
+eeadr                             00000009
+eecon1                            00000008
+eecon2                            00000009
+eedato                            00000008
+f                                 00000001
+fsr                               00000004
+indf                              00000000
+intcon                            0000000B
+opcion                            00000001
+pcl                               00000002
+pclath                            0000000A
+porta                             00000005
+portb                             00000006
+status                            00000003
+tabla                             00000005
+temp_1                            0000001B
+temp_2                            0000001C
+tmr0                              00000001
+trisa                             00000005
+trisb                             00000006
+w                                 00000000
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+01C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXX----------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   481
+Program Memory Words Free:   543
+
+
+Errors   :     0
+Warnings :     1 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

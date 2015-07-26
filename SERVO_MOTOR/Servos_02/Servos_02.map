@@ -1,0 +1,46 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Sat Dec 12 07:48:00 2009
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x000054
+ .config_2007_SERVOS_02.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x00002d      
+                            0x002007    0x002007      
+            44 out of 1093 program addresses used, program memory utilization is 4%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               EstabaAlto   0x000023    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+               EstabaBajo   0x00001f    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+  Fin_Timer0_Interrupcion   0x000027    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+                   Inicio   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+                Principal   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+      Timer0_Interrupcion   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   Inicio   0x000005    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+                Principal   0x000010    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+      Timer0_Interrupcion   0x000015    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+               EstabaBajo   0x00001f    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+               EstabaAlto   0x000023    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+  Fin_Timer0_Interrupcion   0x000027    program     static E:\Jorge\PROG_PIC_NUEVOS\SERVO_MOTOR\Servos_02\Servos_02.asm
+
+

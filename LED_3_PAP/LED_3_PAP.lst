@@ -1,0 +1,625 @@
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 
+                      00003         LIST    P=16F84A
+                      00004         INCLUDE "P16F84A.INC"
+                      00001         LIST
+                      00002 ; P16F84A.INC  Standard Header File, Version 2.00    Microchip Technology, Inc.
+                      00134         LIST
+                      00005 
+                      00006 ;---------MAPA DE MEMORIA-------
+                      00007 
+                      00008         CBLOCK  0X0C
+                      00009         
+  0000000C            00010         ROTAR
+                      00011         ;REG1                   ;UTILIZANDO LA DIRECTIVA CBLOCK ASIGNO 
+                      00012         ;REG2                   ;LOS NOMBRES A LAS POSICIONES DE MEMORIA
+                      00013         ;REG3                   ;DE DATOOS PARA REALIZAR LOS RETARDOS
+                      00014         ;REG4
+  0000000D            00015         RETARDO
+  0000000E            00016         PDel0
+  0000000F            00017         PDel1
+                      00018 
+                      00019         ENDC
+                      00020 
+                      00021 ;-------CONFIGURACION DE PUERTOS---
+                      00022 
+0000                  00023 RESET   ORG     0X00                    ;INDICA DONDE SE ESCRIBE LA SIGUIENTE INSTRUCCION
+0000   2805           00024                 GOTO    INICIO          ;SALTA A INICIO
+0005                  00025                 ORG     0X05
+0005   1683           00026 INICIO  BSF             STATUS,RP0      ;SALTO AL BANCO 1
+0006   3000           00027                 MOVLW   B'00000000'             ;CARGA W CON 00000000
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0086           00028                 MOVWF   TRISB           ;CONFIGURA LOS PINES DE PORT B COMO SALIDA
+0008   1283           00029                 BCF             STATUS,RP0      ;REGRESA AL BANCO 0
+                      00030         
+                      00031 ;--------------OSCILANDO A VARIAS FRECUENCIAS------------------
+                      00032 
+0009                  00033 FREC_1
+                      00034 
+                      00035 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00036 
+0009                  00037 CONTROL_1               
+0009   300A           00038                 MOVLW   .10             ;CARGO W CON EL DECIMAL 5
+000A   008D           00039                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00040 
+000B                  00041 AHORA_1
+000B   038D           00042                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+000C   080D           00043                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+000D   3A00           00044                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+000E   1903           00045                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA UNA LINEA
+000F   2822           00046 CHAU_1  GOTO    FREC_2          ;SI LLEGA A CERO NOS VAMOS A FREC_2
+                      00047 
+0010   3001           00048                 MOVLW   0X01            ;CARGA W CON 00000001
+0011   008C           00049                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00050                 
+0012                  00051 ROTANDO_1       
+0012   080C           00052                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+0013   0086           00053                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00054 
+0014   20D6           00055                 CALL    PDelay          ;LLAMANDO A RETARDO
+0015   20D6           00056                 CALL    PDelay          ;LLAMANDO A RETARDO
+0016   20D6           00057                 CALL    PDelay          ;LLAMANDO A RETARDO
+0017   20D6           00058                 CALL    PDelay          ;LLAMANDO A RETARDO
+0018   20D6           00059                 CALL    PDelay          ;LLAMANDO A RETARDO
+0019   20D6           00060                 CALL    PDelay          ;LLAMANDO A RETARDO
+001A   20D6           00061                 CALL    PDelay          ;LLAMANDO A RETARDO
+001B   20D6           00062                 CALL    PDelay          ;LLAMANDO A RETARDO
+001C   20D6           00063                 CALL    PDelay          ;LLAMANDO A RETARDO
+001D   20D6           00064                 CALL    PDelay          ;LLAMANDO A RETARDO
+                      00065 
+001E   0D8C           00066                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+001F   1D8C           00067                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+0020   2812           00068                 GOTO    ROTANDO_1               ;SINO SIGUE ROITANDO
+0021   280B           00069                 GOTO    AHORA_1         ;REPITE TODO DE NUEVO
+                      00070                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to 
+                      00071 
+                      00072 ;-----------------------------------------------------------------
+                      00073 
+0022                  00074 FREC_2
+                      00075 
+                      00076 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00077 
+0022                  00078 CONTROL_2               
+0022   3014           00079                 MOVLW   .20             ;CARGO W CON EL DECIMAL 100
+0023   008D           00080                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00081 
+0024                  00082 AHORA_2
+0024   038D           00083                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+0025   080D           00084                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+0026   3A00           00085                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+0027   1903           00086                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA HASTA AHORA
+0028   283A           00087 CHAU_2  GOTO    FREC_3          ;SI LLEGA A CERO NOS VAMOS A FREC_1(NUEVAMENTE)
+                      00088 
+0029   3001           00089                 MOVLW   0X01            ;CARGA W CON 00000001
+002A   008C           00090                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00091                 
+002B                  00092 ROTANDO_2       
+002B   080C           00093                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+002C   0086           00094                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00095 
+002D   20D6           00096                 CALL    PDelay          ;LLAMANDO A RETARDO
+002E   20D6           00097                 CALL    PDelay          ;LLAMANDO A RETARDO
+002F   20D6           00098                 CALL    PDelay          ;LLAMANDO A RETARDO
+0030   20D6           00099                 CALL    PDelay          ;LLAMANDO A RETARDO
+0031   20D6           00100                 CALL    PDelay          ;LLAMANDO A RETARDO
+0032   20D6           00101                 CALL    PDelay          ;LLAMANDO A RETARDO
+0033   20D6           00102                 CALL    PDelay          ;LLAMANDO A RETARDO
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0034   20D6           00103                 CALL    PDelay          ;LLAMANDO A RETARDO
+0035   20D6           00104                 CALL    PDelay          ;LLAMANDO A RETARDO
+                      00105 
+0036   0D8C           00106                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+0037   1D8C           00107                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+0038   282B           00108                 GOTO    ROTANDO_2               ;SINO SIGUE ROITANDO
+0039   2824           00109                 GOTO    AHORA_2         ;REPITE TODO DE NUEVO
+                      00110                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to 
+                      00111 
+                      00112 ;-----------------------------------------------------------------
+                      00113 
+003A                  00114 FREC_3
+                      00115 
+                      00116 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00117 
+003A                  00118 CONTROL_3               
+003A   301E           00119                 MOVLW   .30             ;CARGO W CON EL DECIMAL 5
+003B   008D           00120                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00121 
+003C                  00122 AHORA_3
+003C   038D           00123                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+003D   080D           00124                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+003E   3A00           00125                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+003F   1903           00126                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA UNA LINEA
+0040   2851           00127 CHAU_3  GOTO    FREC_4          ;SI LLEGA A CERO NOS VAMOS A FREC_2
+                      00128 
+0041   3001           00129                 MOVLW   0X01            ;CARGA W CON 00000001
+0042   008C           00130                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00131                 
+0043                  00132 ROTANDO_3       
+0043   080C           00133                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+0044   0086           00134                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00135 
+0045   20D6           00136                 CALL    PDelay          ;LLAMANDO A RETARDO
+0046   20D6           00137                 CALL    PDelay          ;LLAMANDO A RETARDO
+0047   20D6           00138                 CALL    PDelay          ;LLAMANDO A RETARDO
+0048   20D6           00139                 CALL    PDelay  
+0049   20D6           00140                 CALL    PDelay  
+004A   20D6           00141                 CALL    PDelay  
+004B   20D6           00142                 CALL    PDelay  
+004C   20D6           00143                 CALL    PDelay  
+                      00144 
+004D   0D8C           00145                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+004E   1D8C           00146                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+004F   2843           00147                 GOTO    ROTANDO_3               ;SINO SIGUE ROITANDO
+0050   283C           00148                 GOTO    AHORA_3         ;REPITE TODO DE NUEVO
+                      00149                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to 
+                      00150 
+                      00151 ;-----------------------------------------------------------------
+                      00152 
+0051                  00153 FREC_4
+                      00154 
+                      00155 ;------REALLIZA LA SECUENCIA DE LEDS-----
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00156 
+0051                  00157 CONTROL_4               
+0051   3028           00158                 MOVLW   .40             ;CARGO W CON EL DECIMAL 100
+0052   008D           00159                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00160 
+0053                  00161 AHORA_4
+0053   038D           00162                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+0054   080D           00163                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+0055   3A00           00164                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+0056   1903           00165                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA HASTA AHORA
+0057   2867           00166 CHAU_4  GOTO    FREC_5          ;SI LLEGA A CERO NOS VAMOS A FREC_1(NUEVAMENTE)
+                      00167 
+0058   3001           00168                 MOVLW   0X01            ;CARGA W CON 00000001
+0059   008C           00169                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00170                 
+005A                  00171 ROTANDO_4       
+005A   080C           00172                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+005B   0086           00173                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00174 
+005C   20D6           00175                 CALL    PDelay          ;LLAMANDO A RETARDO
+005D   20D6           00176                 CALL    PDelay          ;LLAMANDO A RETARDO
+005E   20D6           00177                 CALL    PDelay  
+005F   20D6           00178                 CALL    PDelay  
+0060   20D6           00179                 CALL    PDelay  
+0061   20D6           00180                 CALL    PDelay  
+0062   20D6           00181                 CALL    PDelay  
+                      00182 
+0063   0D8C           00183                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+0064   1D8C           00184                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+0065   285A           00185                 GOTO    ROTANDO_4               ;SINO SIGUE ROITANDO
+0066   2853           00186                 GOTO    AHORA_4         ;REPITE TODO DE NUEVO
+                      00187                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to
+                      00188 
+                      00189 ;-----------------------------------------------------------------
+                      00190  
+0067                  00191 FREC_5
+                      00192 
+                      00193 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00194 
+0067                  00195 CONTROL_5
+0067   3032           00196                 MOVLW   .50
+0068   008D           00197                 MOVWF   RETARDO
+                      00198 
+0069                  00199 AHORA_5
+0069   038D           00200                 DECF    RETARDO,1
+006A   080D           00201                 MOVF    RETARDO,0
+006B   3A00           00202                 XORLW   0X00
+006C   1903           00203                 BTFSC   STATUS,Z
+006D   287C           00204 CHAU_5  GOTO    FREC_6
+                      00205 
+006E   3001           00206                 MOVLW   0X01
+006F   008C           00207                 MOVWF   ROTAR
+                      00208 
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0070                  00209 ROTANDO_5
+0070   080C           00210                 MOVF    ROTAR,0
+0071   0086           00211                 MOVWF   PORTB
+                      00212 
+0072   20D6           00213                 CALL    PDelay
+0073   20D6           00214                 CALL    PDelay  
+0074   20D6           00215                 CALL    PDelay  
+0075   20D6           00216                 CALL    PDelay  
+0076   20D6           00217                 CALL    PDelay  
+0077   20D6           00218                 CALL    PDelay          
+                      00219 
+0078   0D8C           00220                 RLF             ROTAR,1
+0079   1D8C           00221                 BTFSS   ROTAR,3
+007A   2870           00222                 GOTO    ROTANDO_5
+007B   2869           00223                 GOTO    AHORA_5
+                      00224 ;---------------------------------------------------------------
+                      00225 
+007C                  00226 FREC_6
+                      00227 
+                      00228 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00229 
+007C                  00230 CONTROL_6               
+007C   303C           00231                 MOVLW   .60             ;CARGO W CON EL DECIMAL 5
+007D   008D           00232                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00233 
+007E                  00234 AHORA_6
+007E   038D           00235                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+007F   080D           00236                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+0080   3A00           00237                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+0081   1903           00238                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA UNA LINEA
+0082   2890           00239 CHAU_6  GOTO    FREC_7          ;SI LLEGA A CERO NOS VAMOS A FREC_2
+                      00240 
+0083   3001           00241                 MOVLW   0X01            ;CARGA W CON 00000001
+0084   008C           00242                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00243                 
+0085                  00244 ROTANDO_6       
+0085   080C           00245                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+0086   0086           00246                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00247 
+0087   20D6           00248                 CALL    PDelay          ;LLAMANDO A RETARDO
+0088   20D6           00249                 CALL    PDelay          ;LLAMANDO A RETARDO
+0089   20D6           00250                 CALL    PDelay          ;LLAMANDO A RETARDO
+008A   20D6           00251                 CALL    PDelay          ;LLAMANDO A RETARDO
+008B   20D6           00252                 CALL    PDelay          ;LLAMANDO A RETARDO
+                      00253 
+008C   0D8C           00254                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+008D   1D8C           00255                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+008E   2885           00256                 GOTO    ROTANDO_6               ;SINO SIGUE ROITANDO
+008F   287E           00257                 GOTO    AHORA_6         ;REPITE TODO DE NUEVO
+                      00258                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to 
+                      00259 
+                      00260 ;-----------------------------------------------------------------
+                      00261 
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0090                  00262 FREC_7
+                      00263 
+                      00264 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00265 
+0090                  00266 CONTROL_7               
+0090   3046           00267                 MOVLW   .70     ;CARGO W CON EL DECIMAL 100
+0091   008D           00268                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00269 
+0092                  00270 AHORA_7
+0092   038D           00271                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+0093   080D           00272                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+0094   3A00           00273                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+0095   1903           00274                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA HASTA AHORA
+0096   28A3           00275 CHAU_7  GOTO    FREC_8          ;SI LLEGA A CERO NOS VAMOS A FREC_1(NUEVAMENTE)
+                      00276 
+0097   3001           00277                 MOVLW   0X01            ;CARGA W CON 00000001
+0098   008C           00278                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00279                 
+0099                  00280 ROTANDO_7       
+0099   080C           00281                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+009A   0086           00282                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00283 
+009B   20D6           00284                 CALL    PDelay          ;LLAMANDO A RETARDO
+009C   20D6           00285                 CALL    PDelay          ;LLAMANDO A RETARDO
+009D   20D6           00286                 CALL    PDelay          ;LLAMANDO A RETARDO
+009E   20D6           00287                 CALL    PDelay          ;LLAMANDO A RETARDO
+                      00288 
+009F   0D8C           00289                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+00A0   1D8C           00290                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+00A1   2899           00291                 GOTO    ROTANDO_7               ;SINO SIGUE ROITANDO
+00A2   2892           00292                 GOTO    AHORA_7         ;REPITE TODO DE NUEVO
+                      00293                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to 
+                      00294 
+                      00295 ;-----------------------------------------------------------------
+                      00296 
+00A3                  00297 FREC_8
+                      00298 
+                      00299 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00300 
+00A3                  00301 CONTROL_8               
+00A3   3050           00302                 MOVLW   .80     ;CARGO W CON EL DECIMAL 5
+00A4   008D           00303                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00304 
+00A5                  00305 AHORA_8
+00A5   038D           00306                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+00A6   080D           00307                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+00A7   3A00           00308                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+00A8   1903           00309                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA UNA LINEA
+00A9   28B5           00310 CHAU_8  GOTO    FREC_9          ;SI LLEGA A CERO NOS VAMOS A FREC_2
+                      00311 
+00AA   3001           00312                 MOVLW   0X01            ;CARGA W CON 00000001
+00AB   008C           00313                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00314                 
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00AC                  00315 ROTANDO_8       
+00AC   080C           00316                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+00AD   0086           00317                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00318 
+00AE   20D6           00319                 CALL    PDelay          ;LLAMANDO A RETARDO
+00AF   20D6           00320                 CALL    PDelay          ;LLAMANDO A RETARDO
+00B0   20D6           00321                 CALL    PDelay          ;LLAMANDO A RETARDO
+                      00322 
+00B1   0D8C           00323                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+00B2   1D8C           00324                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+00B3   28AC           00325                 GOTO    ROTANDO_8               ;SINO SIGUE ROITANDO
+00B4   28A5           00326                 GOTO    AHORA_8         ;REPITE TODO DE NUEVO
+                      00327                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to 
+                      00328 
+                      00329 ;-----------------------------------------------------------------
+                      00330 
+00B5                  00331 FREC_9
+                      00332 
+                      00333 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00334 
+00B5                  00335 CONTROL_9               
+00B5   305A           00336                 MOVLW   .90             ;CARGO W CON EL DECIMAL 100
+00B6   008D           00337                 MOVWF   RETARDO         ;LUEGO LO PASO A RETARDO Y LO DECREMENTO
+                      00338 
+00B7                  00339 AHORA_9
+00B7   038D           00340                 DECF    RETARDO,1       ;OPERO RETARDO Y 0X00 CON UN XOR ME DARA 0 SI AMBOS SON CEROS
+00B8   080D           00341                 MOVF    RETARDO,0       ;OSEA SI RETARDO LLEGO A CERO; ENTONCES EL BIT Z SE PONE A 
+00B9   3A00           00342                 XORLW   0X00            ;1 PARA INDICAR Q EL RESULTADO DE LA ULÑTIMA OPERACION FUE 0 
+00BA   1903           00343                 BTFSC   STATUS,Z        ;SI RETARDO AUN NO LLEGA A 0 SALTA HASTA AHORA
+00BB   28C6           00344 CHAU_9  GOTO    FREC_10         ;SI LLEGA A CERO NOS VAMOS A FREC_1(NUEVAMENTE)
+                      00345 
+00BC   3001           00346                 MOVLW   0X01            ;CARGA W CON 00000001
+00BD   008C           00347                 MOVWF   ROTAR           ;LO PASA AL REGISTRO ROTAR
+                      00348                 
+00BE                  00349 ROTANDO_9       
+00BE   080C           00350                 MOVF    ROTAR,0         ;PASA EL CONTENIDO DE ROTAR A W
+00BF   0086           00351                 MOVWF   PORTB           ;DE AHI A PORT B
+                      00352 
+00C0   20D6           00353                 CALL    PDelay          ;LLAMANDO A RETARDO
+00C1   20D6           00354                 CALL    PDelay          ;LLAMANDO A RETARDO
+                      00355 
+00C2   0D8C           00356                 RLF             ROTAR,1         ;DEZPLAZA EL CONTENIDO DE ROTAR Y LO GUARDA
+00C3   1D8C           00357                 BTFSS   ROTAR,3         ;PRUEBA SI SE ACTIVA EL 4to BIT  SI ES ASI SALTA 
+00C4   28BE           00358                 GOTO    ROTANDO_9               ;SINO SIGUE ROITANDO
+00C5   28B7           00359                 GOTO    AHORA_9         ;REPITE TODO DE NUEVO
+                      00360                                                         ;ESTO SIRVE PARA QUE NO SE ACTIVE EL LED 4to
+                      00361 
+                      00362 ;-----------------------------------------------------------------
+                      00363  
+00C6                  00364 FREC_10
+                      00365 
+                      00366 ;------REALLIZA LA SECUENCIA DE LEDS-----
+                      00367 
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00C6                  00368 CONTROL_10
+00C6   3064           00369                 MOVLW   .100
+00C7   008D           00370                 MOVWF   RETARDO
+                      00371 
+00C8                  00372 AHORA_10
+00C8   038D           00373                 DECF    RETARDO,1
+00C9   080D           00374                 MOVF    RETARDO,0
+00CA   3A00           00375                 XORLW   0X00
+00CB   1903           00376                 BTFSC   STATUS,Z
+00CC   2809           00377 CHAU_10 GOTO    FREC_1
+                      00378 
+00CD   3001           00379                 MOVLW   0X01
+00CE   008C           00380                 MOVWF   ROTAR
+                      00381 
+00CF                  00382 ROTANDO_10
+00CF   080C           00383                 MOVF    ROTAR,0
+00D0   0086           00384                 MOVWF   PORTB
+                      00385 
+00D1   20D6           00386                 CALL    PDelay  
+                      00387 
+00D2   0D8C           00388                 RLF             ROTAR,1
+00D3   1D8C           00389                 BTFSS   ROTAR,3
+00D4   28CF           00390                 GOTO    ROTANDO_10
+00D5   28C8           00391                 GOTO    AHORA_10
+                      00392 
+                      00393 ;----------------------------------------------------------------
+                      00394 ;-----RUTINA DE RETARDO 10mS----------
+                      00395 ;-------------------------------------------------------------
+                      00396 ; Code generated by PDEL  ver 1.0  on 21/10/2009 at 08:09:32 p.m.
+                      00397 ; Description: Waits 10000 cycles
+                      00398 ;-------------------------------------------------------------
+00D6   3008           00399 PDelay  movlw     .8        ; 1 set number of repetitions (B)
+00D7   008E           00400         movwf     PDel0     ; 1 |
+00D8   30F9           00401 PLoop1  movlw     .249      ; 1 set number of repetitions (A)
+00D9   008F           00402         movwf     PDel1     ; 1 |
+00DA   0064           00403 PLoop2  clrwdt              ; 1 clear watchdog
+00DB   0064           00404         clrwdt              ; 1 cycle delay
+00DC   0B8F           00405         decfsz    PDel1, 1  ; 1 + (1) is the time over? (A)
+00DD   28DA           00406         goto      PLoop2    ; 2 no, loop
+00DE   0B8E           00407         decfsz    PDel0,  1 ; 1 + (1) is the time over? (B)
+00DF   28D8           00408         goto      PLoop1    ; 2 no, loop
+00E0   28E1           00409 PDelL1  goto PDelL2         ; 2 cycles delay
+00E1   0064           00410 PDelL2  clrwdt              ; 1 cycle delay
+00E2   0008           00411         return              ; 2+2 Done
+                      00412 ;-------------------------------------------------------------
+                      00413 
+                      00414 
+                      00415         END             ;FIN
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+AHORA_1                           0000000B
+AHORA_10                          000000C8
+AHORA_2                           00000024
+AHORA_3                           0000003C
+AHORA_4                           00000053
+AHORA_5                           00000069
+AHORA_6                           0000007E
+AHORA_7                           00000092
+AHORA_8                           000000A5
+AHORA_9                           000000B7
+C                                 00000000
+CHAU_1                            0000000F
+CHAU_10                           000000CC
+CHAU_2                            00000028
+CHAU_3                            00000040
+CHAU_4                            00000057
+CHAU_5                            0000006D
+CHAU_6                            00000082
+CHAU_7                            00000096
+CHAU_8                            000000A9
+CHAU_9                            000000BB
+CONTROL_1                         00000009
+CONTROL_10                        000000C6
+CONTROL_2                         00000022
+CONTROL_3                         0000003A
+CONTROL_4                         00000051
+CONTROL_5                         00000067
+CONTROL_6                         0000007C
+CONTROL_7                         00000090
+CONTROL_8                         000000A3
+CONTROL_9                         000000B5
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FREC_1                            00000009
+FREC_10                           000000C6
+FREC_2                            00000022
+FREC_3                            0000003A
+FREC_4                            00000051
+FREC_5                            00000067
+FREC_6                            0000007C
+FREC_7                            00000090
+FREC_8                            000000A3
+FREC_9                            000000B5
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PDel0                             0000000E
+PDel1                             0000000F
+PDelL1                            000000E0
+PDelL2                            000000E1
+PDelay                            000000D6
+PLoop1                            000000D8
+PLoop2                            000000DA
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RESET                             00000000
+RETARDO                           0000000D
+ROTANDO_1                         00000012
+ROTANDO_10                        000000CF
+ROTANDO_2                         0000002B
+ROTANDO_3                         00000043
+ROTANDO_4                         0000005A
+ROTANDO_5                         00000070
+ROTANDO_6                         00000085
+ROTANDO_7                         00000099
+ROTANDO_8                         000000AC
+ROTANDO_9                         000000BE
+ROTAR                             0000000C
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TRISA                             00000085
+TRISB                             00000086
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+MPASM  5.33                     LED_3_PAP.ASM   10-21-2009  20:11:34         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WRERR                             00000003
+Z                                 00000002
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X----XXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXX------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   223
+Program Memory Words Free:   801
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     1 reported,     0 suppressed
+
+

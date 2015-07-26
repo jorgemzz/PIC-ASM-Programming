@@ -1,0 +1,82 @@
+MPLINK 4.33, Linker
+Linker Map File - Created Fri Jan 04 00:02:32 1980
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x00013c
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x00009d      
+            158 out of 1093 program addresses used, program memory utilization is 14%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    cifra   0x00000b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle1   0x000037    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle2   0x000044    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle3   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle4   0x00005e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                  nopulso   0x00009b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso1   0x00000b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso2   0x000016    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso3   0x000021    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso4   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo0   0x000071    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo1   0x000098    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo2   0x000095    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo3   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo4   0x00008c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo5   0x000089    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo6   0x000086    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo7   0x000080    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo8   0x00007d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo9   0x00007a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoA   0x000074    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoB   0x00006e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoC   0x00006b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoD   0x000077    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoE   0x000083    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoF   0x00008f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    cifra   0x00000b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso1   0x00000b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso2   0x000016    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso3   0x000021    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                    paso4   0x00002c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle1   0x000037    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle2   0x000044    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle3   0x000051    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   halle4   0x00005e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoC   0x00006b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoB   0x00006e    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo0   0x000071    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoA   0x000074    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoD   0x000077    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo9   0x00007a    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo8   0x00007d    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo7   0x000080    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoE   0x000083    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo6   0x000086    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo5   0x000089    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo4   0x00008c    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengoF   0x00008f    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo3   0x000092    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo2   0x000095    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                   tengo1   0x000098    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+                  nopulso   0x00009b    program     static E:\Jorge\PROG_PIC_NUEVOS\RUTINAS_TECLADO\TECLADO\TECLADO.ASM
+
+
